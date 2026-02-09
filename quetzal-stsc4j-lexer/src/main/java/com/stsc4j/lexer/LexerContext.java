@@ -5,7 +5,7 @@ import com.stsc4j.lexer.state.LexerState;
 import com.stsc4j.lexer.strategy.Analyzer;
 import com.stsc4j.lexer.strategy.ClassifierIdentifier;
 import com.stsc4j.lexer.strategy.ClassifierKeywords;
-import com.stsc4j.lexer.strategy.ClassifierOperators;
+import com.stsc4j.lexer.strategy.ClassifierSymbols;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class LexerContext {
     private List<Token> tokens = new ArrayList<>();
 
     private Analyzer analyzer = new Analyzer(List.of(
-            new ClassifierOperators(),
+            new ClassifierSymbols(),
             new ClassifierKeywords(),
             new ClassifierIdentifier())
     );
@@ -30,10 +30,28 @@ public class LexerContext {
         this.state = newState;
     }
 
+    public LexerState getState() {
+        return state;
+    }
+
+    public String getBuffer() {
+        return buffer.toString();
+    }
+
+    public void cleanToken() {
+        tokens.clear();
+    }
+
     public void process(String input) {
-        for (char c : input.toCharArray()) {
-            state.process(c, this);
-        }
+
+        char[] chars = input.toCharArray();
+        int index = 0;
+        int length = chars.length;
+        do {
+            state.process(chars[index], length, index, this);
+            index++;
+        } while (length > index);
+
         if (buffer.length() > 0) {
             state.finalize(this);
         }
@@ -48,13 +66,6 @@ public class LexerContext {
         buffer.setLength(0);
         state = new InitialState();
     }
-
-    public void generateTokenType() {
-        final String lexeme = buffer.toString();
-        TokenType tokenType = analyzer.analyze(lexeme);
-        generateToken(tokenType);
-    }
-
 
     public List<Token> getTokens() {
         return tokens;

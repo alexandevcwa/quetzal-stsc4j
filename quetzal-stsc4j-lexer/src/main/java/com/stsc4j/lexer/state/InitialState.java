@@ -1,23 +1,45 @@
 package com.stsc4j.lexer.state;
 
 import com.stsc4j.lexer.LexerContext;
+import com.stsc4j.lexer.TokenType;
 
 public class InitialState implements LexerState {
 
     @Override
-    public void process(char c, LexerContext lexer) {
+    public void process(char c, int length, int index, LexerContext lexer) {
+
+        // Analyze whitespace
         if (Character.isWhitespace(c)) {
             return;
         }
 
+        // Analyze special characters like symbols
+        if (!Character.isLetterOrDigit(c) && '_' != c && '"' != c && '.' != c) {
+            LexerState s = new SymbolState();
+            lexer.setState(s);
+            s.process(c, length, index, lexer);
+            return;
+        }
+
+        // Analyze letters
         if (Character.isLetter(c)) {
-            lexer.setState(new LetterState());
-            lexer.add(c);
+            LexerState s = new LetterState();
+            lexer.setState(s);
+            s.process(c, length, index, lexer);
+            return;
         }
 
-        if(Character.isDigit(c)){
-
+        // Analyze Literals
+        if (Character.isLetterOrDigit(c) || c == '"' || c == '.') {
+            LexerState s = new LiteralState();
+            lexer.setState(s);
+            s.process(c, length, index, lexer);
+            return;
         }
+
+        lexer.generateToken(TokenType.UNKNOW);
+        String error = "Unexpected character '" + c + "'";
+        throw new IllegalStateException(error);
     }
 
     @Override

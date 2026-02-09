@@ -1,22 +1,24 @@
 package com.stsc4j.lexer;
 
 public enum TokenType {
-    // PRIMITIVE TYPES
+    ////////////////
+    /// KEYWORDS ///
+    ////////////////
     PRIMITIVE_VOID, PRIMITIVE_LONG,
     PRIMITIVE_INT, PRIMITIVE_SHORT,
     PRIMITIVE_DOUBLE, PRIMITIVE_FLOAT,
     PRIMITIVE_STRING, PRIMITIVE_BOOLEAN,
 
-    // KEYWORDS
     IDENTIFIER, SPACE, EOF, UNKNOW, END_LINE,
 
 
-    // PARENTS
+    ///////////////////////////
+    /// SYMBOLS & OPERATORS ///
+    ///////////////////////////
+    // PARENTHESES
     LEFT_PARENT, RIGHT_PARENT,
-
     // BRACKETS
     LEFT_BRACKET, RIGHT_BRACKET,
-
     // OPERATORS
     PLUS, MINUS,
     MULTIPLY, DIVIDE,

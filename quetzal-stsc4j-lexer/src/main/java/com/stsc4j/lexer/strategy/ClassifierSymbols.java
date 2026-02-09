@@ -4,11 +4,11 @@ import com.stsc4j.lexer.TokenType;
 
 import static com.stsc4j.lexer.strategy.LexerDictionary.*;
 
-public class ClassifierOperators implements Classifier {
+public class ClassifierSymbols implements Classifier {
 
     @Override
     public boolean match(String s) {
-        return LexerDictionary.OPERATORS.contains(s.toCharArray()[0]);
+        return SYMBOLS.contains(s.toCharArray()[0]);
     }
 
     @Override
@@ -48,6 +48,18 @@ public class ClassifierOperators implements Classifier {
                 break;
             case MODULO:
                 type = TokenType.MODULO;
+                break;
+            case PARENTHESES_OPEN:
+                type = TokenType.LEFT_PARENT;
+                break;
+            case PARENTHESES_CLOSE:
+                type = TokenType.RIGHT_PARENT;
+                break;
+            case BRACKETS_OPEN:
+                type = TokenType.LEFT_BRACKET;
+                break;
+            case BRACKETS_CLOSE:
+                type = TokenType.RIGHT_BRACKET;
                 break;
         }
 
