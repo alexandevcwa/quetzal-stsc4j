@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="quetzal_stsc4j_ui.Components.OutputPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <TabControl Background="{StaticResource BgLight}" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BorderColor}">
+        <TabItem Header="Salida de Compilación">
+            <TextBox Background="{StaticResource BgDark}" Foreground="#CCCCCC" 
+                     FontFamily="Consolas" BorderThickness="0" IsReadOnly="True" Padding="5"
+                     Text="Quetzal Compiler Initialized..."/>
+        </TabItem>
+
+        <TabItem Header="Terminal">
+            <Grid Background="#0C0C0C">
+                <TextBlock Text="PS Quetzal\Dev> " Foreground="#CCCCCC" FontFamily="Consolas" Margin="5"/>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

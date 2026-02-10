@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:quetzal_stsc4j_ui"
              StartupUri="QuetzalStsc4jUI.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Assets/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
