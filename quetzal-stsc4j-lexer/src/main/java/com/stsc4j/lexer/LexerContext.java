@@ -2,10 +2,6 @@ package com.stsc4j.lexer;
 
 import com.stsc4j.lexer.state.InitialState;
 import com.stsc4j.lexer.state.LexerState;
-import com.stsc4j.lexer.strategy.Analyzer;
-import com.stsc4j.lexer.strategy.ClassifierIdentifier;
-import com.stsc4j.lexer.strategy.ClassifierKeywords;
-import com.stsc4j.lexer.strategy.ClassifierSymbols;
 
 import java.util.ArrayList;
 import java.util.List;
