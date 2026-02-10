@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/quetzal-stsc4j-ui/bin/Debug/net10.0-windows
+/quetzal-stsc4j-ui/obj
+/quetzal-stsc4j-ui/.vs/quetzal-stsc4j-ui
