@@ -2,9 +2,37 @@ package com.stsc4j.lexer.strategy;
 
 import com.stsc4j.lexer.TokenType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.stsc4j.lexer.strategy.LexerDictionary.*;
 
 public class ClassifierSymbols implements Classifier {
+
+    private static final Map<Character, TokenType> SYMBOLS_MAP = new HashMap<>();
+
+    static {
+        SYMBOLS_MAP.put(PLUS, TokenType.PLUS);
+        SYMBOLS_MAP.put(MINUS, TokenType.MINUS);
+        SYMBOLS_MAP.put(MULTIPLY, TokenType.MULTIPLY);
+        SYMBOLS_MAP.put(DIVIDE, TokenType.DIVIDE);
+        SYMBOLS_MAP.put(EQUALS, TokenType.EQUAL);
+        SYMBOLS_MAP.put(EXCLAMATION, TokenType.EXCLAMATION);
+        SYMBOLS_MAP.put(LESS_THAN, TokenType.LESS_THAN);
+        SYMBOLS_MAP.put(GREATER_THAN, TokenType.GREATER_THAN);
+        SYMBOLS_MAP.put(AND, TokenType.AND);
+        SYMBOLS_MAP.put(OR, TokenType.OR);
+        SYMBOLS_MAP.put(MODULO, TokenType.MODULE);
+        SYMBOLS_MAP.put(PARENTHESES_OPEN, TokenType.LEFT_PARENT);
+        SYMBOLS_MAP.put(PARENTHESES_CLOSE, TokenType.RIGHT_PARENT);
+        SYMBOLS_MAP.put(BRACKETS_OPEN, TokenType.LEFT_BRACKET);
+        SYMBOLS_MAP.put(BRACKETS_CLOSE, TokenType.RIGHT_BRACKET);
+        SYMBOLS_MAP.put(BRACES_OPEN, TokenType.BRACES_OPEN);
+        SYMBOLS_MAP.put(BRACES_CLOSE, TokenType.BRACES_CLOSE);
+        SYMBOLS_MAP.put(COMMA, TokenType.COMMA);
+        SYMBOLS_MAP.put(DOUBLE_DOT, TokenType.DOUBLE_DOT);
+        SYMBOLS_MAP.put(DOT, TokenType.DOT);
+    }
 
     @Override
     public boolean match(String s) {
@@ -13,56 +41,6 @@ public class ClassifierSymbols implements Classifier {
 
     @Override
     public TokenType classify(String s) {
-        TokenType type = null;
-
-        switch (s.toCharArray()[0]) {
-            case PLUS:
-                type = TokenType.PLUS;
-                break;
-            case MINUS:
-                type = TokenType.MINUS;
-                break;
-            case MULTIPLY:
-                type = TokenType.MULTIPLY;
-                break;
-            case DIVIDE:
-                type = TokenType.DIVIDE;
-                break;
-            case EQUALS:
-                type = TokenType.EQUAL;
-                break;
-            case EXCLAMATION:
-                type = TokenType.EXCLAMATION;
-                break;
-            case LESS_THAN:
-                type = TokenType.LESS_THAN;
-                break;
-            case GREATER_THAN:
-                type = TokenType.GREATER_THAN;
-                break;
-            case AND:
-                type = TokenType.AND;
-                break;
-            case OR:
-                type = TokenType.OR;
-                break;
-            case MODULO:
-                type = TokenType.MODULO;
-                break;
-            case PARENTHESES_OPEN:
-                type = TokenType.LEFT_PARENT;
-                break;
-            case PARENTHESES_CLOSE:
-                type = TokenType.RIGHT_PARENT;
-                break;
-            case BRACKETS_OPEN:
-                type = TokenType.LEFT_BRACKET;
-                break;
-            case BRACKETS_CLOSE:
-                type = TokenType.RIGHT_BRACKET;
-                break;
-        }
-
-        return type;
+        return SYMBOLS_MAP.getOrDefault(s.toCharArray()[0], TokenType.UNKNOW);
     }
 }

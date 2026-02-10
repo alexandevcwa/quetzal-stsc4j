@@ -9,12 +9,12 @@ public class InitialState implements LexerState {
     public void process(char c, int length, int index, LexerContext lexer) {
 
         // Analyze whitespace
-        if (Character.isWhitespace(c)) {
+        if (Character.isWhitespace(c) || c == '\n') {
             return;
         }
 
         // Analyze special characters like symbols
-        if (!Character.isLetterOrDigit(c) && '_' != c && '"' != c && '.' != c) {
+        if (!Character.isLetterOrDigit(c) && '_' != c && '"' != c) {
             LexerState s = new SymbolState();
             lexer.setState(s);
             s.process(c, length, index, lexer);
@@ -30,7 +30,7 @@ public class InitialState implements LexerState {
         }
 
         // Analyze String Literals
-        if(c == '"'){
+        if (c == '"') {
             LexerState s = new StringLiteralState();
             lexer.setState(s);
             s.process(c, length, index, lexer);
@@ -38,7 +38,7 @@ public class InitialState implements LexerState {
         }
 
         // Analyze Numeric Literals
-        if(Character.isDigit(c)){
+        if (Character.isDigit(c)) {
             LexerState s = new DigitLiteralState();
             lexer.setState(s);
             s.process(c, length, index, lexer);
