@@ -1,0 +1,40 @@
+<UserControl x:Class="quetzal_stsc4j_ui.Components.TerminalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BgDark}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="TerminalOutput" Grid.Row="0"
+                 Background="#0C0C0C"
+                 Foreground="#CCCCCC"
+                 FontFamily="Consolas"
+                 FontSize="12"
+                 IsReadOnly="True"
+                 BorderThickness="0"
+                 Padding="5"
+                 VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto"
+                 Text="Terminal iniciada..."/>
+
+        <Border Grid.Row="1" Background="#0C0C0C" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BorderColor}">
+            <Grid Margin="5,5,5,5" Height="25">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="PS> " Foreground="#CCCCCC" VerticalAlignment="Center" FontFamily="Consolas"/>
+                <TextBox Grid.Column="1" x:Name="TerminalInput"
+                         Background="#0C0C0C"
+                         Foreground="#CCCCCC"
+                         FontFamily="Consolas"
+                         BorderThickness="0"
+                         VerticalAlignment="Center"
+                         KeyDown="TerminalInput_KeyDown"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

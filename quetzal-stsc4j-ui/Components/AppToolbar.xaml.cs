@@ -1,30 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace quetzal_stsc4j_ui.Components
+namespace quetzal_stsc4j_ui.Components;
+
+public partial class AppToolbar : UserControl
 {
-    /// <summary>
-    /// Interaction logic for AppToolbar.xaml
-    /// </summary>
-    public partial class AppToolbar : UserControl
-    {
-        public AppToolbar()
-        {
-            InitializeComponent();
-        }
+    // Delegados para eventos
+    public event Action<string> CompileRequested;
+    public event Action<string> RunRequested;
+    public event Action SaveRequested;
+    public event Action<string> PackageRequested;
+    public event Action<string> ConvertRequested;
 
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
-        {
-        }
+    public AppToolbar()
+    {
+        InitializeComponent();
+    }
+
+    private void BtnCompile_Click(object sender, RoutedEventArgs e)
+    {
+        CompileRequested?.Invoke(GetCurrentFilePath());
+    }
+
+    private void BtnRun_Click(object sender, RoutedEventArgs e)
+    {
+        RunRequested?.Invoke(GetCurrentFilePath());
+    }
+
+    private void BtnSave_Click(object sender, RoutedEventArgs e)
+    {
+        SaveRequested?.Invoke();
+    }
+
+    private void BtnPackage_Click(object sender, RoutedEventArgs e)
+    {
+        PackageRequested?.Invoke(GetCurrentDirectoryPath());
+    }
+
+    private void BtnConvert_Click(object sender, RoutedEventArgs e)
+    {
+        ConvertRequested?.Invoke(GetCurrentFilePath());
+    }
+
+    private string GetCurrentFilePath()
+    {
+        var mainWindow = Window.GetWindow(this) as QuetzalStsc4jUI;
+        return mainWindow?.GetCurrentFilePath() ?? "";
+    }
+
+    private string GetCurrentDirectoryPath()
+    {
+        var mainWindow = Window.GetWindow(this) as QuetzalStsc4jUI;
+        return mainWindow?.GetCurrentDirectoryPath() ?? Directory.GetCurrentDirectory();
     }
 }
+
+

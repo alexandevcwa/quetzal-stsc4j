@@ -1,26 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+using System.IO;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace quetzal_stsc4j_ui.Components
+namespace quetzal_stsc4j_ui.Components;
+
+public partial class CodeEditorView : UserControl
 {
-    /// <summary>
-    /// Interaction logic for CodeEditorView.xaml
-    /// </summary>
-    public partial class CodeEditorView : UserControl
+    private string _currentFilePath;
+    private bool _isModified;
+
+    public string CurrentFilePath
     {
-        public CodeEditorView()
+        get => _currentFilePath;
+        set
         {
-            InitializeComponent();
+            _currentFilePath = value;
+            UpdateFileName();
         }
     }
+
+    public bool IsModified
+    {
+        get => _isModified;
+        set
+        {
+            _isModified = value;
+            UpdateFileName();
+        }
+    }
+
+    public string Text
+    {
+        get => EditorTexto.Text;
+        set => EditorTexto.Text = value;
+    }
+
+    public CodeEditorView()
+    {
+        InitializeComponent();
+    }
+
+    private void EditorTexto_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        IsModified = true;
+    }
+
+    private void UpdateFileName()
+    {
+        string fileName = string.IsNullOrEmpty(_currentFilePath)
+            ? "Sin guardar"
+            : Path.GetFileName(_currentFilePath);
+
+        if (IsModified && !fileName.EndsWith("*"))
+        {
+            fileName += " *";
+        }
+
+        FileNameRun.Text = fileName;
+    }
+
+    public void ClearEditor()
+    {
+        EditorTexto.Clear();
+        _currentFilePath = null;
+        IsModified = false;
+    }
 }
+

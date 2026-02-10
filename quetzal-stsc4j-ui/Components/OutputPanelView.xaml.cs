@@ -1,26 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
-namespace quetzal_stsc4j_ui.Components
+namespace quetzal_stsc4j_ui.Components;
+
+public partial class OutputPanelView : UserControl
 {
-    /// <summary>
-    /// Interaction logic for OutputPanelView.xaml
-    /// </summary>
-    public partial class OutputPanelView : UserControl
+    private TerminalView _terminalComponent;
+
+    public OutputPanelView()
     {
-        public OutputPanelView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+        InitializeTerminal();
+    }
+
+    private void InitializeTerminal()
+    {
+        _terminalComponent = new TerminalView();
+        TerminalContainer.Children.Add(_terminalComponent);
+    }
+
+    public void AppendCompileOutput(string text)
+    {
+        CompileOutput.AppendText(text + "\n");
+        CompileOutput.ScrollToEnd();
+    }
+
+    public void ClearCompileOutput()
+    {
+        CompileOutput.Clear();
+    }
+
+    public TerminalView GetTerminal()
+    {
+        return _terminalComponent;
     }
 }
+
+
