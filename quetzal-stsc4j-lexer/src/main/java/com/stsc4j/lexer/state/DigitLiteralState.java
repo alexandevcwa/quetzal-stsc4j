@@ -2,17 +2,17 @@ package com.stsc4j.lexer.state;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.TokenType;
-import com.stsc4j.lexer.strategy.*;
+import com.stsc4j.lexer.strategy.Analyzer;
+import com.stsc4j.lexer.strategy.ClassifierIntegerLiterals;
+import com.stsc4j.lexer.strategy.ClassifierNumericLiterals;
 
 import java.util.List;
 
-public class LiteralState extends AbstractState implements LexerState {
+public class DigitLiteralState extends AbstractState implements LexerState {
 
     private final Analyzer ANALYZER = new Analyzer(List.of(
             new ClassifierIntegerLiterals(),
-            new ClassifierNumericLiterals(),
-            new ClassifierBoolLiterals(),
-            new ClassifierStringLiterals()
+            new ClassifierNumericLiterals()
     ));
 
     @Override
@@ -29,7 +29,7 @@ public class LiteralState extends AbstractState implements LexerState {
     }
 
     private boolean isPartOfNumber(char c) {
-     return (Character.isLetterOrDigit(c) || c == '.' || c == '"' || Character.isWhitespace(c));
+        return (Character.isDigit(c) || c == '.');
     }
 
     @Override

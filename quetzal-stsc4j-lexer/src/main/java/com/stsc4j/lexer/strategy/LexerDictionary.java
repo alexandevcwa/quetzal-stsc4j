@@ -9,12 +9,9 @@ public class LexerDictionary {
     public static final String NUMERO = "numero";
     public static final String TEXTO = "texto";
     public static final String LOG = "log";
-    public static final Set<String> KEYWORDS = Set.of(ENTERO, NUMERO, TEXTO, LOG);
-
     public static final String LIT_TRUE = "verdadero";
     public static final String LIT_FALSE = "falso";
-    public static final char LIT_DOUBLE_QUOTE = '"';
-    public static final Set<String> BOOLEAN_LITERALS = Set.of(LIT_TRUE, LIT_FALSE,String.valueOf(LIT_DOUBLE_QUOTE));
+    public static final Set<String> KEYWORDS = Set.of(ENTERO, NUMERO, TEXTO, LOG, LIT_TRUE, LIT_FALSE);
 
     public static final char PLUS = '+';
     public static final char MINUS = '-';
@@ -34,9 +31,4 @@ public class LexerDictionary {
     public static final Set<Character> SYMBOLS = Set.of(PLUS, MINUS, MULTIPLY, DIVIDE, EQUALS, EXCLAMATION,
             LESS_THAN, GREATER_THAN, AND, OR, MODULO, PARENTHESES_OPEN, PARENTHESES_CLOSE, BRACKETS_OPEN, BRACKETS_CLOSE
     );
-
-    public static final Set<Character> PARENTHESES = Set.of('(', ')');
-
-    public static final Set<Character> BRACKETS = Set.of('[', ']');
-
 }

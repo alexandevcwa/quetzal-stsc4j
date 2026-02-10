@@ -8,7 +8,7 @@ public class Main {
         context.cleanToken();
 
         System.out.println("==============================");
-        context.process("numero n = 10  texto = 1232.43 log=verdadero");
+        context.process("numero n = 10  texto = 1232.43 log=verdadero \"hola mundo desde quetzal \"");
         context.getTokens().forEach(System.out::println);
     }
 }

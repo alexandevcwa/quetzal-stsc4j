@@ -29,9 +29,17 @@ public class InitialState implements LexerState {
             return;
         }
 
-        // Analyze Literals
-        if (Character.isLetterOrDigit(c) || c == '"' || c == '.') {
-            LexerState s = new LiteralState();
+        // Analyze String Literals
+        if(c == '"'){
+            LexerState s = new StringLiteralState();
+            lexer.setState(s);
+            s.process(c, length, index, lexer);
+            return;
+        }
+
+        // Analyze Numeric Literals
+        if(Character.isDigit(c)){
+            LexerState s = new DigitLiteralState();
             lexer.setState(s);
             s.process(c, length, index, lexer);
             return;

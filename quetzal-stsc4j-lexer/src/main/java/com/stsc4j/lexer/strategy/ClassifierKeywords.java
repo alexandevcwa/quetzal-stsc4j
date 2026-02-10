@@ -27,6 +27,12 @@ public class ClassifierKeywords implements Classifier {
             case LOG:
                 type = TokenType.PRIMITIVE_BOOLEAN;
                 break;
+            case LIT_TRUE:
+                type = TokenType.LIT_TRUE;
+                break;
+            case LIT_FALSE:
+                type = TokenType.LIT_FALSE;
+                break;
         }
         return type;
     }
