@@ -4,7 +4,7 @@
 
     <groupId>com.stsc4j</groupId>
     <artifactId>quetzal-stsc4j-parser</artifactId>
-    <version>0.0.1</version> 
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>quetzal-stsc4j-lexer</name>
@@ -28,12 +28,17 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-    
+
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.stsc4j</groupId>
+            <artifactId>quetzal-stsc4j-lexer</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
