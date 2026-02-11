@@ -9,6 +9,14 @@ public class Token {
         this.lexeme = value;
     }
 
+    public TokenType getType() {
+        return type;
+    }
+
+    public String getLexeme() {
+        return lexeme;
+    }
+
     @Override
     public String toString() {
         return String.format("%-18s -> %s", type, lexeme);
