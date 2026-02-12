@@ -54,6 +54,8 @@ public class LexerContext {
             }
         }
 
+        tokens.add(new Token(TokenType.EOF, ""));
+
         if (buffer.length() > 0) {
             state.finalize(this);
         }
