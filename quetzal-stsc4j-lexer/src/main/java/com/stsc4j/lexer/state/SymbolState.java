@@ -11,13 +11,13 @@ public class SymbolState implements LexerState {
     public static final Classifier SYMBOL_CLASSIFIER = new ClassifierSymbols();
 
     @Override
-    public void process(char c, int length, int index, LexerContext lexer) {
+    public void process(char c, int length, int index, LexerContext context) {
         if (SYMBOLS.contains(c)) {
-            lexer.add(c);
-            lexer.generateToken(SYMBOL_CLASSIFIER.classify(String.valueOf(c)));
+            context.add(c);
+            context.generateToken(SYMBOL_CLASSIFIER.classify(String.valueOf(c)));
         } else {
-            lexer.setState(new InitialState());
-            lexer.getState().process(c, length, index, lexer);
+            context.setState(new InitialState());
+            context.getState().process(c, length, index, context);
         }
     }
 

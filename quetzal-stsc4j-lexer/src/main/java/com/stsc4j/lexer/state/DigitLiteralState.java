@@ -16,15 +16,15 @@ public class DigitLiteralState extends AbstractState implements LexerState {
     ));
 
     @Override
-    public void process(char c, int length, int index, LexerContext lexer) {
+    public void process(char c, int length, int index, LexerContext context) {
         if (isPartOfNumber(c)) {
-            lexer.add(c);
+            context.add(c);
             if (length == index + 1) {
-                flushToken(lexer);
+                flushToken(context);
             }
         } else {
-            flushToken(lexer);
-            lexer.getState().process(c, length, index, lexer);
+            flushToken(context);
+            context.getState().process(c, length, index, context);
         }
     }
 

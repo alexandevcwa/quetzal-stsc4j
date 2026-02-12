@@ -8,6 +8,8 @@ public class Main {
 
         String code = "entero sumar_entero(entero a, entero b) {\n" +
                 "    retornar a + b\n" +
+                "// hHOLA \n" +
+                "// hHOLA\n" +
                 "}\n" +
                 "\n" +
                 "objeto Usuario {\n" +

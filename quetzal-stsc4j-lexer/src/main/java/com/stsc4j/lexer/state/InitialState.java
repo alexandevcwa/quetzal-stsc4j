@@ -5,8 +5,9 @@ import com.stsc4j.lexer.TokenType;
 
 public class InitialState implements LexerState {
 
+    // Entro un =
     @Override
-    public void process(char c, int length, int index, LexerContext lexer) {
+    public void process(char c, int length, int index, LexerContext context) {
 
         // Analyze whitespace
         if (Character.isWhitespace(c) || c == '\n') {
@@ -14,38 +15,43 @@ public class InitialState implements LexerState {
         }
 
         // Analyze special characters like symbols
+        // EL igual = puede ser procesaqdo por ete if
         if (!Character.isLetterOrDigit(c) && '_' != c && '"' != c) {
+            // Cambio de estado mi automata para que ese estado determine que tipo de token es
             LexerState s = new SymbolState();
-            lexer.setState(s);
-            s.process(c, length, index, lexer);
+            // Asignar nuevo estado al contexto
+            context.setState(s);
+            // Reprocesar el mismo caracter actual
+            // Entro el =
+            s.process(c, length, index, context);
             return;
         }
 
         // Analyze letters
         if (Character.isLetter(c)) {
             LexerState s = new LetterState();
-            lexer.setState(s);
-            s.process(c, length, index, lexer);
+            context.setState(s);
+            s.process(c, length, index, context);
             return;
         }
 
         // Analyze String Literals
         if (c == '"') {
             LexerState s = new StringLiteralState();
-            lexer.setState(s);
-            s.process(c, length, index, lexer);
+            context.setState(s);
+            s.process(c, length, index, context);
             return;
         }
 
         // Analyze Numeric Literals
         if (Character.isDigit(c)) {
             LexerState s = new DigitLiteralState();
-            lexer.setState(s);
-            s.process(c, length, index, lexer);
+            context.setState(s);
+            s.process(c, length, index, context);
             return;
         }
 
-        lexer.generateToken(TokenType.UNKNOW);
+        context.generateToken(TokenType.UNKNOW);
         String error = "Unexpected character '" + c + "'";
         throw new IllegalStateException(error);
     }
