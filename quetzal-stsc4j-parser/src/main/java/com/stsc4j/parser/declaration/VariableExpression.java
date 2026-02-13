@@ -15,4 +15,8 @@ public class VariableExpression extends Expression {
     protected <R> R accept(Visitor<R> visitor) {
         return null;
     }
+
+    public String getName() {
+        return name;
+    }
 }

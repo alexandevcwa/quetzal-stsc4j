@@ -17,4 +17,8 @@ public class ListExpression extends Expression {
     protected <R> R accept(Visitor<R> visitor) {
         return null;
     }
+
+    public List<Expression> getElements() {
+        return elements;
+    }
 }

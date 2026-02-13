@@ -15,4 +15,8 @@ public class LiteralExpression extends Expression {
     protected <R> R accept(Visitor<R> visitor) {
         return null;
     }
+
+    public Object getValue() {
+        return value;
+    }
 }

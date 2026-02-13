@@ -21,6 +21,22 @@ public class FunctionDeclaration extends Statement {
     }
 
 
+    public TokenType getReturnType() {
+        return returnType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<VarDeclaration> getParameters() {
+        return parameters;
+    }
+
+    public Block getBody() {
+        return body;
+    }
+
     @Override
     protected <R> R accept(Visitor<R> visitor) {
         return visitor.visit(this);

@@ -19,4 +19,16 @@ public class BinaryExpression extends Expression {
     protected <R> R accept(Visitor<R> visitor) {
         return null;
     }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    public Expression getRight() {
+        return right;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
 }

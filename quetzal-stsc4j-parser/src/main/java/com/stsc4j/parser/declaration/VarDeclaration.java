@@ -19,6 +19,21 @@ public class VarDeclaration extends Statement {
         this.initializer = initializer;
     }
 
+    public TypeInfo getType() {
+        return type;
+    }
+
+    public boolean isMutable() {
+        return isMutable;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Expression getInitializer() {
+        return initializer;
+    }
 
     @Override
     protected <R> R accept(Visitor<R> visitor) {

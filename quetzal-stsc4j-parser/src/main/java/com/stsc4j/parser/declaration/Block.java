@@ -14,7 +14,11 @@ public class Block extends Statement {
     }
 
     @Override
-    protected <R> R accept(Visitor<R> visitor) {
+    public <R> R accept(Visitor<R> visitor) {
         return visitor.visit(this);
+    }
+
+    public List<Statement> getStatements() {
+        return statements;
     }
 }
