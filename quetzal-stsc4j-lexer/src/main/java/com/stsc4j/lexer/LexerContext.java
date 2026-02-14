@@ -10,8 +10,16 @@ public class LexerContext {
 
     private LexerState state;
 
+    /**
+     * Contiene un lexema procesado
+     */
     private final StringBuilder buffer = new StringBuilder();
+
+    /**
+     * Lista de tokens generados
+     */
     private final List<Token> tokens = new ArrayList<>();
+
 
     public LexerContext() {
         this.state = new InitialState();
@@ -45,6 +53,8 @@ public class LexerContext {
                 state.process(currentChar, length, i, this);
             }
         }
+
+        tokens.add(new Token(TokenType.EOF, ""));
 
         if (buffer.length() > 0) {
             state.finalize(this);

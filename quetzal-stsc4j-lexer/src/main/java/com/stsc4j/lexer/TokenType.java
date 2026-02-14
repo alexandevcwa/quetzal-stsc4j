@@ -78,5 +78,6 @@ public enum TokenType {
     LIT_FLOAT, LIT_STRING,
     LIT_TRUE, LIT_FALSE,
 
+    EOF
 
 }

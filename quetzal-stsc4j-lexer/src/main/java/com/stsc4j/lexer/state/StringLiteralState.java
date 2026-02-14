@@ -8,16 +8,16 @@ public class StringLiteralState implements  LexerState{
     private boolean isFirstDoubleQuote = true;
 
     @Override
-    public void process(char c, int length, int index, LexerContext lexer) {
+    public void process(char c, int length, int index, LexerContext context) {
         if(c == '"'){
-            lexer.add(c);
+            context.add(c);
             if(isFirstDoubleQuote){
                 isFirstDoubleQuote = false;
             }else {
-                lexer.generateToken(TokenType.LIT_STRING);
+                context.generateToken(TokenType.LIT_STRING);
             }
         }else {
-            lexer.add(c);
+            context.add(c);
         }
     }
 
