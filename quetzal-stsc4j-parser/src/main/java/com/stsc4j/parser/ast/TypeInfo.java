@@ -1,18 +1,26 @@
 package com.stsc4j.parser.ast;
 
 public class TypeInfo {
-    /**
-     * Tipo de dato primitivo o estructuras como listas
-     */
-    String name;
 
-    /**
-     * Tipo de dato genético, para tipos genéricos como List<T>, el geneticType sería T
-     */
-    TypeInfo genericType;
+    private final String name;
+    private final TypeInfo genericType;
 
-    public TypeInfo(String name, TypeInfo geneticType) {
+    public TypeInfo(String name, String genericTypeName) {
         this.name = name;
+        this.genericType = genericTypeName != null ? new TypeInfo(genericTypeName, (String) null) : null;
+    }
+
+    public TypeInfo(String name, TypeInfo genericType) {
+        this.name = name;
+        this.genericType = genericType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public TypeInfo getGenericType() {
+        return genericType;
     }
 
     @Override
