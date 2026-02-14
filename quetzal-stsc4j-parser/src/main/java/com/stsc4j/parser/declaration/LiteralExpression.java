@@ -13,7 +13,7 @@ public class LiteralExpression extends Expression {
 
     @Override
     protected <R> R accept(Visitor<R> visitor) {
-        return null;
+        return visitor.visit(this);
     }
 
     public Object getValue() {

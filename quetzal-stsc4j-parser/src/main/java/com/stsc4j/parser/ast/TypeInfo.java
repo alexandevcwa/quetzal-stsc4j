@@ -2,14 +2,14 @@ package com.stsc4j.parser.ast;
 
 public class TypeInfo {
     /**
-     * Data type or reserved word like (texto, número, lista)
+     * Tipo de dato primitivo o estructuras como listas
      */
     String name;
 
     /**
-     * For lista<entero | número | texto>
+     * Tipo de dato genético, para tipos genéricos como List<T>, el geneticType sería T
      */
-    TypeInfo geneticType;
+    TypeInfo genericType;
 
     public TypeInfo(String name, TypeInfo geneticType) {
         this.name = name;
@@ -17,6 +17,6 @@ public class TypeInfo {
 
     @Override
     public String toString() {
-        return name + (geneticType != null ? "<" + geneticType + ">" : "");
+        return name + (genericType != null ? "<" + genericType + ">" : "");
     }
 }
