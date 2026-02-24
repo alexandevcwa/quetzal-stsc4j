@@ -3,10 +3,12 @@ package com.stsc4j.lexer;
 public class Token {
     final TokenType type;
     final String lexeme;
+    final int line;
 
-    public Token(TokenType type, String value) {
+    public Token(TokenType type, String value, int line) {
         this.type = type;
         this.lexeme = value;
+        this.line = line;
     }
 
     public TokenType getType() {

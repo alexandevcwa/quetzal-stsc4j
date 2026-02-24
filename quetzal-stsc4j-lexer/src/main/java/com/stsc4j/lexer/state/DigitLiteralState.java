@@ -15,13 +15,18 @@ public class DigitLiteralState extends AbstractState implements LexerState {
             new ClassifierNumericLiterals()
     ));
 
+    private boolean isFirstDigit = true;
+
     @Override
     public void process(char c, int length, int index, LexerContext context) {
+
         if (isPartOfNumber(c)) {
             context.add(c);
             if (length == index + 1) {
                 flushToken(context);
             }
+        } else if (Character.isLetter(c)) {
+            context.generateToken(TokenType.UNKNOW);
         } else {
             flushToken(context);
             context.getState().process(c, length, index, context);
