@@ -6,7 +6,7 @@ public class Main {
 
         System.out.println("=============CODE============");
 
-        String code = "entero mayor = 123\n entero mad = 4f4";
+        String code = "entero mayor = 123\n entero mad = 44.2";
         context.process(code);
         context.getTokens().forEach(System.out::println);
         context.cleanToken();

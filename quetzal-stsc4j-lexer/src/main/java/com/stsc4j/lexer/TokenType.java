@@ -4,11 +4,8 @@ public enum TokenType {
 
     // Keywords
     PRIMITIVE_VOID,
-    PRIMITIVE_LONG,
-    PRIMITIVE_INT,
-    PRIMITIVE_SHORT,
-    PRIMITIVE_DOUBLE,
-    PRIMITIVE_FLOAT,
+    PRIMITIVE_INTEGER,
+    PRIMITIVE_DECIMAL,
     PRIMITIVE_STRING,
     PRIMITIVE_BOOLEAN,
     MUTABLE_VARIABLE,
@@ -73,11 +70,13 @@ public enum TokenType {
     DOT,
 
     // LITERALS
-    LIT_LONG, LIT_INT,
-    LIT_SHORT, LIT_DOUBLE,
-    LIT_FLOAT, LIT_STRING,
-    LIT_TRUE, LIT_FALSE,
+    LIT_INTEGER,
+    LIT_DECIMAL,
+    LIT_STRING,
+    LIT_TRUE,
+    LIT_FALSE,
 
+    // End of file/input
     EOF
 
 }
