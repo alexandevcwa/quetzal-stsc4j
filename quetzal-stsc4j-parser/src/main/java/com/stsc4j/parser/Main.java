@@ -1,16 +1,18 @@
 package com.stsc4j.parser;
 
 import com.stsc4j.lexer.LexerContext;
-import com.stsc4j.parser.ast.ASTPrinter;
-import com.stsc4j.parser.ast.statement.Statement;
-import com.stsc4j.parser.parser.Parser;
+import com.stsc4j.parser.v1.ast.ASTPrinter;
+import com.stsc4j.parser.v1.ast.Statement;
+import com.stsc4j.parser.v1.parser.ParserPrincipal;
+import com.stsc4j.parser.v1.parser.TokenStream;
+
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "log mayor = a > b";
+        String sourceCode = "entero var e1 = 293";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);
@@ -25,19 +27,14 @@ public class Main {
         System.out.println();
 
         // Análisis sintáctico
-        Parser parser = new Parser(context.getTokens());
-        List<Statement> statements = parser.parse();
-
-        System.out.println("=== AST (Árbol de Sintaxis Abstracta) ===");
+        ParserPrincipal principal = new ParserPrincipal(new TokenStream(context.getTokens()));
+        List<Statement> astTree = principal.parse();
+        
+        System.out.println("=== AST ===");
         ASTPrinter printer = new ASTPrinter();
-        for (Statement stmt : statements) {
-            System.out.println(printer.print(stmt));
+        for (Statement statement : astTree) {
+            System.out.println(printer.print(statement));
         }
-
-        // Mostrar errores si los hay
-        if (!parser.getErrors().isEmpty()) {
-            System.out.println("=== Errores ===");
-            parser.getErrors().forEach(System.out::println);
-        }
+        
     }
 }
