@@ -26,8 +26,7 @@ public class ASTPrinter implements Visitor<String> {
 
     @Override
     public String visit(ExpressionLiteral expressionLiteral) {
-        String type = expressionLiteral.value == null ? "null" : expressionLiteral.value.getClass().getSimpleName();
-        return getIndent() + "Literal: " + expressionLiteral.value + " (" + type + ")";
+        return getIndent() + "Literal: " + expressionLiteral.value + " (" + expressionLiteral.token.getType().toString() + ")";
     }
 
     @Override
