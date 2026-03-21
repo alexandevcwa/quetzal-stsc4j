@@ -46,8 +46,6 @@ public enum TokenType {
     // Symbols
     LEFT_PARENT,
     RIGHT_PARENT,
-    LEFT_BRACKET,
-    RIGHT_BRACKET,
     PLUS,
     MINUS,
     MULTIPLY,
