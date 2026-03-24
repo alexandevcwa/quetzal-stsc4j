@@ -12,7 +12,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "entero var e1 = \"hola mundo\"";
+        String sourceCode = "entero suma = 5 + 3";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);

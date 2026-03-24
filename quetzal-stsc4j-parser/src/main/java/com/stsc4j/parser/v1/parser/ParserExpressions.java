@@ -33,10 +33,10 @@ public class ParserExpressions {
 
     // Maneja >, <, >=, <=
     private Expression parseRelationalExpression(){
-        Expression expression = parseMultiplyAndDivideExpression();
+        Expression expression = parseAddAndSubtractExpression();
         while (tokenStream.match(TokenType.GREATER_THAN, TokenType.LESS_THAN,TokenType.EQUAL)){
             Token operator = tokenStream.show();
-            Expression right = parseMultiplyAndDivideExpression();
+            Expression right = parseAddAndSubtractExpression();
             expression = new ExpressionBinary(expression, operator, right);
         }
         return expression;

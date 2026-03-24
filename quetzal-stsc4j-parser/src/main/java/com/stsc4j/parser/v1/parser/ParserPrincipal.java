@@ -31,10 +31,13 @@ public class ParserPrincipal {
 
     public Statement parseNext(){
         try{
+            // Parser Variables
             if(tokenStream.match(TokenType.PRIMITIVE_INTEGER,TokenType.PRIMITIVE_DECIMAL,TokenType.PRIMITIVE_STRING,
                     TokenType.PRIMITIVE_BOOLEAN)){
                 return parserDeclaration.parseVarDeclaration();
             }
+
+            // Parser If
             if(tokenStream.match(TokenType.IF)){
                 return parserStatement.parseIf();
             }
