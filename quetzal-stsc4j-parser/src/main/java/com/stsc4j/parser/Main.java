@@ -12,7 +12,13 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "entero suma = 5 + 3";
+        String sourceCode = "entero edad = 20\n" +
+                "\n" +
+                "si (edad >= 18) {\n" +
+
+                "} sino {\n" +
+
+                "}";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);
@@ -29,7 +35,7 @@ public class Main {
         // Análisis sintáctico
         ParserPrincipal principal = new ParserPrincipal(new TokenStream(context.getTokens()));
         List<Statement> astTree = principal.parse();
-        
+
         System.out.println("=== AST ===");
         ASTPrinter printer = new ASTPrinter();
         for (Statement statement : astTree) {

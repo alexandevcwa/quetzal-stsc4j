@@ -1,5 +1,8 @@
 package com.stsc4j.parser.v1.ast;
 
+import com.stsc4j.lexer.Token;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class ASTPrinter implements Visitor<String> {
@@ -32,7 +35,13 @@ public class ASTPrinter implements Visitor<String> {
     @Override
     public String visit(ExpressionBinary expressionBinary) {
         StringBuilder sb = new StringBuilder();
-        sb.append(getIndent()).append("Binary Operation: ").append(expressionBinary.operator.getLexeme()).append("\n");
+        String operator = null;
+        if (null != expressionBinary.operators) {
+            operator = Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
+        }else {
+            operator = expressionBinary.operator.getLexeme();
+        }
+        sb.append(getIndent()).append("Binary Operation: ").append(operator).append("\n");
         indentLevel++;
         sb.append(getIndent()).append("├─ Left:\n");
         indentLevel++;

@@ -26,7 +26,7 @@ public class TokenStream {
     }
 
     /**
-     * Verificar si el token actual hace match con algún tipo
+     * Verificar si el token actual hace match con algún tipo y avanza una posición.
      * @param t Tipos de tokens que puede ser el actual
      * @return True = el token actual hace match con alguno de los tipos, False = el token actual no hace match con ninguno de los tipos
      */
@@ -34,6 +34,20 @@ public class TokenStream {
         for(TokenType tt : t){
             if(show().getType() == tt){
                 advance();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si el token actual hace match con algún tipo sin consumirlo.
+     * @param t Lista de tipos de tokens
+     * @return True = el token actual hace match con alguno de los tipos, False = el token actual no hace match con ninguno de los tipos
+     */
+    public boolean currentEquals(TokenType... t){
+        for(TokenType tt : t){
+            if(show().getType() == tt){
                 return true;
             }
         }
