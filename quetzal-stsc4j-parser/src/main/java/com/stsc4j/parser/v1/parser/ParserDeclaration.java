@@ -2,9 +2,8 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
-import com.stsc4j.parser.v1.ast.Expression;
-import com.stsc4j.parser.v1.ast.Statement;
-import com.stsc4j.parser.v1.ast.StatementVariable;
+import com.stsc4j.parser.v1.ast.*;
+import com.stsc4j.parser.v1.parser.expression.ParseGenericExpression;
 
 public class ParserDeclaration {
     private final TokenStream tokenStream;
@@ -15,15 +14,32 @@ public class ParserDeclaration {
         this.parserExpressions = parserExpressions;
     }
 
-    public Statement parseVarDeclaration(){
+    public Statement parseVarDeclaration() {
         Token type = tokenStream.before();
-        boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
-        Token name = tokenStream.consume(TokenType.IDENTIFIER,"Se esperaba el nombre de la variable.");
+        boolean isMutable = false;
+        Token name = null;
 
         Expression initialValue = null;
-        if(tokenStream.match(TokenType.EQUAL)){
-            initialValue = parserExpressions.parseExpression();
+
+        if (type.getType().equals(TokenType.IDENTIFIER)) {
+            tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
+            name = type;
+        } else {
+            isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
+            name = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
+            tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
         }
-        return new StatementVariable(type,isMutable,name,initialValue);
+        initialValue = parserExpressions.parseGenericExpression();
+
+        Expression ternary = null;
+        if (tokenStream.matchButNotAdvance(TokenType.QUESTION)) {
+            tokenStream.advance();
+            ternary = parserExpressions.parseTernaryExpression((ExpressionBinary) initialValue);
+        }
+
+
+        return new StatementVariable(type, isMutable, name,
+                ternary != null ? ternary : initialValue
+        );
     }
 }

@@ -66,6 +66,7 @@ public enum TokenType {
     COMMA,
     DOUBLE_DOT,
     DOT,
+    QUESTION,
 
     // LITERALS
     LIT_INTEGER,

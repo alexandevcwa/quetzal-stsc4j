@@ -24,7 +24,7 @@ public class ASTPrinter implements Visitor<String> {
 
     @Override
     public String visit(ExpressionVariable expressionVariable) {
-        return getIndent() + "Variable: " + expressionVariable.token.getLexeme();
+        return getIndent() + "Variable: " + expressionVariable.token.getLexeme() + " (" + expressionVariable.token.getType().toString() + ")";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ASTPrinter implements Visitor<String> {
         String operator = null;
         if (null != expressionBinary.operators) {
             operator = Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
-        }else {
+        } else {
             operator = expressionBinary.operator.getLexeme();
         }
         sb.append(getIndent()).append("Binary Operation: ").append(operator).append("\n");
@@ -50,6 +50,26 @@ public class ASTPrinter implements Visitor<String> {
         sb.append(getIndent()).append("└─ Right:\n");
         indentLevel++;
         sb.append(expressionBinary.right.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(ExpressionTernary expressionTernary) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Ternary Operation\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Condition:\n");
+        indentLevel++;
+        sb.append(expressionTernary.binary.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("├─ True:\n");
+        indentLevel++;
+        sb.append(expressionTernary.left.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ False:\n");
+        indentLevel++;
+        sb.append(expressionTernary.right.accept(this));
         indentLevel -= 2;
         return sb.toString();
     }
