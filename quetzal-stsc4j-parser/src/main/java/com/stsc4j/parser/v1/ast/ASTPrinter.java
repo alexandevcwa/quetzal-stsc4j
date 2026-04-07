@@ -38,7 +38,7 @@ public class ASTPrinter implements Visitor<String> {
         String operator = null;
         if (null != expressionBinary.operators) {
             operator = Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
-        }else {
+        } else {
             operator = expressionBinary.operator.getLexeme();
         }
         sb.append(getIndent()).append("Binary Operation: ").append(operator).append("\n");

@@ -34,7 +34,7 @@ public class ParserPrincipal {
     public Statement parseNext(){
         // Parser Variables
         if(tokenStream.match(TokenType.PRIMITIVE_INTEGER,TokenType.PRIMITIVE_DECIMAL,TokenType.PRIMITIVE_STRING,
-                TokenType.PRIMITIVE_BOOLEAN)){
+                TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)){
             return parserDeclaration.parseVarDeclaration();
         }
 

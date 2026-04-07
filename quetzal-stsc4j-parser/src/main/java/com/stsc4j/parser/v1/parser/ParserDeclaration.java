@@ -15,15 +15,24 @@ public class ParserDeclaration {
         this.parserExpressions = parserExpressions;
     }
 
-    public Statement parseVarDeclaration(){
+    public Statement parseVarDeclaration() {
         Token type = tokenStream.before();
-        boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
-        Token name = tokenStream.consume(TokenType.IDENTIFIER,"Se esperaba el nombre de la variable.");
+        boolean isMutable = false;
+        Token name = null;
 
         Expression initialValue = null;
-        if(tokenStream.match(TokenType.EQUAL)){
-            initialValue = parserExpressions.parseExpression();
+
+        if (type.getType().equals(TokenType.IDENTIFIER)) {
+            tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
+            name = type;
+        } else {
+            isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
+            name = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
+            tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
         }
-        return new StatementVariable(type,isMutable,name,initialValue);
+        initialValue = parserExpressions.parseExpression();
+
+
+        return new StatementVariable(type, isMutable, name, initialValue);
     }
 }
