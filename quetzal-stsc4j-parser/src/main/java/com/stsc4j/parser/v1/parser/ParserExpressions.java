@@ -2,12 +2,11 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
-import com.stsc4j.parser.v1.ast.Expression;
-import com.stsc4j.parser.v1.ast.ExpressionBinary;
-import com.stsc4j.parser.v1.ast.ExpressionLiteral;
-import com.stsc4j.parser.v1.ast.ExpressionVariable;
+import com.stsc4j.parser.v1.ast.*;
+import com.stsc4j.parser.v1.parser.expression.ParseGenericExpression;
+import com.stsc4j.parser.v1.parser.expression.ParseTernaryExpression;
 
-public class ParserExpressions {
+public class ParserExpressions implements ParseGenericExpression, ParseTernaryExpression {
 
     private final TokenStream tokenStream;
 
@@ -99,5 +98,18 @@ public class ParserExpressions {
             return expression;
         }
         throw new ParserException("Se esperaba una expresión.");
+    }
+
+    @Override
+    public Expression parseGenericExpression() {
+        return parseEqualExpression();
+    }
+
+    @Override
+    public Expression parseTernaryExpression(ExpressionBinary expression) {
+        Expression left = primaryParser();
+        tokenStream.match(TokenType.DOUBLE_DOT, "Se esperaba ':' después de la expresión del medio en el operador ternario.");
+        Expression right = primaryParser();
+        return new ExpressionTernary(expression, left, right);
     }
 }

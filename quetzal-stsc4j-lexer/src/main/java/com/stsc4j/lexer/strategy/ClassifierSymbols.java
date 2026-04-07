@@ -32,6 +32,7 @@ public class ClassifierSymbols implements Classifier {
         SYMBOLS_MAP.put(COMMA, TokenType.COMMA);
         SYMBOLS_MAP.put(DOUBLE_DOT, TokenType.DOUBLE_DOT);
         SYMBOLS_MAP.put(DOT, TokenType.DOT);
+        SYMBOLS_MAP.put(QUESTION,TokenType.QUESTION);
     }
 
     @Override

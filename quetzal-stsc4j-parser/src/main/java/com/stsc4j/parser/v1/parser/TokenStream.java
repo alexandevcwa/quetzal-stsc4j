@@ -13,8 +13,26 @@ public class TokenStream {
         this.tokens = tokens;
     }
 
+    /**
+     * Obtiene el token actual sin avanzar en el flujo de tokens.
+     *
+     * @return El token actual en el flujo.
+     */
     public Token show() {
         return tokens.get(current);
+    }
+
+    /**
+     * Obtiene el siguiente token en el flujo de tokens sin consumirlo.
+     * Si el token actual es el fin del archivo (EOF), retorna el token actual.
+     *
+     * @return El siguiente token en el flujo si no es EOF, o el token actual si es EOF.
+     */
+    public Token futureShow() {
+        if (matchButNotAdvance(TokenType.EOF)) {
+            return show();
+        }
+        return tokens.get(current + 1);
     }
 
     /**

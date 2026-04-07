@@ -12,7 +12,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "n1 = 83";
+        String sourceCode = "texto mensaje = edad";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);

@@ -2,9 +2,8 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
-import com.stsc4j.parser.v1.ast.Expression;
-import com.stsc4j.parser.v1.ast.Statement;
-import com.stsc4j.parser.v1.ast.StatementVariable;
+import com.stsc4j.parser.v1.ast.*;
+import com.stsc4j.parser.v1.parser.expression.ParseGenericExpression;
 
 public class ParserDeclaration {
     private final TokenStream tokenStream;
@@ -30,9 +29,17 @@ public class ParserDeclaration {
             name = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
             tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
         }
-        initialValue = parserExpressions.parseExpression();
+        initialValue = parserExpressions.parseGenericExpression();
+
+        Expression ternary = null;
+        if (tokenStream.matchButNotAdvance(TokenType.QUESTION)) {
+            tokenStream.advance();
+            ternary = parserExpressions.parseTernaryExpression((ExpressionBinary) initialValue);
+        }
 
 
-        return new StatementVariable(type, isMutable, name, initialValue);
+        return new StatementVariable(type, isMutable, name,
+                ternary != null ? ternary : initialValue
+        );
     }
 }
