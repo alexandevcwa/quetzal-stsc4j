@@ -25,13 +25,14 @@ public class ClassifierSymbols implements Classifier {
         SYMBOLS_MAP.put(MODULO, TokenType.MODULE);
         SYMBOLS_MAP.put(PARENTHESES_OPEN, TokenType.LEFT_PARENT);
         SYMBOLS_MAP.put(PARENTHESES_CLOSE, TokenType.RIGHT_PARENT);
-        SYMBOLS_MAP.put(BRACKETS_OPEN, TokenType.LEFT_BRACKET);
-        SYMBOLS_MAP.put(BRACKETS_CLOSE, TokenType.RIGHT_BRACKET);
+        SYMBOLS_MAP.put(BRACKETS_OPEN, TokenType.BRACKETS_OPEN);
+        SYMBOLS_MAP.put(BRACKETS_CLOSE, TokenType.BRACKETS_CLOSE);
         SYMBOLS_MAP.put(BRACES_OPEN, TokenType.BRACES_OPEN);
         SYMBOLS_MAP.put(BRACES_CLOSE, TokenType.BRACES_CLOSE);
         SYMBOLS_MAP.put(COMMA, TokenType.COMMA);
         SYMBOLS_MAP.put(DOUBLE_DOT, TokenType.DOUBLE_DOT);
         SYMBOLS_MAP.put(DOT, TokenType.DOT);
+        SYMBOLS_MAP.put(QUESTION,TokenType.QUESTION);
     }
 
     @Override

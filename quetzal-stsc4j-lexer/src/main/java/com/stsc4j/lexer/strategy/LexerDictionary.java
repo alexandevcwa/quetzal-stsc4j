@@ -68,12 +68,14 @@ public class LexerDictionary {
     public static final char COMMA = ',';
     public static final char DOUBLE_DOT = ':';
     public static final char DOT = '.';
+    public static final char QUESTION = '?';
     public static final Set<Character> SYMBOLS = Set.of(
             PLUS, MINUS, MULTIPLY, DIVIDE, EQUALS, EXCLAMATION,
             LESS_THAN, GREATER_THAN, AND, OR, MODULO, PARENTHESES_OPEN,
             PARENTHESES_CLOSE, BRACKETS_OPEN, BRACKETS_CLOSE,
             BRACES_OPEN, BRACES_CLOSE,
             COMMA,
-            DOUBLE_DOT, DOT
+            DOUBLE_DOT, DOT,
+            QUESTION
     );
 }

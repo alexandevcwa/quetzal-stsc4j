@@ -10,6 +10,6 @@ public class ClassifierIntegerLiterals implements Classifier {
 
     @Override
     public TokenType classify(String s) {
-        return TokenType.LIT_LONG;
+            return TokenType.LIT_INTEGER;
     }
 }

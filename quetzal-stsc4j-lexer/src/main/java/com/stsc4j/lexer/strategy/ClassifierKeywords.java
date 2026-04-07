@@ -12,8 +12,8 @@ public class ClassifierKeywords implements Classifier {
     private static final Map<String, TokenType> KEYWORDS_MAP = new HashMap<>();
 
     static {
-        KEYWORDS_MAP.put(ENTERO, TokenType.PRIMITIVE_LONG);
-        KEYWORDS_MAP.put(NUMERO, TokenType.PRIMITIVE_DOUBLE);
+        KEYWORDS_MAP.put(ENTERO, TokenType.PRIMITIVE_INTEGER);
+        KEYWORDS_MAP.put(NUMERO, TokenType.PRIMITIVE_DECIMAL);
         KEYWORDS_MAP.put(TEXTO, TokenType.PRIMITIVE_STRING);
         KEYWORDS_MAP.put(LOG, TokenType.PRIMITIVE_BOOLEAN);
         KEYWORDS_MAP.put(LIT_TRUE, TokenType.LIT_TRUE);

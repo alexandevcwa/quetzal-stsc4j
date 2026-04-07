@@ -11,6 +11,6 @@ public class ClassifierNumericLiterals implements Classifier{
 
     @Override
     public TokenType classify(String s) {
-        return TokenType.LIT_DOUBLE;
+        return TokenType.LIT_DECIMAL;
     }
 }

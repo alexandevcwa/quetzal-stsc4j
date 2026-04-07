@@ -11,6 +11,9 @@ public class InitialState implements LexerState {
 
         // Analyze whitespace
         if (Character.isWhitespace(c) || c == '\n') {
+            if(c == '\n'){
+                context.oneMoreLine();
+            }
             return;
         }
 
@@ -52,8 +55,6 @@ public class InitialState implements LexerState {
         }
 
         context.generateToken(TokenType.UNKNOW);
-        String error = "Unexpected character '" + c + "'";
-        throw new IllegalStateException(error);
     }
 
     @Override
