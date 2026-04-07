@@ -12,7 +12,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "texto mensaje = edad";
+        String sourceCode = "lista<entero> numeros = [1, 2, 3]\n" +
+                "numeros.agregar(12).orac(2,2)";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);
