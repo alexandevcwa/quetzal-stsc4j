@@ -75,6 +75,39 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionMethodCall expressionMethodCall) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Method Call: ").append(expressionMethodCall.methodName.getLexeme()).append("\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Object:\n");
+        indentLevel++;
+        sb.append(expressionMethodCall.object.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Arguments: ").append(expressionMethodCall.args.size()).append("\n");
+        indentLevel++;
+        List<Expression> arguments = expressionMethodCall.args;
+        for (int i = 0; i < arguments.size(); i++) {
+            if (i < arguments.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            Expression arg = arguments.get(i);
+            String argOutput = arg.accept(this);
+            String[] lines = argOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < arguments.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");

@@ -120,6 +120,24 @@ public class TokenStream {
     }
 
     /**
+     * Verifica si el token actual coincide con alguno de los tipos de tokens especificados y retrocede una posición en
+     * el flujo de tokens si hay coincidencia.
+     *
+     * @param t Lista de tipos de {@code TokenType} con los que el token actual puede coincidir.
+     * @return {@code true} si el token actual coincide con alguno de los tipos especificados y retrocede en el flujo,
+     * {@code false} en caso contrario.
+     */
+    public boolean matchAndBack(TokenType... t) {
+        for (TokenType tt : t) {
+            if (show().getType() == tt) {
+                back();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Verifica si el token actual hace match con algún tipo sin consumirlo.
      *
      * @param t Lista de tipos de tokens
@@ -194,6 +212,11 @@ public class TokenStream {
     public Token advance() {
         if (!isAtEnd()) current++;
         return tokens.get(current - 1);
+    }
+
+    public Token back() {
+        if (current > 0) current--;
+        return tokens.get(current);
     }
 
     /**
