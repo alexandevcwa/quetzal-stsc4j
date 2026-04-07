@@ -9,5 +9,7 @@ public interface Visitor <T>{
     T visit(StatementIf statementIf);
     T visit(StatementBlock statementBlock);
     T visit(StatementExpression statementExpression);
+
     T visit(StatementVariable statementVariable);
+    T visit(StatementList statementList);
 }

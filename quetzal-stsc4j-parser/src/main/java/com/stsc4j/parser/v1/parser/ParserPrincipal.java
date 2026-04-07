@@ -11,12 +11,14 @@ import java.util.List;
 public class ParserPrincipal {
     private final TokenStream tokenStream;
     private final ParserExpressions parserExpressions;
+    private final ParserArrayExpression parserArrayExpression;
     private final ParserDeclaration parserDeclaration;
     private final ParserStatement parserStatement;
 
     public ParserPrincipal(TokenStream stream){
         this.tokenStream = stream;
         this.parserExpressions = new ParserExpressions(stream);
+        this.parserArrayExpression = new ParserArrayExpression(stream,parserExpressions);
         this.parserDeclaration = new ParserDeclaration(stream,parserExpressions);
         this.parserStatement = new ParserStatement(stream,parserExpressions,this);
     }
@@ -34,6 +36,10 @@ public class ParserPrincipal {
         if(tokenStream.match(TokenType.PRIMITIVE_INTEGER,TokenType.PRIMITIVE_DECIMAL,TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN)){
             return parserDeclaration.parseVarDeclaration();
+        }
+
+        if(tokenStream.match(TokenType.LIST)){
+            return parserArrayExpression.parseArrayExpression();
         }
 
         // Parser If

@@ -129,4 +129,36 @@ public class ASTPrinter implements Visitor<String> {
         indentLevel -= 2;
         return sb.toString();
     }
+
+    @Override
+    public String visit(StatementList statementList) {
+        StringBuilder sb = new StringBuilder();
+        String mutability = statementList.mutable ? "mutable" : "immutable";
+        sb.append(getIndent()).append("List Declaration (").append(mutability).append(")\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Type: ").append(statementList.type.getLexeme()).append("\n");
+        sb.append(getIndent()).append("├─ Name: ").append(statementList.listName.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Elements: ").append(statementList.expressions.size()).append(" element(s)\n");
+        indentLevel++;
+        List<Expression> expressions = statementList.expressions;
+        for (int i = 0; i < expressions.size(); i++) {
+            if (i < expressions.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            Expression expr = expressions.get(i);
+            String exprOutput = expr.accept(this);
+            String[] lines = exprOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < expressions.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel -= 2;
+        return sb.toString();
+    }
 }

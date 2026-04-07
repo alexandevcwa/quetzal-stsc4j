@@ -12,13 +12,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "entero edad = 20\n" +
-                "\n" +
-                "si (edad >= 18) {\n" +
-
-                "} sino {\n" +
-
-                "}";
+        String sourceCode = "lista<entero> var numeros = [\"asdf\", 1, a]";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);
