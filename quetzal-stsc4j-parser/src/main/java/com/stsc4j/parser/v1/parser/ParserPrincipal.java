@@ -33,7 +33,8 @@ public class ParserPrincipal {
 
     public Statement parseNext() {
         // Parser de Llamadas a Métodos y Funciones
-        if (tokenStream.match(TokenType.IDENTIFIER) && tokenStream.matchAndBack(TokenType.DOT)) {
+        if (tokenStream.match(TokenType.IDENTIFIER) &&
+                (tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
             Expression expr = parserExpressions.parseExpression();
             return new StatementExpression(expr);
         }
