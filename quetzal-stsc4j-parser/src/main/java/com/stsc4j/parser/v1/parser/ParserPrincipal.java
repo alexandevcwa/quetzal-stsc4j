@@ -38,7 +38,7 @@ public class ParserPrincipal {
             return new StatementExpression(expr);
         }
 
-        // Parser Variables con asignaciones binarias, literales y/o ternarias
+        // Parser Variables con asignaciones binarias, literales, ternarias y valor retorno de lista
         if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
             return parserDeclaration.parseVarDeclaration();
