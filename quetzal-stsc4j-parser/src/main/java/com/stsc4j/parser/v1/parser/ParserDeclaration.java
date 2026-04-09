@@ -3,7 +3,6 @@ package com.stsc4j.parser.v1.parser;
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
-import com.stsc4j.parser.v1.parser.expression.ParseGenericExpression;
 
 public class ParserDeclaration {
     private final TokenStream tokenStream;
