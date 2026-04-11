@@ -12,8 +12,10 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Ejemplo de código fuente
-        String sourceCode = "lista<entero> numeros = [1, 2, 3]\n" +
-                "numeros.agregar(12).orac(2,2)";
+        String sourceCode = "lista<lista<entero>> var matriz = [\n" +
+                "    [1, 2],\n" +
+                "    [3, 4]\n" +
+                "]";
 
         System.out.println("=== Código fuente ===");
         System.out.println(sourceCode);

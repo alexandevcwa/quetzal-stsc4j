@@ -11,14 +11,14 @@ import java.util.List;
 public class ParserPrincipal {
     private final TokenStream tokenStream;
     private final ParserExpressions parserExpressions;
-    private final ParserArrayExpression parserArrayExpression;
+    private final ParserListExpression parserListExpression;
     private final ParserDeclaration parserDeclaration;
     private final ParserStatement parserStatement;
 
     public ParserPrincipal(TokenStream stream) {
         this.tokenStream = stream;
         this.parserExpressions = new ParserExpressions(stream);
-        this.parserArrayExpression = new ParserArrayExpression(stream, parserExpressions);
+        this.parserListExpression = new ParserListExpression(stream, parserExpressions);
         this.parserDeclaration = new ParserDeclaration(stream, parserExpressions);
         this.parserStatement = new ParserStatement(stream, parserExpressions, this);
     }
@@ -47,7 +47,7 @@ public class ParserPrincipal {
 
         // Listas
         if (tokenStream.match(TokenType.LIST)) {
-            return parserArrayExpression.parseArrayExpression();
+            return parserListExpression.parseListExpression();
         }
 
         // Parser If
