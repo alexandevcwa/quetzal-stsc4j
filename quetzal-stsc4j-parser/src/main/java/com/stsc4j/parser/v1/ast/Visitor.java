@@ -7,6 +7,7 @@ public interface Visitor <T>{
     T visit(ExpressionBinary expressionBinary);
     T visit(ExpressionTernary expressionTernary);
     T visit(ExpressionMethodCall expressionMethodCall);
+    T visit(ExpressionIndexAccess expressionIndexAccess);
 
     T visit(StatementIf statementIf);
     T visit(StatementBlock statementBlock);

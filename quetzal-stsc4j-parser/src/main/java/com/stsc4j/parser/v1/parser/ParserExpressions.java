@@ -3,13 +3,11 @@ package com.stsc4j.parser.v1.parser;
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
-import com.stsc4j.parser.v1.parser.expression.ParseGenericExpression;
-import com.stsc4j.parser.v1.parser.expression.ParseTernaryExpression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserExpressions implements ParseGenericExpression, ParseTernaryExpression {
+public class ParserExpressions {
 
     private final TokenStream tokenStream;
 
@@ -93,22 +91,9 @@ public class ParserExpressions implements ParseGenericExpression, ParseTernaryEx
         return args;
     }
 
-    /**
-     * Analiza y construye una representación de llamada a método basada en la secuencia
-     * de tokens actual. Procesa llamadas a métodos siguiendo la estructura de acceso
-     * mediante el operador '.' y maneja argumentos cuando están disponibles.
-     * <p>
-     * Durante el análisis:
-     * - Identifica el objeto inicial al que se aplicarán las llamadas.
-     * - Busca llamadas a métodos adicionales conectadas por '.'.
-     * - Procesa los argumentos de las llamadas a métodos cuando se encuentran paréntesis
-     * que los rodean.
-     *
-     * @return Una instancia de {@code Expression} que modela una llamada a método, incluyendo
-     * el objeto, el nombre del método y los argumentos, si existen.
-     */
+    // Manejar llamadas a métodos, con y sin parámetros, y encadenamiento de llamadas 'obj.method1().method2()'
     private Expression parseMethodCall() {
-        Expression expression = primaryParser();
+        Expression expression = parseIndexAccess();
         while (tokenStream.match(TokenType.DOT)) {
             Token methodName = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre del método después del '.'");
             if (tokenStream.match(TokenType.LEFT_PARENT)) {
@@ -116,6 +101,17 @@ public class ParserExpressions implements ParseGenericExpression, ParseTernaryEx
                 tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
                 expression = new ExpressionMethodCall(expression, methodName, args);
             }
+        }
+        return expression;
+    }
+
+    // Manejar expresiones de acceso a índices 'lista[1]'
+    private Expression parseIndexAccess() {
+        Expression expression = primaryParser();
+        if (tokenStream.match(TokenType.BRACKETS_OPEN)) {
+            Expression idx = parseExpression();
+            tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
+            expression = new ExpressionIndexAccess(expression, idx);
         }
         return expression;
     }
@@ -148,13 +144,18 @@ public class ParserExpressions implements ParseGenericExpression, ParseTernaryEx
         throw new ParserException("Se esperaba una expresión.");
     }
 
-
-    @Override
-    public Expression parseGenericExpression() {
-        return parseEqualExpression();
-    }
-
-    @Override
+    /**
+     * Analiza y construye una expresión ternaria a partir de una expresión binaria inicial
+     * y las expresiones adicionales necesarias para completar la estructura ternaria.
+     * <p>
+     * La expresión ternaria tiene la forma: <condición> ? <expresión1> : <expresión2>.
+     * Este método se encarga de procesar los componentes de la expresión y validarlos.
+     *
+     * @param expression La expresión binaria que representa la condición de la expresión ternaria.
+     * @return Una instancia de {@code ExpressionTernary} que modela la expresión ternaria completa
+     * construida a partir de la condición y las expresiones adicionales.
+     * @throws RuntimeException Si no se encuentra el separador ':' o si las expresiones no son válidas.
+     */
     public Expression parseTernaryExpression(ExpressionBinary expression) {
         Expression left = primaryParser();
         tokenStream.match(TokenType.DOUBLE_DOT, "Se esperaba ':' después de la expresión del medio en el operador ternario.");
