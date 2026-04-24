@@ -14,6 +14,11 @@ public class ParserDeclaration {
     }
 
     public Statement parseVarDeclaration() {
+        if (tokenStream.notMatch(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
+                TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
+            throw new RuntimeException("Se esperaba una declaración de variable con 'var' o una asignación a una variable ya declarada.");
+        }
+
         // Tipo de dato
         Token type = tokenStream.before();
 

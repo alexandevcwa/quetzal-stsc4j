@@ -53,10 +53,8 @@ public class ParserPrincipal {
 //                && tokenStream.matchAndBack(TokenType.LEFT_PARENT)) {
 //        }
 
-
-
         // Parser (Variables)
-        if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
+        if (tokenStream.matchNotAdvance(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
             return parserDeclaration.parseVarDeclaration();
         }
