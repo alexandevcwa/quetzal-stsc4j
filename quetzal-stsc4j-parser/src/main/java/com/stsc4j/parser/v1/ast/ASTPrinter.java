@@ -157,6 +157,81 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionJsnBlock expressionJsnBlock) {
+        // Si el bloque está vacío o es nulo
+        if (expressionJsnBlock.expressions == null || expressionJsnBlock.expressions.isEmpty()) {
+            return getIndent() + "JSN Block {}";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("JSN Block { ").append(expressionJsnBlock.expressions.size()).append(" element(s) }\n");
+        indentLevel++;
+
+        List<ExpressionJsn> expressions = expressionJsnBlock.expressions;
+        for (int i = 0; i < expressions.size(); i++) {
+            if (i < expressions.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            ExpressionJsn expr = expressions.get(i);
+            String exprOutput = expr.accept(this);
+            String[] lines = exprOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < expressions.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(ExpressionJsn expressionJsn) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("JSN Property: ").append(expressionJsn.key.getLexeme()).append("\n");
+        indentLevel++;
+
+        // Si tiene un valor simple
+        if (expressionJsn.value != null) {
+            sb.append(getIndent()).append("└─ Value:\n");
+            indentLevel++;
+            sb.append(expressionJsn.value.accept(this));
+            indentLevel--;
+        }
+        // Si tiene una lista de valores
+        else if (expressionJsn.values != null && !expressionJsn.values.isEmpty()) {
+            sb.append(getIndent()).append("└─ Values: ").append(expressionJsn.values.size()).append(" element(s)\n");
+            indentLevel++;
+            List<Expression> values = expressionJsn.values;
+            for (int i = 0; i < values.size(); i++) {
+                if (i < values.size() - 1) {
+                    sb.append(getIndent()).append("├─ ");
+                } else {
+                    sb.append(getIndent()).append("└─ ");
+                }
+                Expression value = values.get(i);
+                String valueOutput = value.accept(this);
+                String[] lines = valueOutput.split("\n");
+                sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+                for (int j = 1; j < lines.length; j++) {
+                    sb.append("\n").append(lines[j]);
+                }
+                if (i < values.size() - 1) {
+                    sb.append("\n");
+                }
+            }
+            indentLevel--;
+        }
+
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");
@@ -331,5 +406,19 @@ public class ASTPrinter implements Visitor<String> {
     @Override
     public String visit(TypePrimitive type) {
         return getIndent() + "Type: " + type.primitiveType.getLexeme();
+    }
+
+    @Override
+    public String visit(StatementJsn statementJsn) {
+        StringBuilder sb = new StringBuilder();
+        String mutability = statementJsn.mutable ? "mutable" : "immutable";
+        sb.append(getIndent()).append("JSN Declaration (").append(mutability).append(")\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Name: ").append(statementJsn.identifier.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Block:\n");
+        indentLevel++;
+        sb.append(statementJsn.block.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
     }
 }

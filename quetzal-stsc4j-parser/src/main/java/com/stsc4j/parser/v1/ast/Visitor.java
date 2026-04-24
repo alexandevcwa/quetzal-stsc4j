@@ -16,6 +16,10 @@ public interface Visitor<T> {
 
     T visit(ExpressionList expressionList);
 
+    T visit(ExpressionJsnBlock expressionJsnBlock);
+
+    T visit(ExpressionJsn expressionJsn);
+
     T visit(StatementIf statementIf);
 
     T visit(StatementBlock statementBlock);
@@ -29,4 +33,6 @@ public interface Visitor<T> {
     T visit(TypeList typeList);
 
     T visit(TypePrimitive type);
+
+    T visit(StatementJsn statementJsn);
 }
