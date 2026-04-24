@@ -124,6 +124,114 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionList expressionList) {
+        // Si la lista está vacía o es nula
+        if (expressionList.expressions == null || expressionList.expressions.isEmpty()) {
+            return getIndent() + "List []";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("List [").append(expressionList.expressions.size()).append(" element(s)]\n");
+        indentLevel++;
+
+        List<Expression> expressions = expressionList.expressions;
+        for (int i = 0; i < expressions.size(); i++) {
+            if (i < expressions.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            Expression expr = expressions.get(i);
+            String exprOutput = expr.accept(this);
+            String[] lines = exprOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < expressions.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(ExpressionJsnBlock expressionJsnBlock) {
+        // Si el bloque está vacío o es nulo
+        if (expressionJsnBlock.expressions == null || expressionJsnBlock.expressions.isEmpty()) {
+            return getIndent() + "JSN Block {}";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("JSN Block { ").append(expressionJsnBlock.expressions.size()).append(" element(s) }\n");
+        indentLevel++;
+
+        List<ExpressionJsn> expressions = expressionJsnBlock.expressions;
+        for (int i = 0; i < expressions.size(); i++) {
+            if (i < expressions.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            ExpressionJsn expr = expressions.get(i);
+            String exprOutput = expr.accept(this);
+            String[] lines = exprOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < expressions.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(ExpressionJsn expressionJsn) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("JSN Property: ").append(expressionJsn.key.getLexeme()).append("\n");
+        indentLevel++;
+
+        // Si tiene un valor simple
+        if (expressionJsn.value != null) {
+            sb.append(getIndent()).append("└─ Value:\n");
+            indentLevel++;
+            sb.append(expressionJsn.value.accept(this));
+            indentLevel--;
+        }
+        // Si tiene una lista de valores
+        else if (expressionJsn.values != null && !expressionJsn.values.isEmpty()) {
+            sb.append(getIndent()).append("└─ Values: ").append(expressionJsn.values.size()).append(" element(s)\n");
+            indentLevel++;
+            List<Expression> values = expressionJsn.values;
+            for (int i = 0; i < values.size(); i++) {
+                if (i < values.size() - 1) {
+                    sb.append(getIndent()).append("├─ ");
+                } else {
+                    sb.append(getIndent()).append("└─ ");
+                }
+                Expression value = values.get(i);
+                String valueOutput = value.accept(this);
+                String[] lines = valueOutput.split("\n");
+                sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+                for (int j = 1; j < lines.length; j++) {
+                    sb.append("\n").append(lines[j]);
+                }
+                if (i < values.size() - 1) {
+                    sb.append("\n");
+                }
+            }
+            indentLevel--;
+        }
+
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");
@@ -205,11 +313,19 @@ public class ASTPrinter implements Visitor<String> {
         String mutability = statementList.mutable ? "mutable" : "immutable";
         sb.append(getIndent()).append("List Declaration (").append(mutability).append(")\n");
         indentLevel++;
-        sb.append(getIndent()).append("├─ Type: ").append(statementList.type.getLexeme()).append("\n");
+
+        // Mostrar el tipo en notación simplificada
+        String typeNotation = getTypeListNotation(statementList.type);
+        sb.append(getIndent()).append("├─ Type: ").append(typeNotation).append("\n");
+
+        // Mostrar nombre
         sb.append(getIndent()).append("├─ Name: ").append(statementList.listName.getLexeme()).append("\n");
-        sb.append(getIndent()).append("└─ Elements: ").append(statementList.expressions.size()).append(" element(s)\n");
+
+        // Mostrar número de elementos
+        sb.append(getIndent()).append("└─ Elements: ").append(statementList.expressionList.expressions.size()).append(" element(s)\n");
+
         indentLevel++;
-        List<Expression> expressions = statementList.expressions;
+        List<Expression> expressions = statementList.expressionList.expressions;
         for (int i = 0; i < expressions.size(); i++) {
             if (i < expressions.size() - 1) {
                 sb.append(getIndent()).append("├─ ");
@@ -227,6 +343,81 @@ public class ASTPrinter implements Visitor<String> {
                 sb.append("\n");
             }
         }
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(TypeList typeList) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("List Type Structure:\n");
+        indentLevel++;
+        printTypeListStructure(sb, typeList, 0);
+        indentLevel--;
+        return sb.toString();
+    }
+
+    /**
+     * Imprime recursivamente la estructura de un TypeList anidado
+     */
+    private void printTypeListStructure(StringBuilder sb, Type type, int depth) {
+        if (type instanceof TypeList) {
+            TypeList typeList = (TypeList) type;
+            sb.append(getIndent()).append("├─ List Dimension ");
+            sb.append(depth + 1).append(":\n");
+            indentLevel++;
+            printTypeListStructure(sb, typeList.elementType, depth + 1);
+            indentLevel--;
+        } else if (type instanceof TypePrimitive) {
+            TypePrimitive typePrim = (TypePrimitive) type;
+            sb.append(getIndent()).append("└─ Base Type: ")
+                    .append(typePrim.primitiveType.getLexeme()).append("\n");
+        }
+    }
+
+    /**
+     * Genera la notación simplificada de un TypeList
+     */
+    private String getTypeListNotation(TypeList typeList) {
+        StringBuilder sb = new StringBuilder();
+        Type elementType = typeList;
+        int depth = 0;
+
+        // Contar profundidad y abrir brackets
+        while (elementType instanceof TypeList) {
+            sb.append("List<");
+            elementType = ((TypeList) elementType).elementType;
+            depth++;
+        }
+
+        // Agregar tipo base
+        if (elementType instanceof TypePrimitive) {
+            sb.append(((TypePrimitive) elementType).primitiveType.getLexeme());
+        }
+
+        // Cerrar todos los brackets
+        for (int i = 0; i <= depth; i++) {
+            sb.append(">");
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(TypePrimitive type) {
+        return getIndent() + "Type: " + type.primitiveType.getLexeme();
+    }
+
+    @Override
+    public String visit(StatementJsn statementJsn) {
+        StringBuilder sb = new StringBuilder();
+        String mutability = statementJsn.mutable ? "mutable" : "immutable";
+        sb.append(getIndent()).append("JSN Declaration (").append(mutability).append(")\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Name: ").append(statementJsn.identifier.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Block:\n");
+        indentLevel++;
+        sb.append(statementJsn.block.accept(this));
         indentLevel -= 2;
         return sb.toString();
     }
