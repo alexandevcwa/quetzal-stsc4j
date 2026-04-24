@@ -4,17 +4,17 @@ import com.stsc4j.lexer.Token;
 
 import java.util.List;
 
-public class StatementList extends Statement{
-    public final Token type;
+public class StatementList extends Statement {
+    public final TypeList type;
     public final boolean mutable;
     public final Token listName;
-    public final List<Expression> expressions;
+    public final ExpressionList expressionList;
 
-    public StatementList(Token type, boolean mutable, Token listName, List<Expression> expressions) {
+    public StatementList(TypeList type, boolean mutable, Token listName, ExpressionList expressionList) {
         this.type = type;
         this.mutable = mutable;
         this.listName = listName;
-        this.expressions = expressions;
+        this.expressionList = expressionList;
     }
 
     @Override

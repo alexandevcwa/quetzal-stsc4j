@@ -83,7 +83,7 @@ public class ParserExpressions {
      */
     private List<Expression> parseArgs() {
         List<Expression> args = new ArrayList<>();
-        if (!tokenStream.matchButNotAdvance(TokenType.RIGHT_PARENT)) {
+        if (!tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
             do {
                 args.add(parseExpression());
             } while (tokenStream.match(TokenType.COMMA));
@@ -94,12 +94,21 @@ public class ParserExpressions {
     // Manejar llamadas a métodos, con y sin parámetros, y encadenamiento de llamadas 'obj.method1().method2()'
     private Expression parseMethodCall() {
         Expression expression = parseIndexAccess();
-        while (tokenStream.match(TokenType.DOT)) {
-            Token methodName = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre del método después del '.'");
-            if (tokenStream.match(TokenType.LEFT_PARENT)) {
-                List<Expression> args = parseArgs();
-                tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
-                expression = new ExpressionMethodCall(expression, methodName, args);
+        Token before = tokenStream.before();
+        // Controlar funciones como mifuncion()
+        if (tokenStream.match(TokenType.LEFT_PARENT)) {
+            List<Expression> args = parseArgs();
+            tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
+            expression = new ExpressionMethodCall(expression, before, args);
+        } else {
+            // Controlar funciones como mifuncion.method1()
+            while (tokenStream.match(TokenType.DOT)) {
+                Token methodName = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre del método después del '.'");
+                if (tokenStream.match(TokenType.LEFT_PARENT)) {
+                    List<Expression> args = parseArgs();
+                    tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
+                    expression = new ExpressionMethodCall(expression, methodName, args);
+                }
             }
         }
         return expression;

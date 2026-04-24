@@ -29,7 +29,7 @@ public class TokenStream {
      * @return El siguiente token en el flujo si no es EOF, o el token actual si es EOF.
      */
     public Token futureShow() {
-        if (matchButNotAdvance(TokenType.EOF)) {
+        if (matchNotAdvance(TokenType.EOF)) {
             return show();
         }
         return tokens.get(current + 1);
@@ -110,7 +110,7 @@ public class TokenStream {
      * @return True = to token actual hace match con alguno de los tipos, False = el token actual no hace match con
      * ninguno de los tipos
      */
-    public boolean matchButNotAdvance(TokenType... t) {
+    public boolean matchNotAdvance(TokenType... t) {
         for (TokenType tt : t) {
             if (show().getType() == tt) {
                 return true;
