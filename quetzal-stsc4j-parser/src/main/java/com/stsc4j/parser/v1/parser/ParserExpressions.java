@@ -83,7 +83,7 @@ public class ParserExpressions {
      */
     private List<Expression> parseArgs() {
         List<Expression> args = new ArrayList<>();
-        if (!tokenStream.matchButNotAdvance(TokenType.RIGHT_PARENT)) {
+        if (!tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
             do {
                 args.add(parseExpression());
             } while (tokenStream.match(TokenType.COMMA));

@@ -50,6 +50,7 @@ public class ParserStatement {
     }
 
     public Statement parseJsn() {
+        tokenStream.consume(TokenType.JSN, "Se esperaba JSN");
         boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
         Token identifier = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba una identificador para el JSN");
         tokenStream.consume(TokenType.EQUAL, "Se esperaba '=' luego del identificador del JSN");

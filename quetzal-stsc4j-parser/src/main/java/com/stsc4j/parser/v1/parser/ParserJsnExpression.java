@@ -44,12 +44,12 @@ public class ParserJsnExpression {
 
         Expression value = null;
         // Parsear literales
-        if (tokenStream.matchButNotAdvance(TokenType.LIT_DECIMAL, TokenType.LIT_INTEGER,
+        if (tokenStream.matchNotAdvance(TokenType.LIT_DECIMAL, TokenType.LIT_INTEGER,
                 TokenType.LIT_STRING, TokenType.LIT_TRUE, TokenType.LIT_FALSE)) {
             value = parserExpressions.parseExpression();
         }
         // Parsear objetos JSN anidados
-        else if (tokenStream.matchButNotAdvance(TokenType.BRACES_OPEN)) {
+        else if (tokenStream.matchNotAdvance(TokenType.BRACES_OPEN)) {
             value = parseJsnBlock();
         }
         // Parsear listas
@@ -66,9 +66,9 @@ public class ParserJsnExpression {
         List<Expression> expressions = new ArrayList<>();
 
         while (!stop) {
-            if (tokenStream.matchButNotAdvance(TokenType.BRACES_OPEN)) {
+            if (tokenStream.matchNotAdvance(TokenType.BRACES_OPEN)) {
                 expressions.add(parseJsnBlock());
-            } else if (tokenStream.matchButNotAdvance(TokenType.LIT_DECIMAL, TokenType.LIT_INTEGER,
+            } else if (tokenStream.matchNotAdvance(TokenType.LIT_DECIMAL, TokenType.LIT_INTEGER,
                     TokenType.LIT_STRING, TokenType.LIT_TRUE, TokenType.LIT_FALSE)) {
                 expressions.add(parserExpressions.parseExpression());
             }

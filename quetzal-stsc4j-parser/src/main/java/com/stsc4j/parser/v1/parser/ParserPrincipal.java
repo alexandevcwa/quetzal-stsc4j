@@ -71,7 +71,7 @@ public class ParserPrincipal {
             return parserStatement.parseIf();
         }
 
-        if (tokenStream.match(TokenType.JSN)) {
+        if (tokenStream.matchNotAdvance(TokenType.JSN)) {
             return parserStatement.parseJsn();
         }
         throw new RuntimeException("Unrecognized token...");

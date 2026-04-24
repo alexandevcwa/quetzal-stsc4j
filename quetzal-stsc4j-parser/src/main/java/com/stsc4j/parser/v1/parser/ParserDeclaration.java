@@ -41,7 +41,7 @@ public class ParserDeclaration {
 
         Expression ternary = null;
         // Verificar operador ternario
-        if (tokenStream.matchButNotAdvance(TokenType.QUESTION)) {
+        if (tokenStream.matchNotAdvance(TokenType.QUESTION)) {
             tokenStream.advance();
             ternary = parserExpressions.parseTernaryExpression((ExpressionBinary) initialValue);
         }
