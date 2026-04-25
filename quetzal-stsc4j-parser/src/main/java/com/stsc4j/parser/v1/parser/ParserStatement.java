@@ -58,7 +58,29 @@ public class ParserStatement {
         return new StatementJsn(identifier, isMutable, expression);
     }
 
-    public Statement parseSyncFunction() {
-        return null;
+    public Statement parseFunction() {
+        Token returnValue = null;
+        if (tokenStream.notMatch(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
+                TokenType.PRIMITIVE_BOOLEAN, TokenType.PRIMITIVE_VOID)) {
+            throw new RuntimeException("Se esperaba un tipo de retorno para la función");
+        }
+        returnValue = tokenStream.before();
+        Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba un identificador para la función");
+        tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' después del identificador de la función");
+
+        ParserFunctionParameter pParameter = new ParserFunctionParameter(tokenStream);
+        List<Statement> parameters = pParameter.parse();
+        tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los parámetros de la función");
+        tokenStream.consume(TokenType.BRACES_OPEN, "Se esperaba '{' al inicio del bloque de la función");
+        // Parseo de bloque
+        List<Statement> block = parserPrincipal.parse(TokenType.BRACES_CLOSE);
+        tokenStream.consume(TokenType.BRACES_CLOSE, "Se esperaba '}' al final del bloque de la función");
+        return new StatementFunction(returnValue, identified, parameters, new StatementBlock(block));
+    }
+
+    public Statement parseReturn() {
+        tokenStream.consume(TokenType.RETURN, "Se esperaba 'retornar'");
+        Expression returnExpression = parserExpressions.parseExpression();
+        return new StatementReturn(returnExpression);
     }
 }

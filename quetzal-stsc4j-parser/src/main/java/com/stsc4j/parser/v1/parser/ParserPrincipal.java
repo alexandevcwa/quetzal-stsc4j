@@ -38,6 +38,18 @@ public class ParserPrincipal {
         return ast;
     }
 
+    public List<Statement> parse(TokenType type){
+        List<Statement> ast = new ArrayList<>();
+        boolean stop = false;
+        while (!stop){
+            ast.add(parseNext());
+            if (tokenStream.matchNotAdvance(type)){
+                stop = true;
+            }
+        }
+        return ast;
+    }
+
     public Statement parseNext() {
 //        // Parser de Llamadas a Métodos y Funciones
 //        if (tokenStream.match(TokenType.IDENTIFIER) &&
@@ -45,13 +57,24 @@ public class ParserPrincipal {
 //            Expression expr = parserExpressions.parseExpression();
 //            return new StatementExpression(expr);
 //        }
-//
-//        // Parser (Funciones Sincronas)
-//        if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
-//                TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)
-//                && tokenStream.match(TokenType.IDENTIFIER)
-//                && tokenStream.matchAndBack(TokenType.LEFT_PARENT)) {
-//        }
+
+
+        // Parser (Funciones)
+        if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
+                TokenType.PRIMITIVE_BOOLEAN, TokenType.PRIMITIVE_VOID)) {
+            if (tokenStream.match(TokenType.IDENTIFIER)) {
+                if (tokenStream.match(TokenType.LEFT_PARENT)) {
+                    tokenStream.back(3);
+                    // Llamar a parser
+                    return parserStatement.parseFunction();
+                } else {
+                    tokenStream.back(2);
+                }
+            } else {
+                tokenStream.back(1);
+            }
+        }
+
 
         // Parser (Variables)
         if (tokenStream.matchNotAdvance(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
@@ -67,6 +90,12 @@ public class ParserPrincipal {
         // Parser If
         if (tokenStream.match(TokenType.IF)) {
             return parserStatement.parseIf();
+        }
+
+        // Parser Return
+        if (tokenStream.match(TokenType.RETURN)) {
+            tokenStream.back();
+            return parserStatement.parseReturn();
         }
 
         if (tokenStream.matchNotAdvance(TokenType.JSN)) {

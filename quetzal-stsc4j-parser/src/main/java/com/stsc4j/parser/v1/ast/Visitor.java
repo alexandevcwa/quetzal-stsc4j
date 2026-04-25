@@ -35,4 +35,7 @@ public interface Visitor<T> {
     T visit(TypePrimitive type);
 
     T visit(StatementJsn statementJsn);
+    T visit(StatementFunction statementFunction);
+    T visit(StatementFuncionParameter statementFuncionParameter);
+    T visit(StatementReturn statementReturn);
 }

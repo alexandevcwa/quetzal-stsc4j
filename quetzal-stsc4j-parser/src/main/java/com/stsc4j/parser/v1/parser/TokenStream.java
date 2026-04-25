@@ -218,6 +218,10 @@ public class TokenStream {
         if (current > 0) current--;
         return tokens.get(current);
     }
+    public Token back(int steps){
+        if(current> 0 && current - steps >= 0) current -= steps;
+        return tokens.get(current);
+    }
 
     /**
      * Verifica si se ha llegado al final de la lista de tokens.
