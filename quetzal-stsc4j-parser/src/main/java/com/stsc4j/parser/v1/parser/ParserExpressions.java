@@ -7,7 +7,7 @@ import com.stsc4j.parser.v1.ast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserExpressions {
+public class ParserExpressions extends Parser {
 
     private final TokenStream tokenStream;
 
@@ -16,6 +16,7 @@ public class ParserExpressions {
     }
 
     // Punto de entrada para cualquier expresión
+    @Override
     public Expression parseExpression() {
         return parseEqualExpression();
     }

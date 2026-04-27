@@ -79,7 +79,7 @@ public class ParserPrincipal {
         // Parser (Variables)
         if (tokenStream.matchNotAdvance(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
-            return parserDeclaration.parseVarDeclaration();
+            return parserDeclaration.parseStatement();
         }
 
         // Listas
@@ -98,6 +98,7 @@ public class ParserPrincipal {
             return parserStatement.parseReturn();
         }
 
+        // Parser JSN
         if (tokenStream.matchNotAdvance(TokenType.JSN)) {
             return parserStatement.parseJsn();
         }

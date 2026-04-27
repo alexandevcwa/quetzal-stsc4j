@@ -3,12 +3,12 @@ package com.stsc4j.parser.v1.parser;
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.Statement;
-import com.stsc4j.parser.v1.ast.StatementFuncionParameter;
+import com.stsc4j.parser.v1.ast.StatementFunctionParameter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserFunctionParameter {
+public class ParserFunctionParameter extends Parser{
 
     public TokenStream tokenStream;
 
@@ -16,7 +16,12 @@ public class ParserFunctionParameter {
         this.tokenStream = tokenStream;
     }
 
-    public List<Statement> parse() {
+    @Override
+    public List<Statement> parseStatements() {
+        return parse();
+    }
+
+    private List<Statement> parse() {
         boolean stop = false;
         List<Statement> parameters = new ArrayList<>();
 
@@ -27,7 +32,7 @@ public class ParserFunctionParameter {
             }
             Token type = tokenStream.before();
             Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba un identificador para el parámetro de la función");
-            parameters.add(new StatementFuncionParameter(type, identified));
+            parameters.add(new StatementFunctionParameter(type, identified));
             if (tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
                 stop = true;
             } else {

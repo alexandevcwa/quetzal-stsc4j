@@ -472,12 +472,12 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(StatementFuncionParameter statementFuncionParameter) {
+    public String visit(StatementFunctionParameter statementFunctionParameter) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Parameter: ");
-        sb.append(statementFuncionParameter.type.getLexeme());
+        sb.append(statementFunctionParameter.type.getLexeme());
         sb.append(" ");
-        sb.append(statementFuncionParameter.identified.getLexeme());
+        sb.append(statementFunctionParameter.identified.getLexeme());
         return sb.toString();
     }
 }

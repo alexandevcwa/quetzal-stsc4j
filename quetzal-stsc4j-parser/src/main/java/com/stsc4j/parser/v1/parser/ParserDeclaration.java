@@ -4,7 +4,7 @@ import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
 
-public class ParserDeclaration {
+public class ParserDeclaration extends Parser {
     private final TokenStream tokenStream;
     private final ParserExpressions parserExpressions;
 
@@ -13,7 +13,13 @@ public class ParserDeclaration {
         this.parserExpressions = parserExpressions;
     }
 
-    public Statement parseVarDeclaration() {
+
+    @Override
+    public Statement parseStatement() {
+        return parseVarDeclaration();
+    }
+
+    private Statement parseVarDeclaration() {
         if (tokenStream.notMatch(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
             throw new RuntimeException("Se esperaba una declaración de variable con 'var' o una asignación a una variable ya declarada.");

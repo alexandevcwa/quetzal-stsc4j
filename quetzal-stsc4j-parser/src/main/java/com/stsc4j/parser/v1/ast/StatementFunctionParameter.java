@@ -2,11 +2,11 @@ package com.stsc4j.parser.v1.ast;
 
 import com.stsc4j.lexer.Token;
 
-public class StatementFuncionParameter extends Statement {
+public class StatementFunctionParameter extends Statement {
     public Token type;
     public Token identified;
 
-    public StatementFuncionParameter(Token type, Token identified){
+    public StatementFunctionParameter(Token type, Token identified){
         this.type = type;
         this.identified = identified;
     }

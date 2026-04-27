@@ -69,9 +69,10 @@ public class ParserStatement {
         tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' después del identificador de la función");
 
         ParserFunctionParameter pParameter = new ParserFunctionParameter(tokenStream);
-        List<Statement> parameters = pParameter.parse();
+        List<Statement> parameters = pParameter.parseStatements();
         tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los parámetros de la función");
         tokenStream.consume(TokenType.BRACES_OPEN, "Se esperaba '{' al inicio del bloque de la función");
+
         // Parseo de bloque
         List<Statement> block = parserPrincipal.parse(TokenType.BRACES_CLOSE);
         tokenStream.consume(TokenType.BRACES_CLOSE, "Se esperaba '}' al final del bloque de la función");

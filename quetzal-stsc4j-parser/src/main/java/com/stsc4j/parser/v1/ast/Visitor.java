@@ -36,6 +36,6 @@ public interface Visitor<T> {
 
     T visit(StatementJsn statementJsn);
     T visit(StatementFunction statementFunction);
-    T visit(StatementFuncionParameter statementFuncionParameter);
+    T visit(StatementFunctionParameter statementFunctionParameter);
     T visit(StatementReturn statementReturn);
 }
