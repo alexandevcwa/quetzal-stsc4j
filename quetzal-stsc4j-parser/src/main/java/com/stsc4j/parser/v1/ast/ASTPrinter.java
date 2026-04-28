@@ -232,6 +232,18 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionPropertyAccess expressionPropertyAccess) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Property Access: ").append(expressionPropertyAccess.propertyName.getLexeme()).append("\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Object:\n");
+        indentLevel++;
+        sb.append(expressionPropertyAccess.object.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");

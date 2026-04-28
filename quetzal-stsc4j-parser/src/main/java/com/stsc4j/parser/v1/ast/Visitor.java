@@ -20,6 +20,8 @@ public interface Visitor<T> {
 
     T visit(ExpressionJsn expressionJsn);
 
+    T visit(ExpressionPropertyAccess expressionPropertyAccess);
+
     T visit(StatementIf statementIf);
 
     T visit(StatementBlock statementBlock);

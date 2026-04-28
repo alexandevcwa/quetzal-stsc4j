@@ -176,4 +176,16 @@ class ParserIfTest {
                 .matches(s -> s instanceof StatementIf);
         System.out.println(astPrinter.print(ast));
     }
+
+    @Test
+    @DisplayName("Test - Declaración de if con acceso a atributo JSON")
+    void testDeclaracionIfAccesoAAtributoJsn(){
+        final String code = "si (jsnObj.edad.adulta == 18) { edad = 3 } sino { edad = 4 }";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parseStatement();
+        assertThat(ast)
+                .matches(s -> s instanceof StatementIf);
+        System.out.println(astPrinter.print(ast));
+    }
 }

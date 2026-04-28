@@ -139,24 +139,62 @@ public class ParserExpressions extends Parser {
         return args;
     }
 
-    // Manejar llamadas a métodos, con y sin parámetros, y encadenamiento de llamadas 'obj.method1().method2()'
+    /**
+     * Punto de entrada para parsear llamadas a métodos y acceso a propiedades.
+     * Delega la responsabilidad a métodos especializados.
+     */
     private Expression parseMethodCall() {
         Expression expression = parseIndexAccess();
         Token before = tokenStream.before();
-        // Controlar funciones como mifuncion()
+
+        // Controlar llamada directa a función: mifuncion()
         if (tokenStream.match(TokenType.LEFT_PARENT)) {
-            List<Expression> args = parseArgs();
-            tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
-            expression = new ExpressionMethodCall(expression, before, args);
-        } else {
-            // Controlar funciones como mifuncion.method1()
-            while (tokenStream.match(TokenType.DOT)) {
-                Token methodName = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre del método después del '.'");
-                if (tokenStream.match(TokenType.LEFT_PARENT)) {
-                    List<Expression> args = parseArgs();
-                    tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
-                    expression = new ExpressionMethodCall(expression, methodName, args);
-                }
+            expression = parseDirectMethodCall(expression, before);
+        }
+
+        // Controlar acceso mediante punto: obj.prop o obj.metodo()
+        expression = parsePropertyAndMethodAccess(expression);
+
+        return expression;
+    }
+
+    /**
+     * Parsea una llamada a método directo con argumentos.
+     * Responsabilidad única: procesar la invocación de métodos.
+     *
+     * @param object La expresión que representa el objeto/función a invocar
+     * @param methodName El token que representa el nombre de la función
+     * @return Una ExpressionMethodCall con los argumentos parseados
+     */
+    private Expression parseDirectMethodCall(Expression object, Token methodName) {
+        List<Expression> args = parseArgs();
+        tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
+        return new ExpressionMethodCall(object, methodName, args);
+    }
+
+    /**
+     * Parsea encadenamiento de propiedades y métodos mediante notación de punto.
+     * Responsabilidad única: procesar acceso a propiedades y métodos encadenados.
+     *
+     * Ejemplos:
+     * - obj.propiedad → ExpressionPropertyAccess
+     * - obj.metodo() → ExpressionMethodCall
+     * - obj.prop1.prop2.metodo() → Anidamiento de expresiones
+     *
+     * @param expression La expresión inicial (objeto base)
+     * @return La expresión resultante después de procesar todos los accesos
+     */
+    private Expression parsePropertyAndMethodAccess(Expression expression) {
+        while (tokenStream.match(TokenType.DOT)) {
+            Token accessName = tokenStream.consume(TokenType.IDENTIFIER,
+                "Se esperaba el nombre de propiedad o método después del '.'");
+
+            if (tokenStream.match(TokenType.LEFT_PARENT)) {
+                // Es un método: obj.metodo()
+                expression = parseDirectMethodCall(expression, accessName);
+            } else {
+                // Es una propiedad JSN: obj.propiedad
+                expression = new ExpressionPropertyAccess(expression, accessName);
             }
         }
         return expression;
