@@ -18,8 +18,8 @@ public class InitialState implements LexerState {
         }
 
         // Analyze special characters like symbols
-        // EL igual = puede ser procesaqdo por ete if
-        if (!Character.isLetterOrDigit(c) && '_' != c && '"' != c) {
+        // EL igual = puede ser procesado
+        if ((!Character.isLetterOrDigit(c) && '_' != c && '"' != c) || c == 'y' || c == 'o') {
             // Cambio de estado mi automata para que ese estado determine que tipo de token es
             LexerState s = new SymbolState();
             // Asignar nuevo estado al contexto

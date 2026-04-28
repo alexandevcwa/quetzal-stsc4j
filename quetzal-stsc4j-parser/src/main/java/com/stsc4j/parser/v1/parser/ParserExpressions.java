@@ -3,11 +3,12 @@ package com.stsc4j.parser.v1.parser;
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
+import com.stsc4j.parser.v1.exception.ParserException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserExpressions {
+public class ParserExpressions extends Parser {
 
     private final TokenStream tokenStream;
 
@@ -16,8 +17,46 @@ public class ParserExpressions {
     }
 
     // Punto de entrada para cualquier expresión
+    @Override
     public Expression parseExpression() {
-        return parseEqualExpression();
+        return parseSymbolicExpression();
+    }
+
+    private Expression parseSymbolicExpression() {
+        Expression expression = parseEspaniolExpression();
+        while (tokenStream.match(TokenType.AND, TokenType.OR)) {
+            Token operator = tokenStream.before();
+            Token secondaryOperator = null;
+            if ((tokenStream.match(TokenType.AND) && operator.getType() == TokenType.AND) ||
+                    (tokenStream.match(TokenType.OR) && operator.getType() == TokenType.OR)
+            ) {
+                if (tokenStream.match(TokenType.AND, TokenType.OR)) {
+                    throw new ParserException("No se pueden mezclar operadores lógicos '&&' y '||' sin paréntesis para definir la precedencia.");
+                }
+                secondaryOperator = tokenStream.before();
+            } else {
+                var logico = operator.getType() == TokenType.AND ? "&&" : "||";
+                throw new ParserException("Se esperaba un operador lógico adicional para formar '" + logico + "'.");
+            }
+            if (secondaryOperator != null) {
+                final Token[] operators = {operator, secondaryOperator};
+                expression = new ExpressionBinary(expression, operators, parseEspaniolExpression());
+            } else {
+                Expression right = parseEspaniolExpression();
+                expression = new ExpressionBinary(expression, operator, right);
+            }
+        }
+        return expression;
+    }
+
+    private Expression parseEspaniolExpression() {
+        Expression expression = parseEqualExpression();
+        while (tokenStream.match(TokenType.AND_ESP, TokenType.OR_ESP)) {
+            Token operator = tokenStream.before();
+            Expression right = parseEqualExpression();
+            expression = new ExpressionBinary(expression, operator, right);
+        }
+        return expression;
     }
 
     // Maneja ==, !=
@@ -25,8 +64,17 @@ public class ParserExpressions {
         Expression expression = parseRelationalExpression();
         while (tokenStream.match(TokenType.EQUAL, TokenType.EXCLAMATION)) {
             Token operator = tokenStream.show();
+            Token secondaryOperator = null;
+            if (tokenStream.match(TokenType.EQUAL)) {
+                secondaryOperator = tokenStream.before();
+            }
             Expression right = parseRelationalExpression();
-            expression = new ExpressionBinary(expression, operator, right);
+            if (secondaryOperator != null) {
+                final Token[] operators = {operator, secondaryOperator};
+                expression = new ExpressionBinary(expression, operators, right);
+            } else {
+                expression = new ExpressionBinary(expression, operator, right);
+            }
         }
         return expression;
     }
@@ -34,11 +82,11 @@ public class ParserExpressions {
     // Maneja >, <, >=, <=
     private Expression parseRelationalExpression() {
         Expression expression = parseAddAndSubtractExpression();
-        while (tokenStream.match(TokenType.GREATER_THAN, TokenType.LESS_THAN, TokenType.EQUAL)) {
+        while (tokenStream.match(TokenType.GREATER_THAN, TokenType.LESS_THAN)) {
             Token operator = tokenStream.before();
             Token secondaryOperator = null;
-            if (tokenStream.currentEquals(TokenType.EQUAL)) {
-                secondaryOperator = tokenStream.advance();
+            if (tokenStream.match(TokenType.EQUAL)) {
+                secondaryOperator = tokenStream.before();
             }
             Expression right = parseAddAndSubtractExpression();
             if (secondaryOperator != null) {
@@ -91,24 +139,62 @@ public class ParserExpressions {
         return args;
     }
 
-    // Manejar llamadas a métodos, con y sin parámetros, y encadenamiento de llamadas 'obj.method1().method2()'
+    /**
+     * Punto de entrada para parsear llamadas a métodos y acceso a propiedades.
+     * Delega la responsabilidad a métodos especializados.
+     */
     private Expression parseMethodCall() {
         Expression expression = parseIndexAccess();
         Token before = tokenStream.before();
-        // Controlar funciones como mifuncion()
+
+        // Controlar llamada directa a función: mifuncion()
         if (tokenStream.match(TokenType.LEFT_PARENT)) {
-            List<Expression> args = parseArgs();
-            tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
-            expression = new ExpressionMethodCall(expression, before, args);
-        } else {
-            // Controlar funciones como mifuncion.method1()
-            while (tokenStream.match(TokenType.DOT)) {
-                Token methodName = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre del método después del '.'");
-                if (tokenStream.match(TokenType.LEFT_PARENT)) {
-                    List<Expression> args = parseArgs();
-                    tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
-                    expression = new ExpressionMethodCall(expression, methodName, args);
-                }
+            expression = parseDirectMethodCall(expression, before);
+        }
+
+        // Controlar acceso mediante punto: obj.prop o obj.metodo()
+        expression = parsePropertyAndMethodAccess(expression);
+
+        return expression;
+    }
+
+    /**
+     * Parsea una llamada a método directo con argumentos.
+     * Responsabilidad única: procesar la invocación de métodos.
+     *
+     * @param object La expresión que representa el objeto/función a invocar
+     * @param methodName El token que representa el nombre de la función
+     * @return Una ExpressionMethodCall con los argumentos parseados
+     */
+    private Expression parseDirectMethodCall(Expression object, Token methodName) {
+        List<Expression> args = parseArgs();
+        tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
+        return new ExpressionMethodCall(object, methodName, args);
+    }
+
+    /**
+     * Parsea encadenamiento de propiedades y métodos mediante notación de punto.
+     * Responsabilidad única: procesar acceso a propiedades y métodos encadenados.
+     *
+     * Ejemplos:
+     * - obj.propiedad → ExpressionPropertyAccess
+     * - obj.metodo() → ExpressionMethodCall
+     * - obj.prop1.prop2.metodo() → Anidamiento de expresiones
+     *
+     * @param expression La expresión inicial (objeto base)
+     * @return La expresión resultante después de procesar todos los accesos
+     */
+    private Expression parsePropertyAndMethodAccess(Expression expression) {
+        while (tokenStream.match(TokenType.DOT)) {
+            Token accessName = tokenStream.consume(TokenType.IDENTIFIER,
+                "Se esperaba el nombre de propiedad o método después del '.'");
+
+            if (tokenStream.match(TokenType.LEFT_PARENT)) {
+                // Es un método: obj.metodo()
+                expression = parseDirectMethodCall(expression, accessName);
+            } else {
+                // Es una propiedad JSN: obj.propiedad
+                expression = new ExpressionPropertyAccess(expression, accessName);
             }
         }
         return expression;
