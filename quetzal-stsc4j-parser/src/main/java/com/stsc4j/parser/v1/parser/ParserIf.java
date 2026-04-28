@@ -19,6 +19,7 @@ public class ParserIf extends Parser {
 
     @Override
     public Statement parseStatement() {
+        tokenStream.consume(TokenType.IF, "Se esperaba 'si'.");
         tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' después del si.");
         Expression condition = parserExpressions.parseExpression();
         tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de la condición.");

@@ -233,4 +233,8 @@ public class TokenStream {
         return tokens.get(current).getType() == TokenType.EOF;
     }
 
+    public void clear(){
+        current = 0;
+        tokens.clear();
+    }
 }

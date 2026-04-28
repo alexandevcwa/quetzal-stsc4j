@@ -19,7 +19,44 @@ public class ParserExpressions extends Parser {
     // Punto de entrada para cualquier expresión
     @Override
     public Expression parseExpression() {
-        return parseEqualExpression();
+        return parseSymbolicExpression();
+    }
+
+    private Expression parseSymbolicExpression() {
+        Expression expression = parseEspaniolExpression();
+        while (tokenStream.match(TokenType.AND, TokenType.OR)) {
+            Token operator = tokenStream.before();
+            Token secondaryOperator = null;
+            if ((tokenStream.match(TokenType.AND) && operator.getType() == TokenType.AND) ||
+                    (tokenStream.match(TokenType.OR) && operator.getType() == TokenType.OR)
+            ) {
+                if (tokenStream.match(TokenType.AND, TokenType.OR)) {
+                    throw new ParserException("No se pueden mezclar operadores lógicos '&&' y '||' sin paréntesis para definir la precedencia.");
+                }
+                secondaryOperator = tokenStream.before();
+            } else {
+                var logico = operator.getType() == TokenType.AND ? "&&" : "||";
+                throw new ParserException("Se esperaba un operador lógico adicional para formar '" + logico + "'.");
+            }
+            if (secondaryOperator != null) {
+                final Token[] operators = {operator, secondaryOperator};
+                expression = new ExpressionBinary(expression, operators, parseEspaniolExpression());
+            } else {
+                Expression right = parseEspaniolExpression();
+                expression = new ExpressionBinary(expression, operator, right);
+            }
+        }
+        return expression;
+    }
+
+    private Expression parseEspaniolExpression() {
+        Expression expression = parseEqualExpression();
+        while (tokenStream.match(TokenType.AND_ESP, TokenType.OR_ESP)) {
+            Token operator = tokenStream.before();
+            Expression right = parseEqualExpression();
+            expression = new ExpressionBinary(expression, operator, right);
+        }
+        return expression;
     }
 
     // Maneja ==, !=
@@ -27,8 +64,17 @@ public class ParserExpressions extends Parser {
         Expression expression = parseRelationalExpression();
         while (tokenStream.match(TokenType.EQUAL, TokenType.EXCLAMATION)) {
             Token operator = tokenStream.show();
+            Token secondaryOperator = null;
+            if (tokenStream.match(TokenType.EQUAL)) {
+                secondaryOperator = tokenStream.before();
+            }
             Expression right = parseRelationalExpression();
-            expression = new ExpressionBinary(expression, operator, right);
+            if (secondaryOperator != null) {
+                final Token[] operators = {operator, secondaryOperator};
+                expression = new ExpressionBinary(expression, operators, right);
+            } else {
+                expression = new ExpressionBinary(expression, operator, right);
+            }
         }
         return expression;
     }
@@ -36,11 +82,11 @@ public class ParserExpressions extends Parser {
     // Maneja >, <, >=, <=
     private Expression parseRelationalExpression() {
         Expression expression = parseAddAndSubtractExpression();
-        while (tokenStream.match(TokenType.GREATER_THAN, TokenType.LESS_THAN, TokenType.EQUAL)) {
+        while (tokenStream.match(TokenType.GREATER_THAN, TokenType.LESS_THAN)) {
             Token operator = tokenStream.before();
             Token secondaryOperator = null;
-            if (tokenStream.currentEquals(TokenType.EQUAL)) {
-                secondaryOperator = tokenStream.advance();
+            if (tokenStream.match(TokenType.EQUAL)) {
+                secondaryOperator = tokenStream.before();
             }
             Expression right = parseAddAndSubtractExpression();
             if (secondaryOperator != null) {

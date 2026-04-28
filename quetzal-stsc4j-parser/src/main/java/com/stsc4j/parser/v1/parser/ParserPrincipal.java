@@ -73,7 +73,8 @@ public class ParserPrincipal {
         }
 
         // Parser If
-        if (tokenStream.match(TokenType.IF)) {
+        if (tokenStream.matchNotAdvance(TokenType.IF)) {
+
             return parserStatement.parseIf().parseStatement();
         }
 
