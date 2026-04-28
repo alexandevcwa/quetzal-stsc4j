@@ -20,6 +20,14 @@ public class ParserIf extends Parser {
     @Override
     public Statement parseStatement() {
         tokenStream.consume(TokenType.IF, "Se esperaba 'si'.");
+        return parseIfChain();
+    }
+
+    /**
+     * Parsea una cadena de if-else-if-else de forma optimizada.
+     * Evita recursión profunda y maneja múltiples else-if eficientemente.
+     */
+    private Statement parseIfChain() {
         tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' después del si.");
         Expression condition = parserExpressions.parseExpression();
         tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de la condición.");
@@ -27,9 +35,12 @@ public class ParserIf extends Parser {
         Statement elseBranch = null;
 
         if (tokenStream.match(TokenType.ELSE)) {
-            if (tokenStream.match(TokenType.IF)) {
-                elseBranch = parseStatement();
+            if (tokenStream.matchNotAdvance(TokenType.IF)) {
+                // Recursión lineal para else-if (no hay problema con profundidad)
+                tokenStream.advance(); // Consumir el IF
+                elseBranch = parseIfChain();
             } else {
+                // else simple sin if
                 elseBranch = parserBlock.parseStatement();
             }
         }

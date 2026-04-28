@@ -118,12 +118,62 @@ class ParserIfTest {
     }
 
     @Test
-    @DisplayName("Test - Declaración de if con múltiples operadores simbólicos mal escritos")
-    void testDeclaracionIfConMultiplesOperadorSimbolicoMal(){
+    @DisplayName("Test - Declaración de if con múltiples operadores or '|||'")
+    void testDeclaracionIfConMultiplesOperadoresOr(){
         final String code = "si (a>1 ||| b>4){ a = 1}";
         context.process(code);
         tokens.addAll(context.getTokens());
         var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
         System.out.println(exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test - Declaración de if con múltiples operadores and '&&&'")
+    void testDeclaracionIfConMultiplesOperadoresAnd(){
+        final String code = "si (a>1 &&& b>4){ a = 1}";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
+        System.out.println(exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test - Declaración de if con else if")
+    void testDeclaracionIfElseIf(){
+        final String code = "si (a>1) { a = 1}sino si (b>4) { b = 2 } sino si (b>4) { b = 2 } sino { c = 3 }";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parseStatement();
+        assertThat(ast)
+                .matches(s -> s instanceof StatementIf);
+        System.out.println(astPrinter.print(ast));
+    }
+
+    @Test
+    @DisplayName("Test - Declaración de if con else if anudados")
+    void testDeclaracionIfElseIfAnudados(){
+        final String code =
+                "si (a==1){" +
+                    "si (a>1) {" +
+                        "a = 1" +
+                    "} sino {a = 2}" +
+                "} sino si(b==2){" +
+                    "si(b>1){" +
+                        "b = 1" +
+                    "} sino {" +
+                    "b=2 " +
+                    "}" +
+                "} sino si (c==3) {" +
+                    "si(c>3){" +
+                        "c=1" +
+                    "} sino {" +
+                    "c=4 }" +
+                "} sino { d = 5 }";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parseStatement();
+        assertThat(ast)
+                .matches(s -> s instanceof StatementIf);
+        System.out.println(astPrinter.print(ast));
     }
 }
