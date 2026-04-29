@@ -13,7 +13,7 @@ public class SemanticAnalyzer implements Visitor<String> {
         this.currentEnv = new Environment();
     }
 
-    // Método para iniciar a leer las sentencias
+    // Metod para iniciar a leer las sentencias
     public void analyze(List<Statement> statements) {
         for (Statement stmt : statements) {
             stmt.accept(this);
