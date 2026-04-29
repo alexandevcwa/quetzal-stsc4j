@@ -1,0 +1,29 @@
+name: Notificar PR Integrado en Telegram
+
+# Se ejecuta cuando el PR cambia a estado "cerrado"
+on:
+  pull_request:
+    types: [closed] 
+    branches:
+      - 'main' # Tu rama destino específica
+      - 'trunk'
+
+jobs:
+  notify_telegram:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar mensaje a Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ ¡Pull Request Integrado con éxito!
+            
+            👤 Autor del PR: ${{ github.event.pull_request.user.login }}
+            🧑‍💻 Integrado por: ${{ github.actor }}
+            📌 Título: ${{ github.event.pull_request.title }}
+            🌿 Rama: ${{ github.base_ref }}
+            
+            🔗 Ver PR: ${{ github.event.pull_request.html_url }}
