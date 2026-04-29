@@ -40,4 +40,6 @@ public interface Visitor<T> {
     T visit(StatementFunction statementFunction);
     T visit(StatementFunctionParameter statementFunctionParameter);
     T visit(StatementReturn statementReturn);
+    T visit(StatementLoopWhile statementLoopWhile);
+    T visit(StatementLoopDoWhile statementLoopDoWhile);
 }
