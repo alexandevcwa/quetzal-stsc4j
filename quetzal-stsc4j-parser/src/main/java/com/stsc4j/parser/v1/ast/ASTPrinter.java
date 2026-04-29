@@ -232,6 +232,18 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionPropertyAccess expressionPropertyAccess) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Property Access: ").append(expressionPropertyAccess.propertyName.getLexeme()).append("\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Object:\n");
+        indentLevel++;
+        sb.append(expressionPropertyAccess.object.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");
@@ -415,10 +427,101 @@ public class ASTPrinter implements Visitor<String> {
         sb.append(getIndent()).append("JSN Declaration (").append(mutability).append(")\n");
         indentLevel++;
         sb.append(getIndent()).append("├─ Name: ").append(statementJsn.identifier.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Value:\n");
+        indentLevel++;
+        sb.append(statementJsn.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementReturn statementReturn) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Return Statement\n");
+        indentLevel++;
+        sb.append(statementReturn.returnExpression.accept(this));
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementLoopWhile statementLoopWhile) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("While Loop\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Condition:\n");
+        indentLevel++;
+        sb.append(statementLoopWhile.condition.accept(this)).append("\n");
+        indentLevel--;
         sb.append(getIndent()).append("└─ Block:\n");
         indentLevel++;
-        sb.append(statementJsn.block.accept(this));
+        sb.append(statementLoopWhile.block.accept(this));
         indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementLoopDoWhile statementLoopDoWhile) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Do-While Loop\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Block:\n");
+        indentLevel++;
+        sb.append(statementLoopDoWhile.block.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Condition:\n");
+        indentLevel++;
+        sb.append(statementLoopDoWhile.condition.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementFunction statementFunction) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Function Declaration\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Return Type: ").append(statementFunction.returnValue.getLexeme()).append("\n");
+        sb.append(getIndent()).append("├─ Name: ").append(statementFunction.identified.getLexeme()).append("\n");
+        sb.append(getIndent()).append("├─ Parameters: ").append(statementFunction.parameters.size()).append(" parameter(s)\n");
+
+        // Mostrar parámetros
+        indentLevel++;
+        for (int i = 0; i < statementFunction.parameters.size(); i++) {
+            if (i < statementFunction.parameters.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            Statement param = statementFunction.parameters.get(i);
+            String paramOutput = param.accept(this);
+            String[] lines = paramOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < statementFunction.parameters.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel--;
+
+        sb.append("\n");
+        sb.append(getIndent()).append("└─ Block:\n");
+        indentLevel++;
+        sb.append(statementFunction.block.accept(this));
+        indentLevel -= 2;
+
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementFunctionParameter statementFunctionParameter) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Parameter: ");
+        sb.append(statementFunctionParameter.type.getLexeme());
+        sb.append(" ");
+        sb.append(statementFunctionParameter.identified.getLexeme());
         return sb.toString();
     }
 }

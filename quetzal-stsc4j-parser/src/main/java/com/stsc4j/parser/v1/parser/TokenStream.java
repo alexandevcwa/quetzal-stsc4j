@@ -2,6 +2,7 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
+import com.stsc4j.parser.v1.exception.ParserException;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class TokenStream {
      */
     public void match(TokenType t, String message) {
         boolean match = match(t);
-        if (!match) throw new RuntimeException(message);
+        if (!match) throw new ParserException(message);
     }
 
     /**
@@ -163,7 +164,7 @@ public class TokenStream {
      */
     public Token consume(TokenType type, String message) {
         if (show().getType() == type) return advance();
-        throw new RuntimeException(message);
+        throw new ParserException(message);
     }
 
     /**
@@ -218,6 +219,10 @@ public class TokenStream {
         if (current > 0) current--;
         return tokens.get(current);
     }
+    public Token back(int steps){
+        if(current> 0 && current - steps >= 0) current -= steps;
+        return tokens.get(current);
+    }
 
     /**
      * Verifica si se ha llegado al final de la lista de tokens.
@@ -228,4 +233,8 @@ public class TokenStream {
         return tokens.get(current).getType() == TokenType.EOF;
     }
 
+    public void clear(){
+        current = 0;
+        tokens.clear();
+    }
 }

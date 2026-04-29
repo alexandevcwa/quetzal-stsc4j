@@ -21,7 +21,9 @@ public class ClassifierSymbols implements Classifier {
         SYMBOLS_MAP.put(LESS_THAN, TokenType.LESS_THAN);
         SYMBOLS_MAP.put(GREATER_THAN, TokenType.GREATER_THAN);
         SYMBOLS_MAP.put(AND, TokenType.AND);
+        SYMBOLS_MAP.put(AND_ESP, TokenType.AND_ESP);
         SYMBOLS_MAP.put(OR, TokenType.OR);
+        SYMBOLS_MAP.put(OR_ESP, TokenType.OR_ESP);
         SYMBOLS_MAP.put(MODULO, TokenType.MODULE);
         SYMBOLS_MAP.put(PARENTHESES_OPEN, TokenType.LEFT_PARENT);
         SYMBOLS_MAP.put(PARENTHESES_CLOSE, TokenType.RIGHT_PARENT);

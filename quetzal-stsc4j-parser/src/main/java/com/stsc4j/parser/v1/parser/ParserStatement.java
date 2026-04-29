@@ -1,64 +1,85 @@
 package com.stsc4j.parser.v1.parser;
 
-import com.stsc4j.lexer.Token;
-import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class ParserStatement {
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+
+    // Required Parsers
     private final ParserPrincipal parserPrincipal;
-    private final ParserJsnExpression parserJsnExpression;
+    private final ParserExpressions parserExpressions;
 
-    public ParserStatement(TokenStream tokenStream, ParserExpressions parserExpressions, ParserPrincipal parserPrincipal,
-                           ParserJsnExpression parserJsnExpression) {
+    // Parser for Statement
+    private ParserBlock parserBlock;
+    private ParserJsn parserJsn;
+    private ParserFunction parserFunction;
+    private ParserReturn parserReturn;
+    private ParserIf parserIf;
+    private ParserList parserList;
+    private ParserDeclaration parserDeclaration;
+    private ParserLoopWhile parserLoopWhile;
+
+
+    public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpressions = new ParserExpressions(tokenStream);
         this.parserPrincipal = parserPrincipal;
-        this.parserJsnExpression = parserJsnExpression;
     }
 
-    public Statement parseIf() {
-        tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' después del si.");
-        Expression condition = parserExpressions.parseExpression();
-        tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de la condición.");
-        Statement thenBranch = parseBlock();
-        Statement elseBranch = null;
-
-        if (tokenStream.match(TokenType.ELSE)) {
-            if (tokenStream.match(TokenType.IF)) {
-                elseBranch = parseIf();
-            } else {
-                elseBranch = parseBlock();
-            }
+    public Parser parseVar(){
+        if (parserDeclaration == null) {
+            parserDeclaration = new ParserDeclaration(tokenStream, parserExpressions);
         }
-        return new StatementIf(condition, thenBranch, elseBranch);
+        return parserDeclaration;
     }
 
-    public Statement parseBlock() {
-        tokenStream.consume(TokenType.BRACES_OPEN, "Se esperaba { al inicio de bloque.");
-        List<Statement> statements = new ArrayList<>();
-
-        while (!tokenStream.show().getType().equals(TokenType.BRACES_CLOSE) && !tokenStream.isAtEnd()) {
-            statements.add(parserPrincipal.parseNext());
+    public Parser parseIf() {
+        if (parserIf == null) {
+            parserIf = new ParserIf(tokenStream, parserExpressions, (ParserBlock) parseBlock());
         }
-        tokenStream.consume(TokenType.BRACES_CLOSE, "Se esperaba } al final de bloque.");
-        return new StatementBlock(statements);
+        return parserIf;
     }
 
-    public Statement parseJsn() {
-        tokenStream.consume(TokenType.JSN, "Se esperaba JSN");
-        boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
-        Token identifier = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba una identificador para el JSN");
-        tokenStream.consume(TokenType.EQUAL, "Se esperaba '=' luego del identificador del JSN");
-        ExpressionJsnBlock expression = parserJsnExpression.parserJsnExpression();
-        return new StatementJsn(identifier, isMutable, expression);
+    public Parser parseList(){
+        if (parserList == null) {
+            parserList = new ParserList(tokenStream, parserExpressions);
+        }
+        return parserList;
     }
 
-    public Statement parseSyncFunction() {
+    public Parser parseBlock() {
+        if (parserBlock == null) {
+            parserBlock = new ParserBlock(tokenStream, parserPrincipal);
+        }
+        return parserBlock;
+    }
+
+    public Parser parseJsn() {
+        if (parserJsn == null) {
+            parserJsn = new ParserJsn(tokenStream, parserExpressions);
+        }
+        return parserJsn;
+    }
+
+    public Parser parseFunction() {
+        if (parserFunction == null) {
+            parserFunction = new ParserFunction(tokenStream, parserPrincipal);
+        }
+        return parserFunction;
+    }
+
+    public Parser parseReturn() {
+        if (parserReturn == null) {
+            parserReturn = new ParserReturn(parserExpressions, tokenStream);
+        }
+        return parserReturn;
+    }
+
+    public Parser parseLoopWhile(){
+        if(parserLoopWhile == null){
+            parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+        }
         return null;
     }
 }

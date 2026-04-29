@@ -7,17 +7,18 @@ import com.stsc4j.parser.v1.ast.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserListExpression {
+public class ParserList extends Parser {
 
     private final TokenStream tokenStream;
     private final ParserExpressions parserExpressions;
 
-    public ParserListExpression(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserList(TokenStream tokenStream, ParserExpressions parserExpressions) {
         this.tokenStream = tokenStream;
         this.parserExpressions = parserExpressions;
     }
 
-    public Statement parseListExpression() {
+    @Override
+    public Statement parseStatement() {
         TypeList typeList = (TypeList) parseListType();
         boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
         Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el identificador de la lista.");
@@ -44,6 +45,7 @@ public class ParserListExpression {
         boolean isFirstElement = true;
 
         // Bucle principal para parsear elementos de la lista actual
+        //TODO: Mejorar el manejo del bucle
         while (true) {
             // Verificar si hemos llegado al final de la lista
             if (tokenStream.match(TokenType.BRACKETS_CLOSE)) {
