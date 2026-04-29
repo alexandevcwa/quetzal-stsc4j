@@ -5,7 +5,7 @@ on:
   pull_request:
     types: [closed] 
     branches:
-      - 'main' # Tu rama destino específica
+      - 'develop' # Tu rama destino específica
       - 'trunk'
 
 jobs:
