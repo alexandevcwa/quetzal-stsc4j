@@ -10,8 +10,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        String sourceCode = "lista<entero> numeros = [1, 2, 3]\n" +
-                "numeros.agregar(4)";
+        String sourceCode = "entero a = 20\n" +
+                "entero suma = a + 1.0";
 
         System.out.println("=== Código fuente en Quetzal ===");
         System.out.println(sourceCode + "\n");
