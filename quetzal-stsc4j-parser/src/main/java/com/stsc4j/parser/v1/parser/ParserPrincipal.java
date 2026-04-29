@@ -64,29 +64,33 @@ public class ParserPrincipal {
         // Parser (Variables)
         if (tokenStream.matchNotAdvance(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
-            return parserStatement.parserVar().parseStatement();
+            return parserStatement.parseVar().parseStatement();
         }
 
-        // Listas
+        // Parser (Listas)
         if (tokenStream.match(TokenType.LIST)) {
             return parserStatement.parseList().parseStatement();
         }
 
-        // Parser If
+        // Parser (If)
         if (tokenStream.matchNotAdvance(TokenType.IF)) {
 
             return parserStatement.parseIf().parseStatement();
         }
 
-        // Parser Return
+        // Parser (Return)
         if (tokenStream.match(TokenType.RETURN)) {
             tokenStream.back();
             return parserStatement.parseReturn().parseStatement();
         }
 
-        // Parser JSN
+        // Parser (JSN)
         if (tokenStream.matchNotAdvance(TokenType.JSN)) {
             return parserStatement.parseJsn().parseStatement();
+        }
+
+        if(tokenStream.matchNotAdvance(TokenType.LOOP_WHILE)){
+            return parserStatement.parseLoopWhile().parseStatement();
         }
 
         throw new RuntimeException("Unrecognized token...");

@@ -18,6 +18,7 @@ public class ParserStatement {
     private ParserIf parserIf;
     private ParserList parserList;
     private ParserDeclaration parserDeclaration;
+    private ParserLoopWhile parserLoopWhile;
 
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
@@ -26,7 +27,7 @@ public class ParserStatement {
         this.parserPrincipal = parserPrincipal;
     }
 
-    public Parser parserVar(){
+    public Parser parseVar(){
         if (parserDeclaration == null) {
             parserDeclaration = new ParserDeclaration(tokenStream, parserExpressions);
         }
@@ -73,5 +74,12 @@ public class ParserStatement {
             parserReturn = new ParserReturn(parserExpressions, tokenStream);
         }
         return parserReturn;
+    }
+
+    public Parser parseLoopWhile(){
+        if(parserLoopWhile == null){
+            parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return null;
     }
 }

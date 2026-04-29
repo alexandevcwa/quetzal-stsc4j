@@ -59,8 +59,6 @@ public enum TokenType {
     OR,
     OR_ESP,
     MODULE,
-    PARENTHESES_OPEN,
-    PARENTHESES_CLOSE,
     BRACKETS_OPEN,
     BRACKETS_CLOSE,
     BRACES_OPEN,
