@@ -461,6 +461,22 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementLoopDoWhile statementLoopDoWhile) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Do-While Loop\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Block:\n");
+        indentLevel++;
+        sb.append(statementLoopDoWhile.block.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Condition:\n");
+        indentLevel++;
+        sb.append(statementLoopDoWhile.condition.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementFunction statementFunction) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Function Declaration\n");
