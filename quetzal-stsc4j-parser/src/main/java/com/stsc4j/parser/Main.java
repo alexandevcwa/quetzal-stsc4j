@@ -5,8 +5,6 @@ import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.Statement;
 import com.stsc4j.parser.v1.parser.ParserPrincipal;
 import com.stsc4j.parser.v1.parser.TokenStream;
-
-
 import java.util.List;
 
 public class Main {
