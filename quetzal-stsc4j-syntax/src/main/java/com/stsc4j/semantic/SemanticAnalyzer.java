@@ -29,19 +29,30 @@ public class SemanticAnalyzer implements Visitor<String> {
      */
     @Override
     public String visit(StatementVariable statementVariable) {
-        //Primero vemos que tipo de variable se crea
-        String tipoEsperado = statementVariable.typo.getLexeme();
-
-        //Luego vemos que tipo de dato se le asigna a la variable
+        // Evaluamos lo que hay del lado derecho del igual
         String tipoReal = statementVariable.initialValue.accept(this);
-
-        //Si los tipos no son iguales, se detiene el proceso
-        if (tipoReal != null && !tipoEsperado.equals(tipoReal)) {
-            throw new SemanticError("Trataste de guardar un dato tipo " + tipoReal + " en una variable de tipo " + tipoEsperado);
-        }
-
         String nombreVariable = statementVariable.name.getLexeme();
-        currentEnv.define(nombreVariable, tipoEsperado);
+
+        // TRUCO DEL PARSER:
+        // Si el tipo es un IDENTIFIER, significa que es una reasignación (ej. a = 20)
+        // porque no tiene palabra clave como 'entero' o 'cadena' al inicio.
+        if (statementVariable.typo.getType().toString().equals("IDENTIFIER")) {
+
+            // Tratamos de reasignar. Nuestro Environment se encargará de lanzar
+            // error si la variable es inmutable o si los tipos no cuadran.
+            currentEnv.assign(nombreVariable, tipoReal);
+
+        } else {
+            // ES UNA DECLARACIÓN NUEVA (ej. entero a = 20)
+            String tipoEsperado = statementVariable.typo.getLexeme();
+
+            if (tipoReal != null && !tipoEsperado.equals(tipoReal)) {
+                throw new SemanticError("Trataste de guardar un dato tipo " + tipoReal + " en una variable de tipo " + tipoEsperado);
+            }
+
+            // Aquí le pasamos el booleano 'isMutable' que tu compañero preparó en el AST
+            currentEnv.define(nombreVariable, tipoEsperado, statementVariable.mutable);
+        }
 
         return null;
     }
@@ -90,7 +101,7 @@ public class SemanticAnalyzer implements Visitor<String> {
     public String visit(StatementList statementList) {
         String tipoDeLaLista = statementList.type.elementType.accept(this);
 
-        //revisa que todos los elementos de la lista sean del mismo tipo
+        // Revisa que todos los elementos de la lista sean del mismo tipo
         for (Expression expr : statementList.expressionList.expressions){
             String tipoElemento = expr.accept(this);
             if(tipoElemento != null && !tipoElemento.equals(tipoDeLaLista)){
@@ -98,8 +109,10 @@ public class SemanticAnalyzer implements Visitor<String> {
             }
         }
 
-        //Registro la lista en la tabla de variables
-        currentEnv.define(statementList.listName.getLexeme(), "lista<" + tipoDeLaLista + ">");
+        // Registro la lista en la tabla de variables
+        // SOLUCION: Pasamos el tercer argumento (isMutable) que pide el Environment
+        currentEnv.define(statementList.listName.getLexeme(), "lista<" + tipoDeLaLista + ">", statementList.mutable);
+
         return null;
     }
 
@@ -205,7 +218,25 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(ExpressionIndexAccess expressionIndexAccess) {
-        return "";
+        // 1. Analizamos a qué le queremos sacar el índice (ej: la variable 'numeros')
+        String tipoObjeto = expressionIndexAccess.objectList.accept(this);
+
+        // 2. Analizamos qué hay dentro de los corchetes [ ] (ej: el 0)
+        String tipoIndice = expressionIndexAccess.index.accept(this);
+
+        // REGLA 1: El índice SIEMPRE debe ser un número entero
+        if (tipoIndice != null && !tipoIndice.equals("entero")) {
+            throw new SemanticError("El índice de una lista debe ser un número 'entero', pero me enviaste un '" + tipoIndice + "'.");
+        }
+
+        // REGLA 2: Solo podemos usar corchetes [] en variables tipo lista
+        if (tipoObjeto != null && tipoObjeto.startsWith("lista<")) {
+            // Si es una lista de enteros, al acceder a un elemento, el resultado es un entero.
+            // Extraemos el tipo interno ("lista<entero>" -> "entero")
+            return tipoObjeto.replace("lista<", "").replace(">", "");
+        } else {
+            throw new SemanticError("Intentaste usar corchetes [ ] en una variable de tipo '" + tipoObjeto + "', lo cual no es una lista.");
+        }
     }
 
     @Override

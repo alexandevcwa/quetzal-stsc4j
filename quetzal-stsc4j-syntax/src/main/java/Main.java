@@ -10,13 +10,16 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        String sourceCode = "entero a = 20\n" +
-                "entero suma = a + 1.0";
+
+
+        String sourceCode = "entero a = 10 si (verdadero){entero a = 20} ";
+
 
         System.out.println("=== Código fuente en Quetzal ===");
         System.out.println(sourceCode + "\n");
 
         try {
+
             // Fase 1: Lexer
             LexerContext context = new LexerContext();
             context.process(sourceCode);
@@ -48,4 +51,7 @@ public class Main {
             System.err.println("Error en fases previas: " + e.getMessage());
         }
     }
+
+
+
 }

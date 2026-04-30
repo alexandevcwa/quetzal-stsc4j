@@ -7,8 +7,20 @@ public class Environment {
     // Puntero al entorno padre (para manejar variables globales vs locales)
     private final Environment enclosing;
 
+    //Detalles de cada variable
+
+    private static class VariableInfo{
+        String Type;
+        boolean isMutable;
+
+        VariableInfo(String type, boolean isMutable){
+            this.Type = type;
+            this.isMutable = isMutable;
+        }
+    }
+
     // Tabla hash rápida O(1) para: NombreVariable -> TipoDato
-    private final Map<String, String> values = new HashMap<>();
+    private final Map<String, VariableInfo> values = new HashMap<>();
 
     // Constructor para el entorno global
     public Environment() {
@@ -23,11 +35,29 @@ public class Environment {
     /**
      * Declara una nueva variable. Falla si ya existe en este mismo nivel.
      */
-    public void define(String name, String type) {
-        if (values.containsKey(name)) {
-            throw new SemanticError("La variable '" + name + "' ya está declarada en este ámbito.");
+    public void define(String name, String type, boolean isMutable) {
+        // Usamos nuestro nuevo metodo recursivo para revisar toda la cadena
+        if (isDeclared(name)) {
+            throw new SemanticError("La variable '" + name + "' ya está declarada en este ámbito o en uno superior.");
         }
-        values.put(name, type);
+        values.put(name, new VariableInfo(type, isMutable));
+    }
+
+    /**
+     * Metodo auxiliar que busca si la variable ya existe en la caja actual
+     * o en cualquier caja padre. Devuelve true si la encuentra.
+     */
+    private boolean isDeclared(String name) {
+        // Revisamos la caja actual
+        if (values.containsKey(name)) {
+            return true;
+        }
+        // Si no está, pero tenemos un padre, le preguntamos al padre
+        if (enclosing != null) {
+            return enclosing.isDeclared(name);
+        }
+        // Si llegamos hasta arriba y no está, entonces no existe
+        return false;
     }
 
     /**
@@ -35,11 +65,43 @@ public class Environment {
      */
     public String resolveType(String name) {
         if (values.containsKey(name)) {
-            return values.get(name);
+            return values.get(name).Type;
         }
         if (enclosing != null) {
             return enclosing.resolveType(name);
         }
         throw new SemanticError("La variable '" + name + "' no ha sido definida.");
     }
+
+    /**
+     * REASIGNAR: Intenta cambiar el valor de una variable ya existente.
+     * ¡Aquí está la magia de la inmutabilidad!
+     */
+    public void assign(String name, String newType) {
+        if (values.containsKey(name)) {
+            VariableInfo info = values.get(name);
+
+            // REGLA 1: Verificar si es constante
+            if (!info.isMutable) {
+                throw new SemanticError("Error de inmutabilidad: No puedes reasignar un valor a '" + name + "' porque es una constante.");
+            }
+
+            // REGLA 2: Verificar que no le cambien el tipo de dato (ej. entero a cadena)
+            if (!info.Type.equals(newType)) {
+                throw new SemanticError("Conflicto de tipos: La variable '" + name + "' es de tipo '" + info.Type + "', no puedes asignarle un '" + newType + "'.");
+            }
+
+            return; //si es correcto, se permite la reasignación
+        }
+
+        // Si no está aquí buscamos en el entorno padre
+        if (enclosing != null) {
+            enclosing.assign(name, newType);
+            return;
+        }
+
+        throw new SemanticError("La variable '" + name + "' no ha sido definida.");
+    }
+
+
 }
