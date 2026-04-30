@@ -10,3 +10,7 @@
 quetzal-stsc4j-parser/.idea/
 /.idea/
 /quetzal-stsc4j-parser/target/
+
+# Ignorar compilados de Maven y Java
+target/
+*.class

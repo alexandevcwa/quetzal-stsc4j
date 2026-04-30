@@ -116,10 +116,38 @@ public class ASTPrinter implements Visitor<String> {
         indentLevel++;
         sb.append(expressionIndexAccess.objectList.accept(this)).append("\n");
         indentLevel--;
-        sb.append(getIndent()).append("└─ Index:\n");
-        indentLevel++;
-        sb.append(expressionIndexAccess.index.accept(this));
-        indentLevel -= 2;
+
+        // Manejo de índices múltiples
+        if (expressionIndexAccess.indexList != null && !expressionIndexAccess.indexList.isEmpty()) {
+            sb.append(getIndent()).append("└─ Indices: ").append(expressionIndexAccess.indexList.size()).append(" index(es)\n");
+            indentLevel++;
+            List<Expression> indices = expressionIndexAccess.indexList;
+            for (int i = 0; i < indices.size(); i++) {
+                if (i < indices.size() - 1) {
+                    sb.append(getIndent()).append("├─ ");
+                } else {
+                    sb.append(getIndent()).append("└─ ");
+                }
+                Expression idx = indices.get(i);
+                String idxOutput = idx.accept(this);
+                String[] lines = idxOutput.split("\n");
+                sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+                for (int j = 1; j < lines.length; j++) {
+                    sb.append("\n").append(lines[j]);
+                }
+                if (i < indices.size() - 1) {
+                    sb.append("\n");
+                }
+            }
+            indentLevel--;
+        } else if (expressionIndexAccess.index != null) {
+            // Backwards compatibility con la versión deprecated
+            sb.append(getIndent()).append("└─ Index:\n");
+            indentLevel++;
+            sb.append(expressionIndexAccess.index.accept(this));
+            indentLevel--;
+        }
+        indentLevel--;
         return sb.toString();
     }
 

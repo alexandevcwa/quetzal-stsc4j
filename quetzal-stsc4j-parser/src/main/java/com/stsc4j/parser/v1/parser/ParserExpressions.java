@@ -162,7 +162,7 @@ public class ParserExpressions extends Parser {
      * Parsea una llamada a método directo con argumentos.
      * Responsabilidad única: procesar la invocación de métodos.
      *
-     * @param object La expresión que representa el objeto/función a invocar
+     * @param object     La expresión que representa el objeto/función a invocar
      * @param methodName El token que representa el nombre de la función
      * @return Una ExpressionMethodCall con los argumentos parseados
      */
@@ -175,7 +175,7 @@ public class ParserExpressions extends Parser {
     /**
      * Parsea encadenamiento de propiedades y métodos mediante notación de punto.
      * Responsabilidad única: procesar acceso a propiedades y métodos encadenados.
-     *
+     * <p>
      * Ejemplos:
      * - obj.propiedad → ExpressionPropertyAccess
      * - obj.metodo() → ExpressionMethodCall
@@ -187,7 +187,7 @@ public class ParserExpressions extends Parser {
     private Expression parsePropertyAndMethodAccess(Expression expression) {
         while (tokenStream.match(TokenType.DOT)) {
             Token accessName = tokenStream.consume(TokenType.IDENTIFIER,
-                "Se esperaba el nombre de propiedad o método después del '.'");
+                    "Se esperaba el nombre de propiedad o método después del '.'");
 
             if (tokenStream.match(TokenType.LEFT_PARENT)) {
                 // Es un método: obj.metodo()
@@ -203,10 +203,17 @@ public class ParserExpressions extends Parser {
     // Manejar expresiones de acceso a índices 'lista[1]'
     private Expression parseIndexAccess() {
         Expression expression = primaryParser();
-        if (tokenStream.match(TokenType.BRACKETS_OPEN)) {
+        List<Expression> indexList = null;
+        while (tokenStream.match(TokenType.BRACKETS_OPEN)) {
+            if (indexList == null) {
+                indexList = new ArrayList<>();
+            }
             Expression idx = parseExpression();
+            indexList.add(idx);
             tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
-            expression = new ExpressionIndexAccess(expression, idx);
+        }
+        if(indexList != null) {
+            expression = new ExpressionIndexAccess(expression, indexList);
         }
         return expression;
     }
