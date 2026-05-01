@@ -65,6 +65,7 @@ public enum TokenType {
     BRACES_CLOSE,
     COMMA,
     DOUBLE_DOT,
+    SEMICOLON,
     DOT,
     QUESTION,
 
