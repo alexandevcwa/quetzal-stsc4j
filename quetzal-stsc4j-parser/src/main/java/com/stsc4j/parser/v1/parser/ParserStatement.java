@@ -27,6 +27,10 @@ public class ParserStatement {
         this.parserPrincipal = parserPrincipal;
     }
 
+    public Parser parseExpressions(){
+        return parserExpressions;
+    }
+
     public Parser parseVar(){
         if (parserDeclaration == null) {
             parserDeclaration = new ParserDeclaration(tokenStream, parserExpressions);
