@@ -57,7 +57,9 @@ public class LexerDictionary {
     public static final char LESS_THAN = '<';
     public static final char GREATER_THAN = '>';
     public static final char AND = '&';
+    public static final char AND_ESP = 'y';
     public static final char OR = '|';
+    public static final char OR_ESP = 'o';
     public static final char MODULO = '%';
     public static final char PARENTHESES_OPEN = '(';
     public static final char PARENTHESES_CLOSE = ')';
@@ -66,16 +68,17 @@ public class LexerDictionary {
     public static final char BRACES_OPEN = '{';
     public static final char BRACES_CLOSE = '}';
     public static final char COMMA = ',';
-    public static final char DOUBLE_DOT = ':';
+    public static final char COLON = ':';
+    public static final char SEMICOLON = ';';
     public static final char DOT = '.';
     public static final char QUESTION = '?';
     public static final Set<Character> SYMBOLS = Set.of(
             PLUS, MINUS, MULTIPLY, DIVIDE, EQUALS, EXCLAMATION,
-            LESS_THAN, GREATER_THAN, AND, OR, MODULO, PARENTHESES_OPEN,
+            LESS_THAN, GREATER_THAN, AND, AND_ESP, OR, OR_ESP, MODULO, PARENTHESES_OPEN,
             PARENTHESES_CLOSE, BRACKETS_OPEN, BRACKETS_CLOSE,
             BRACES_OPEN, BRACES_CLOSE,
             COMMA,
-            DOUBLE_DOT, DOT,
+            COLON, SEMICOLON, DOT,
             QUESTION
     );
 }

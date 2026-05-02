@@ -1,9 +1,0 @@
-﻿<Application x:Class="Editor1.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Editor1"
-             StartupUri="SplashWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
-</Application>

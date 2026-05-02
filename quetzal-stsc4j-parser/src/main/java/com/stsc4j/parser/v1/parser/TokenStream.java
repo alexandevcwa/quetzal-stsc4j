@@ -2,6 +2,7 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
+import com.stsc4j.parser.v1.exception.ParserException;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class TokenStream {
      * @return El siguiente token en el flujo si no es EOF, o el token actual si es EOF.
      */
     public Token futureShow() {
-        if (matchButNotAdvance(TokenType.EOF)) {
+        if (matchNotAdvance(TokenType.EOF)) {
             return show();
         }
         return tokens.get(current + 1);
@@ -70,7 +71,7 @@ public class TokenStream {
      */
     public void match(TokenType t, String message) {
         boolean match = match(t);
-        if (!match) throw new RuntimeException(message);
+        if (!match) throw new ParserException(message);
     }
 
     /**
@@ -110,9 +111,27 @@ public class TokenStream {
      * @return True = to token actual hace match con alguno de los tipos, False = el token actual no hace match con
      * ninguno de los tipos
      */
-    public boolean matchButNotAdvance(TokenType... t) {
+    public boolean matchNotAdvance(TokenType... t) {
         for (TokenType tt : t) {
             if (show().getType() == tt) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si el token actual coincide con alguno de los tipos de tokens especificados y retrocede una posición en
+     * el flujo de tokens si hay coincidencia.
+     *
+     * @param t Lista de tipos de {@code TokenType} con los que el token actual puede coincidir.
+     * @return {@code true} si el token actual coincide con alguno de los tipos especificados y retrocede en el flujo,
+     * {@code false} en caso contrario.
+     */
+    public boolean matchAndBack(TokenType... t) {
+        for (TokenType tt : t) {
+            if (show().getType() == tt) {
+                back();
                 return true;
             }
         }
@@ -145,7 +164,7 @@ public class TokenStream {
      */
     public Token consume(TokenType type, String message) {
         if (show().getType() == type) return advance();
-        throw new RuntimeException(message);
+        throw new ParserException(message);
     }
 
     /**
@@ -196,6 +215,15 @@ public class TokenStream {
         return tokens.get(current - 1);
     }
 
+    public Token back() {
+        if (current > 0) current--;
+        return tokens.get(current);
+    }
+    public Token back(int steps){
+        if(current> 0 && current - steps >= 0) current -= steps;
+        return tokens.get(current);
+    }
+
     /**
      * Verifica si se ha llegado al final de la lista de tokens.
      *
@@ -205,4 +233,8 @@ public class TokenStream {
         return tokens.get(current).getType() == TokenType.EOF;
     }
 
+    public void clear(){
+        current = 0;
+        tokens.clear();
+    }
 }

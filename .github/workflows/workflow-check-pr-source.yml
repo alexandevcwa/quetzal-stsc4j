@@ -1,0 +1,20 @@
+name: Restrict PR Source Branch
+
+on:
+  pull_request:
+    branches:
+      - trunk
+
+jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR comes from develop
+        run: |
+          if [[ "${{ github.head_ref }}" != "develop" ]]; then
+            echo "❌ ERROR: Solo se permiten Pull Requests hacia 'trunk' desde la rama 'develop'."
+            echo "Rama de origen actual: ${{ github.head_ref }}"
+            exit 1
+          else
+            echo "✅ Éxito: El PR proviene de 'develop'."
+          fi

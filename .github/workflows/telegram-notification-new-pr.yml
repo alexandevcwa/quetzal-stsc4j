@@ -1,0 +1,45 @@
+name: Notificar Nuevo PR para Revisión
+
+on:
+  pull_request:
+    # 'opened' cuando se crea, 'reopened' si se vuelve a abrir,
+    # y 'synchronize' si suben nuevos cambios al PR existente.
+    types: [opened, synchronize, reopened]
+    branches:
+      - 'develop'
+      - 'trunk'
+
+jobs:
+  notify_new_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar mensaje a Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🔍 **[NUEVO ANÁLISIS] Pull Request Abierto**
+            
+            Se ha solicitado una revisión para integrar cambios.
+            
+            📂 **Proyecto:**
+            ${{ github.repository }}
+            
+            📌 **Título:**
+            ${{ github.event.pull_request.title }}
+            
+            👤 **Autor:**
+            ${{ github.event.pull_request.user.login }}
+            
+            ---
+            🛠️ **Ruta de integración:**
+            `| ${{ github.head_ref }} |`  --->  `| ${{ github.base_ref }} |`
+            
+            📏 **Cambios:**
+            ${{ github.event.pull_request.commits }} commit(s)
+            
+            🔗 **Link al PR:**
+            ${{ github.event.pull_request.html_url }}
+            ---
+            🔔 _Por favor, revisa los cambios antes de aprobar._
