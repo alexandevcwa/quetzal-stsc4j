@@ -1,18 +1,19 @@
 package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.TokenType;
+import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.Statement;
+import com.stsc4j.parser.v1.ast.StatementExpression;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserPrincipal {
-    private final TokenStream tokenStream;
+public class ParserPrincipal extends ParserPrincipalValidations {
 
     private final ParserStatement parserStatement;
 
     public ParserPrincipal(TokenStream stream) {
-        this.tokenStream = stream;
-
+        super(stream);
         this.parserStatement = new ParserStatement(stream, this);
     }
 
@@ -38,12 +39,14 @@ public class ParserPrincipal {
 
     public Statement parseNext() {
         // Parser de Llamadas a Métodos y Funciones
-//        if (tokenStream.match(TokenType.IDENTIFIER) &&
-//                (tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
-//            Expression expr = parserExpressions.parseExpression();
-//            return new StatementExpression(expr);
-//        }
-
+        if (tokenStream.match(TokenType.IDENTIFIER)) {
+            if ((tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
+                Expression expr = parserStatement.parseExpressions().parseExpression();
+                return new StatementExpression(expr);
+            }else {
+                tokenStream.back();
+            }
+        }
 
         // Parser (Funciones)
         if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
@@ -89,7 +92,7 @@ public class ParserPrincipal {
             return parserStatement.parseJsn().parseStatement();
         }
 
-        if(tokenStream.matchNotAdvance(TokenType.LOOP_WHILE)){
+        if (tokenStream.matchNotAdvance(TokenType.LOOP_WHILE)) {
             return parserStatement.parseLoopWhile().parseStatement();
         }
 
