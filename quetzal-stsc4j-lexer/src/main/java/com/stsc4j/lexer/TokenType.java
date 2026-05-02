@@ -77,6 +77,9 @@ public enum TokenType {
     LIT_FALSE,
 
     // End of file/input
-    EOF
+    EOF,
 
+    // RESERVED KEYWORDS FOR QUETZAL
+    C_CONSOLE,
+    F_PRINT,
 }
