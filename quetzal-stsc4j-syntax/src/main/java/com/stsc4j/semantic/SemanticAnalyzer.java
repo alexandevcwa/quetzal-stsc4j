@@ -128,7 +128,29 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(StatementJsn statementJsn) {
-        return "";
+        //Analizamos el bloque {...} para encontrar errores internos
+        statementJsn.block.accept(this);
+
+        //Extraemos el nombre de la variable
+        String nombreVariable = statementJsn.identifier.getLexeme();
+
+        //Lo guardamos en nuestra memoria environment usando el tipo "jsn"
+        currentEnv.define(nombreVariable, "jsn", false); // Asumimos que los JSN son inmutables
+
+        return null;
+    }
+
+    @Override
+    public String visitStatementReturn(StatementReturn statementReturn) {
+        /*
+        if (statementReturn.getValue() != null){
+            //Evaluamos el tipo de dato que se devuelve
+            //esto atrapa los errores internos
+            String tipoRetorno = statementReturn.getValue().accept(this);
+
+            return tipoRetorno;
+        }*/
+        return "vacio";
     }
 
     // EXPRESIONES
@@ -241,16 +263,52 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(ExpressionList expressionList) {
-        return "";
+        //Si la lista esta vacia, se le da un tipo desconocido
+        if (expressionList.expressions == null || expressionList.expressions.isEmpty()) {
+            return "lista<desconocido>";
+        }
+
+        //Tomamos el tipo del primer elemento como identificador
+        String tipoReferencia = expressionList.expressions.get(0).accept(this);
+
+        //Comparamos todos los demas elementos con esta regla
+        for (int i = 1; i < expressionList.expressions.size(); i++) {
+            String tipoActual = expressionList.expressions.get(i).accept(this);
+            if (tipoActual != null && !tipoActual.equals(tipoReferencia)) {
+                throw new SemanticError("Todos los elementos de la lista deben ser del mismo tipo. Se detectó un '" + tipoActual + "' pero esperaba un '" + tipoReferencia + "'.");
+            }
+        }
+        //Si todos pasaron la prueba devolvemos el tipo de la lista
+        return "lista<" + tipoReferencia + ">";
     }
 
     @Override
     public String visit(ExpressionJsnBlock expressionJsnBlock) {
-        return "";
+        //Un bloque JSN es solo un contenedor.
+        //Su trabajo es iterar sobre todas las propiedades y se validan
+
+        if (expressionJsnBlock.expressions != null){
+            for (ExpressionJsn exprJsn : expressionJsnBlock.expressions){
+                exprJsn.accept(this);
+            }
+        }
+        // Informamos al nivel superior que es tipo jsn
+        return "jsn";
     }
 
     @Override
     public String visit(ExpressionJsn expressionJsn) {
-        return "";
+        //Aqui se analizan las propiedades del JSN. Por ejemplo, si tenemos { nombre: "Juan", edad: 30 }
+
+        if (expressionJsn.value != null){
+            //si es un valor simple (cadena, entero) lo evalua
+            expressionJsn.value.accept(this);
+        } else if (expressionJsn.values != null){
+            for (Expression expr : expressionJsn.values){
+                expr.accept(this);
+            }
+        }
+        // El resultado de una propiedad JSN es simplemente "jsn", porque no nos interesa el tipo interno de cada propiedad, solo que es un bloque válido.
+        return "jsn_field";
     }
 }
