@@ -21,6 +21,7 @@ public interface Visitor<T> {
     T visit(ExpressionJsn expressionJsn);
 
     T visit(ExpressionPropertyAccess expressionPropertyAccess);
+    T visit(ExpressionIncDec expressionIncDec);
 
     T visit(StatementIf statementIf);
 
@@ -42,4 +43,5 @@ public interface Visitor<T> {
     T visit(StatementReturn statementReturn);
     T visit(StatementLoopWhile statementLoopWhile);
     T visit(StatementLoopDoWhile statementLoopDoWhile);
+    T visit(StatementLoopFor statementLoopFor);
 }

@@ -68,7 +68,8 @@ public class LexerDictionary {
     public static final char BRACES_OPEN = '{';
     public static final char BRACES_CLOSE = '}';
     public static final char COMMA = ',';
-    public static final char DOUBLE_DOT = ':';
+    public static final char COLON = ':';
+    public static final char SEMICOLON = ';';
     public static final char DOT = '.';
     public static final char QUESTION = '?';
     public static final Set<Character> SYMBOLS = Set.of(
@@ -77,7 +78,7 @@ public class LexerDictionary {
             PARENTHESES_CLOSE, BRACKETS_OPEN, BRACKETS_CLOSE,
             BRACES_OPEN, BRACES_CLOSE,
             COMMA,
-            DOUBLE_DOT, DOT,
+            COLON, SEMICOLON, DOT,
             QUESTION
     );
 }

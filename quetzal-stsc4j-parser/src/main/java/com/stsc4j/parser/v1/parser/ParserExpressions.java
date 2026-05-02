@@ -112,11 +112,35 @@ public class ParserExpressions extends Parser {
 
     // Maneja * y /
     private Expression parseMultiplyAndDivideExpression() {
-        Expression expression = parseMethodCall();
+        Expression expression = parsePostfixExpression();
         while (tokenStream.match(TokenType.MULTIPLY, TokenType.DIVIDE)) {
             Token operator = tokenStream.before();
-            Expression right = parseMethodCall();
+            Expression right = parsePostfixExpression();
             expression = new ExpressionBinary(expression, operator, right);
+        }
+        return expression;
+    }
+
+    // Maneja ++ y -- como operadores de postfijo
+    private Expression parsePostfixExpression() {
+        Expression expression = parseMethodCall();
+        if (expression instanceof ExpressionVariable) {
+            boolean isOk1 = tokenStream.match(TokenType.PLUS, TokenType.MINUS);
+            if (!isOk1) {
+                return expression;
+            }
+            Token operator1 = tokenStream.before();
+            boolean isOk2 = tokenStream.match(TokenType.PLUS, TokenType.MINUS);
+            if (!isOk2) {
+                tokenStream.back();
+                return expression;
+            }
+            Token operator2 = tokenStream.before();
+            if (operator1.getType().equals(operator2.getType())) {
+                return new ExpressionIncDec((ExpressionVariable) expression, new Token[]{operator1, operator2});
+            }
+            tokenStream.back(2);
+            throw new ParserException("Operadores de incremento/decremento deben ser iguales para formar '++' o '--'.");
         }
         return expression;
     }
@@ -212,7 +236,7 @@ public class ParserExpressions extends Parser {
             indexList.add(idx);
             tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
         }
-        if(indexList != null) {
+        if (indexList != null) {
             expression = new ExpressionIndexAccess(expression, indexList);
         }
         return expression;

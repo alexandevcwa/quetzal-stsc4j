@@ -23,15 +23,23 @@ jobs:
             
             Se ha solicitado una revisión para integrar cambios.
             
-            📂 **Proyecto:** ${{ github.repository }}
-            📌 **Título:** ${{ github.event.pull_request.title }}
-            👤 **Autor:** ${{ github.event.pull_request.user.login }}
+            📂 **Proyecto:**
+            ${{ github.repository }}
+            
+            📌 **Título:**
+            ${{ github.event.pull_request.title }}
+            
+            👤 **Autor:**
+            ${{ github.event.pull_request.user.login }}
             
             ---
             🛠️ **Ruta de integración:**
             `| ${{ github.head_ref }} |`  --->  `| ${{ github.base_ref }} |`
             
-            📏 **Cambios:** ${{ github.event.pull_request.commits }} commit(s)
-            🔗 **Link al PR:** ${{ github.event.pull_request.html_url }}
+            📏 **Cambios:**
+            ${{ github.event.pull_request.commits }} commit(s)
+            
+            🔗 **Link al PR:**
+            ${{ github.event.pull_request.html_url }}
             ---
             🔔 _Por favor, revisa los cambios antes de aprobar._
