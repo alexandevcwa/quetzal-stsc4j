@@ -222,7 +222,7 @@ public class LexerContext {
      * @throws LexerException Sí ocurre un error de tokenización, con un mensaje descriptivo
      *                        del problema detectado.
      */
-    private void throwContext() {
+    public void throwContext() {
         final String codePortion = buildCodePortion();
         final String message = String.format("Error al tokenizar código fuente en la línea %d, columna %d, cerca de ↓↓↓ \n%s", line, column - 1, codePortion);
         throw new LexerException("Tokenization Error", message);

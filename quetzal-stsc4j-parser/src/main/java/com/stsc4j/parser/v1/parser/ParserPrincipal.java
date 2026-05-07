@@ -38,6 +38,12 @@ public class ParserPrincipal extends ParserPrincipalValidations {
     }
 
     public Statement parseNext() {
+
+        // Parser de Asignaciones e Incrementales/Decrementales
+        if (isIncrementalDecremental()){
+            return parserStatement.parseIncremental().parseStatement();
+        }
+
         // Parser de Llamadas a Métodos y Funciones
         if (tokenStream.match(TokenType.IDENTIFIER)) {
             if ((tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
