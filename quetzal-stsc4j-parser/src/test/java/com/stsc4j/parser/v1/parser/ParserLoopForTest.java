@@ -47,7 +47,6 @@ class ParserLoopForTest {
         );
     }
 
-    //TODO: no pasa test con declaracion en bloque a--
     @Test
     @DisplayName("Test - Declaración de for loop correcta")
     void testLoopForCorrecto() {
