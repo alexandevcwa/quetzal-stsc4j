@@ -40,66 +40,58 @@ public class ParserPrincipal extends ParserPrincipalValidations {
     public Statement parseNext() {
 
         // Parser de Asignaciones e Incrementales/Decrementales
-        if (isIncrementalDecremental()){
+        if (isIncrementalDecremental()) {
             return parserStatement.parseIncremental().parseStatement();
         }
 
         // Parser de Llamadas a Métodos y Funciones
-        if (tokenStream.match(TokenType.IDENTIFIER)) {
-            if ((tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
-                Expression expr = parserStatement.parseExpressions().parseExpression();
-                return new StatementExpression(expr);
-            }else {
-                tokenStream.back();
-            }
+        if (isFunctionCall()) {
+            Expression expr = parserStatement.parseExpressions().parseExpression();
+            return new StatementExpression(expr);
         }
 
         // Parser (Funciones)
-        if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
-                TokenType.PRIMITIVE_BOOLEAN, TokenType.PRIMITIVE_VOID)) {
-            if (tokenStream.match(TokenType.IDENTIFIER)) {
-                if (tokenStream.match(TokenType.LEFT_PARENT)) {
-                    tokenStream.back(3);
-                    // Llamar a parser
-                    return parserStatement.parseFunction().parseStatement();
-                } else {
-                    tokenStream.back(2);
-                }
-            } else {
-                tokenStream.back(1);
-            }
+        if (isFunctionDeclaration()) {
+            return parserStatement.parseFunction().parseStatement();
         }
 
         // Parser (Variables)
-        if (tokenStream.matchNotAdvance(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
-                TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
+        if (isVariableDeclaration()) {
             return parserStatement.parseVar().parseStatement();
         }
 
         // Parser (Listas)
-        if (tokenStream.match(TokenType.LIST)) {
+        if (isListDeclaration()) {
             return parserStatement.parseList().parseStatement();
         }
 
         // Parser (If)
-        if (tokenStream.matchNotAdvance(TokenType.IF)) {
-
+        if (isIfDeclaration()) {
             return parserStatement.parseIf().parseStatement();
         }
 
         // Parser (Return)
-        if (tokenStream.match(TokenType.RETURN)) {
-            tokenStream.back();
+        if (isReturnDeclaration()) {
             return parserStatement.parseReturn().parseStatement();
         }
 
         // Parser (JSN)
-        if (tokenStream.matchNotAdvance(TokenType.JSN)) {
+        if (isJSNDeclaration()) {
             return parserStatement.parseJsn().parseStatement();
         }
 
-        if (tokenStream.matchNotAdvance(TokenType.LOOP_WHILE)) {
+        // Parser (Loop While)
+        if (isLoopWhileDeclaration()) {
             return parserStatement.parseLoopWhile().parseStatement();
+        }
+
+        // Parser (Loop Do While)
+        if (isLoopDoWhileDeclaration()) {
+            return parserStatement.parseLoopDoWhile().parseStatement();
+        }
+
+        if (isLoopForDeclaration()) {
+            return parserStatement.parseLoopFor().parseStatement();
         }
 
         throw new RuntimeException("Unrecognized token...");

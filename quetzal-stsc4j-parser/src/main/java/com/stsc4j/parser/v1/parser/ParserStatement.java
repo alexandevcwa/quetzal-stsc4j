@@ -1,8 +1,5 @@
 package com.stsc4j.parser.v1.parser;
 
-import com.stsc4j.parser.v1.ast.*;
-
-
 public class ParserStatement {
     private final TokenStream tokenStream;
 
@@ -19,6 +16,8 @@ public class ParserStatement {
     private ParserList parserList;
     private ParserDeclaration parserDeclaration;
     private ParserLoopWhile parserLoopWhile;
+    private ParserLoopDoWhile parserLoopDoWhile;
+    private ParserLoopFor parserLoopFor;
     private ParserIncremental parserIncremental;
 
 
@@ -88,10 +87,24 @@ public class ParserStatement {
         return null;
     }
 
+    public Parser parseLoopDoWhile() {
+        if (parserLoopDoWhile == null) {
+            parserLoopDoWhile = new ParserLoopDoWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return null;
+    }
+
     public Parser parseIncremental() {
         if (parserIncremental == null) {
             parserIncremental = new ParserIncremental(parserExpressions);
         }
         return parserIncremental;
+    }
+
+    public Parser parseLoopFor() {
+        if (parserLoopFor == null) {
+            parserLoopFor = new ParserLoopFor(tokenStream, parserDeclaration, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return parserLoopFor;
     }
 }

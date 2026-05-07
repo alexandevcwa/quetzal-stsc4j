@@ -35,7 +35,7 @@ public class ASTPrinter implements Visitor<String> {
     @Override
     public String visit(ExpressionBinary expressionBinary) {
         StringBuilder sb = new StringBuilder();
-        String operator = null;
+        String operator;
         if (null != expressionBinary.operators) {
             operator = Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
         } else {
@@ -449,9 +449,7 @@ public class ASTPrinter implements Visitor<String> {
         }
 
         // Cerrar todos los brackets
-        for (int i = 0; i <= depth; i++) {
-            sb.append(">");
-        }
+        sb.append(">".repeat(Math.max(0, depth + 1)));
 
         return sb.toString();
     }
@@ -632,11 +630,9 @@ public class ASTPrinter implements Visitor<String> {
 
     @Override
     public String visit(StatementFunctionParameter statementFunctionParameter) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getIndent()).append("Parameter: ");
-        sb.append(statementFunctionParameter.type.getLexeme());
-        sb.append(" ");
-        sb.append(statementFunctionParameter.identified.getLexeme());
-        return sb.toString();
+        return getIndent() + "Parameter: " +
+                statementFunctionParameter.type.getLexeme() +
+                " " +
+                statementFunctionParameter.identified.getLexeme();
     }
 }
