@@ -91,6 +91,14 @@ public interface Visitor<T> {
     T visit(ExpressionIncDec expressionIncDec);
 
     /**
+     * Visita un nodo de tipo ExpressionForEachVar en la jerarquía del árbol de sintaxis abstracta.
+     *
+     * @param expressionForEachVar el nodo de tipo ExpressionForEachVar que se va a visitar
+     * @return el resultado de la visita, cuyo tipo depende de la implementación del visitante
+     */
+    T visit(ExpressionForEachVar expressionForEachVar);
+
+    /**
      * Visita un nodo de tipo StatementIf en la jerarquía del árbol de sintaxis abstracta.
      *
      * @param statementIf el nodo de tipo StatementIf que se va a visitar
@@ -201,6 +209,14 @@ public interface Visitor<T> {
      * @return Un resultado de tipo T generado a partir de la operación realizada sobre statementLoopFor.
      */
     T visit(StatementLoopFor statementLoopFor);
+
+    /**
+     * Visita un nodo de tipo StatementLoopForEach.
+     *
+     * @param statementLoopForEach el nodo de declaración de bucle "for-each" que se va a visitar
+     * @return un valor del tipo T resultante de la visita al nodo
+     */
+    T visit(StatementLoopForEach statementLoopForEach);
 
     /**
      * Visita un nodo de tipo StatementIncDec y realiza la lógica correspondiente.

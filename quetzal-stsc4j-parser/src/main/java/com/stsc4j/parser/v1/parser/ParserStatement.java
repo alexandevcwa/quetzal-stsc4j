@@ -18,6 +18,7 @@ public class ParserStatement {
     private ParserLoopWhile parserLoopWhile;
     private ParserLoopDoWhile parserLoopDoWhile;
     private ParserLoopFor parserLoopFor;
+    private ParserLoopForEach parserLoopForEach;
     private ParserIncremental parserIncremental;
 
 
@@ -84,14 +85,14 @@ public class ParserStatement {
         if (parserLoopWhile == null) {
             parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
         }
-        return null;
+        return parserLoopWhile;
     }
 
     public Parser parseLoopDoWhile() {
         if (parserLoopDoWhile == null) {
             parserLoopDoWhile = new ParserLoopDoWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
         }
-        return null;
+        return parserLoopDoWhile;
     }
 
     public Parser parseIncremental() {
@@ -99,6 +100,13 @@ public class ParserStatement {
             parserIncremental = new ParserIncremental(parserExpressions);
         }
         return parserIncremental;
+    }
+
+    public Parser parseLoopForEach(){
+        if (parserLoopForEach == null){
+            parserLoopForEach = new ParserLoopForEach(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return parserLoopForEach;
     }
 
     public Parser parseLoopFor() {

@@ -11,11 +11,4 @@ public class StatementExpression extends Statement {
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
     }
-
-    @Override
-    public String toString() {
-        return "StatementExpression{" +
-                "expression=" + expression +
-                '}';
-    }
 }

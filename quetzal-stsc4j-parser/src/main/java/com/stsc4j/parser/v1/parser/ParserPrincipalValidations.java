@@ -90,6 +90,19 @@ public abstract class ParserPrincipalValidations {
         return tokenStream.matchNotAdvance(TokenType.LOOP_DO);
     }
 
+    protected boolean isLoopForEach() {
+        if (tokenStream.notMatch(TokenType.LOOP_FOR)) {
+            return false;
+        }
+        tokenStream.advance(4);
+        if (tokenStream.notMatch(TokenType.LOOP_EACH_1, TokenType.LOOP_EACH_2)) {
+            tokenStream.back(4);
+            return false;
+        }
+        tokenStream.back(5);
+        return true;
+    }
+
     protected boolean isLoopForDeclaration() {
         return tokenStream.matchNotAdvance(TokenType.LOOP_FOR);
     }

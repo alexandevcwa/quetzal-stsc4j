@@ -285,6 +285,19 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionForEachVar expressionForEachVar) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("For-Each Variable\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Type: ").append(expressionForEachVar.type.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Variable:\n");
+        indentLevel++;
+        sb.append(expressionForEachVar.variable.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");
@@ -565,6 +578,51 @@ public class ASTPrinter implements Visitor<String> {
         sb.append(getIndent()).append("└─ Block:\n");
         indentLevel++;
         String blockOutput = statementLoopFor.block.accept(this);
+        String[] blockLines = blockOutput.split("\n");
+        sb.append(blockLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < blockLines.length; j++) {
+            sb.append("\n").append(blockLines[j]);
+        }
+        indentLevel--;
+
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementLoopForEach statementLoopForEach) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("For-Each Loop\n");
+        indentLevel++;
+
+        // Variable del for-each
+        sb.append(getIndent()).append("├─ Variable Declaration:\n");
+        indentLevel++;
+        String varOutput = statementLoopForEach.declaration.accept(this);
+        String[] varLines = varOutput.split("\n");
+        sb.append(varLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < varLines.length; j++) {
+            sb.append("\n").append(varLines[j]);
+        }
+        indentLevel--;
+        sb.append("\n");
+
+        // Lista a iterar
+        sb.append(getIndent()).append("├─ Collection:\n");
+        indentLevel++;
+        String listOutput = statementLoopForEach.listVariable.accept(this);
+        String[] listLines = listOutput.split("\n");
+        sb.append(listLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < listLines.length; j++) {
+            sb.append("\n").append(listLines[j]);
+        }
+        indentLevel--;
+        sb.append("\n");
+
+        // Bloque
+        sb.append(getIndent()).append("└─ Block:\n");
+        indentLevel++;
+        String blockOutput = statementLoopForEach.block.accept(this);
         String[] blockLines = blockOutput.split("\n");
         sb.append(blockLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
         for (int j = 1; j < blockLines.length; j++) {

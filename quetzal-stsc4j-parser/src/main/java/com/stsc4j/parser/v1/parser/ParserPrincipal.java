@@ -90,6 +90,12 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseLoopDoWhile().parseStatement();
         }
 
+        // Parser (Loop For Each)
+        if (isLoopForEach()) {
+            return parserStatement.parseLoopForEach().parseStatement();
+        }
+
+        // Parser (Loop For)
         if (isLoopForDeclaration()) {
             return parserStatement.parseLoopFor().parseStatement();
         }
