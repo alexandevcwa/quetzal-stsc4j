@@ -12,10 +12,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-        String sourceCode = "entero var x = 0\n" +
-                "entero var r = 0\n" +
-                "x = 10\n" +
-                "r = x + 5 * (3 + 2)\n";
+        String sourceCode = "entero suma = 1 + 2";
 
 
         System.out.println("=== Código fuente en Quetzal ===");
