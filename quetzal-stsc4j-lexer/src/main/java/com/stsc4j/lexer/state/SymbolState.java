@@ -15,7 +15,10 @@ public class SymbolState implements LexerState {
         if (SYMBOLS.contains(c)) {
             context.add(c);
             context.generateToken(SYMBOL_CLASSIFIER.classify(String.valueOf(c)));
-        } else {
+        } else if(!Character.isLetterOrDigit(c) && !Character.isWhitespace(c)) {
+            context.throwContext();
+        }
+        else {
             context.setState(new InitialState());
             context.getState().process(c, length, index, context);
         }

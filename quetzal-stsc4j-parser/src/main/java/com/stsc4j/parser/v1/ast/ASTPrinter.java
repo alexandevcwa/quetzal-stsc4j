@@ -579,6 +579,19 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementIncDec statementIncDec) {
+        StringBuilder sb = new StringBuilder();
+        String operator = statementIncDec.expression.operator[0].getLexeme() + statementIncDec.expression.operator[1].getLexeme();
+        sb.append(getIndent()).append("Increment/Decrement Statement: ").append(operator).append("\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Variable:\n");
+        indentLevel++;
+        sb.append(statementIncDec.expression.identifier.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementFunction statementFunction) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Function Declaration\n");

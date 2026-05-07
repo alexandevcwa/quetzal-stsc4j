@@ -19,6 +19,7 @@ public class ParserStatement {
     private ParserList parserList;
     private ParserDeclaration parserDeclaration;
     private ParserLoopWhile parserLoopWhile;
+    private ParserIncremental parserIncremental;
 
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
@@ -27,11 +28,11 @@ public class ParserStatement {
         this.parserPrincipal = parserPrincipal;
     }
 
-    public Parser parseExpressions(){
+    public Parser parseExpressions() {
         return parserExpressions;
     }
 
-    public Parser parseVar(){
+    public Parser parseVar() {
         if (parserDeclaration == null) {
             parserDeclaration = new ParserDeclaration(tokenStream, parserExpressions);
         }
@@ -45,7 +46,7 @@ public class ParserStatement {
         return parserIf;
     }
 
-    public Parser parseList(){
+    public Parser parseList() {
         if (parserList == null) {
             parserList = new ParserList(tokenStream, parserExpressions);
         }
@@ -80,10 +81,17 @@ public class ParserStatement {
         return parserReturn;
     }
 
-    public Parser parseLoopWhile(){
-        if(parserLoopWhile == null){
+    public Parser parseLoopWhile() {
+        if (parserLoopWhile == null) {
             parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
         }
         return null;
+    }
+
+    public Parser parseIncremental() {
+        if (parserIncremental == null) {
+            parserIncremental = new ParserIncremental(parserExpressions);
+        }
+        return parserIncremental;
     }
 }
