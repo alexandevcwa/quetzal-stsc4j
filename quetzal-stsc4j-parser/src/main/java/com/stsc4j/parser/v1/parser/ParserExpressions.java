@@ -258,32 +258,56 @@ public class ParserExpressions extends Parser {
     }
 
     private Expression primaryParser() {
+        // Controla literales enteros
         if (tokenStream.match(TokenType.LIT_INTEGER)) {
             Token token = tokenStream.before();
             return new ExpressionLiteral(token, token.getLexeme());
         }
+
+        // Controla literales decimales
         if (tokenStream.match(TokenType.LIT_DECIMAL)) {
             Token token = tokenStream.before();
             return new ExpressionLiteral(token, token.getLexeme());
         }
+
+        // Controla cadenas de texto
         if (tokenStream.match(TokenType.LIT_STRING)) {
             Token token = tokenStream.before();
             return new ExpressionLiteral(token, token.getLexeme());
         }
+
+        // Controla booleanos
         if (tokenStream.match(TokenType.LIT_TRUE) || tokenStream.match(TokenType.LIT_FALSE)) {
             Token token = tokenStream.before();
             return new ExpressionLiteral(token, token.getLexeme());
         }
+
+        // Controla variables
         if (tokenStream.match(TokenType.IDENTIFIER)) {
             return new ExpressionVariable(tokenStream.before());
         }
+
+        // Controla null
         if (tokenStream.match(TokenType.NULL)) {
             return new ExpressionNull(tokenStream.before());
         }
+
+        // Controla apertura y cierre de paréntesis
         if (tokenStream.match(TokenType.LEFT_PARENT)) {
             Expression expression = parseExpression();
             tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de la expresión.");
             return expression;
+        }
+
+        // Controla números negativos
+        if (tokenStream.match(TokenType.MINUS)) {
+            if (tokenStream.match(TokenType.LIT_INTEGER, TokenType.LIT_DECIMAL)) {
+                Token number = tokenStream.before();
+                var token = new Token(number.getType(), ("-" + number.lexeme), number.line);
+                return new ExpressionLiteral(token, token.getLexeme());
+            } else {
+                tokenStream.back();
+            }
         }
         throw new ParserException("Se esperaba una expresión.");
     }

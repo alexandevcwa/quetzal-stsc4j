@@ -48,7 +48,7 @@ class ParserDeclarationTest {
         context.process(code);
         tokens.addAll(context.getTokens());
         // Act
-        final Statement sta = parser.parseStatement();
+        final Statement sta = assertDoesNotThrow(() -> parser.parseStatement());
 
         // Assert
         assertThat(sta)
@@ -83,8 +83,8 @@ class ParserDeclarationTest {
         final String code = "entero a = 1 + a + 2";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var sta = parser.parseStatement();
-        assertThat(sta)
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast)
                 .matches(s -> s instanceof StatementVariable);
     }
 
@@ -94,7 +94,7 @@ class ParserDeclarationTest {
         final String code = "entero valorMatriz = matriz_n1[1]";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ast = parser.parseStatement();
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementVariable);
         System.out.println(astPrinter.print(ast));
@@ -107,12 +107,45 @@ class ParserDeclarationTest {
         context.process(code);
         tokens.forEach(System.out::println);
         tokens.addAll(context.getTokens());
-        var ast = parser.parseStatement();
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
 
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementVariable);
         var formated = (StatementVariable) ast;
         assertThat(((ExpressionIndexAccess) formated.initialValue).indexList.size()).isEqualTo(2);
         System.out.println(astPrinter.print(ast));
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor negativo")
+    void testVariableNumerosNegativos() {
+        final String code = "entero valor = -1";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor negativo con decimal")
+    void testVariableNumerosNegativos2() {
+        final String code = "entero valor = -1.5";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor negativo con operación")
+    void testVariableNumerosNegativos3() {
+        final String code = "entero valor = - 1 - (-1)";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
     }
 }
