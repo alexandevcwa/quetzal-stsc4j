@@ -11,8 +11,8 @@ public class SemanticAnalyzer implements Visitor<String> {
     // Nuestra memoria que guarda las variables que vamos encontrando
     private Environment currentEnv = new Environment();
 
-    private final SemanticExpressionVariable semanticExpressionVariable = new SemanticExpressionVariable(currentEnv);
-    private final SemanticStatementVariable semanticStatementVariable = new SemanticStatementVariable(currentEnv);
+    private final SemanticExpressionVariable semanticExpressionVariable = new SemanticExpressionVariable(currentEnv, this);
+    private final SemanticStatementVariable semanticStatementVariable = new SemanticStatementVariable(currentEnv, this);
     private final SemanticStatementBlock semanticStatementBlock = new SemanticStatementBlock(currentEnv);
     private final SemanticStatementIf semanticStatementIf = new SemanticStatementIf(currentEnv);
     private final SemanticStatementList semanticStatementList = new SemanticStatementList(currentEnv);
@@ -23,7 +23,7 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementLoopWhile semanticStatementLoopWhile = new SemanticStatementLoopWhile(currentEnv);
     private final SemanticStatementLoopDoWhile semanticStatementLoopDoWhile = new SemanticStatementLoopDoWhile(currentEnv);
     private final SemanticStatementLoopFor semanticStatementLoopFor = new SemanticStatementLoopFor(currentEnv);
-    private final SemanticExpressionBinary semanticExpressionBinary = new SemanticExpressionBinary(currentEnv);
+    private final SemanticExpressionBinary semanticExpressionBinary = new SemanticExpressionBinary(currentEnv, this);
     private final SemanticExpressionLiteral semanticExpressionLiteral = new SemanticExpressionLiteral(currentEnv);
     private final SemanticExpressionTernary semanticExpressionTernary = new SemanticExpressionTernary(currentEnv);
     private final SemanticExpressionMethodCall semanticExpressionMethodCall = new SemanticExpressionMethodCall(currentEnv);

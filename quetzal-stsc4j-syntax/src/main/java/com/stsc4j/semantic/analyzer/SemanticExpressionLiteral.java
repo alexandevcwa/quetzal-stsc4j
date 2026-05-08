@@ -1,5 +1,6 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.ExpressionLiteral;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
@@ -14,20 +15,22 @@ public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
     @Override
     public String visit(ExpressionLiteral expressionLiteral) {
-        String tipoToken = expressionLiteral.token.getType().toString();
+        TokenType tipoToken = expressionLiteral.token.getType();
 
-        if (tipoToken.contains("INTEGER") || tipoToken.contains("ENTERO")) {
-            return "entero";
-        } else if (tipoToken.contains("STRING") || tipoToken.contains("CADENA")) {
-            return "cadena";
-        } else if (tipoToken.contains("DECIMAL") || tipoToken.contains("FLOAT")) {
-            return "decimal";
-        } else if (tipoToken.contains("BOOLEAN") || tipoToken.contains("BOOL") || tipoToken.contains("TRUE") || tipoToken.contains("FALSE")) {
-            // ¡Aquí agregamos TRUE y FALSE para tu lexer!
-            return "booleano";
+        switch (tipoToken) {
+            case LIT_INTEGER:
+                return "entero";
+            case LIT_STRING:
+                return "cadena";
+            case LIT_DECIMAL:
+                return "decimal";
+            case LIT_FALSE:
+                return "booleano";
+            default:
+                // Si el token no es un literal reconocido, podríamos lanzar un error semántico o devolver "desconocido"
+                return "desconocido";
         }
 
-        return "desconocido";
     }
 
 }
