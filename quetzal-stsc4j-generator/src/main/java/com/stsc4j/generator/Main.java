@@ -13,8 +13,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        String codigoQuetzal = "entero a = 12 + 15 " +
-                "consola.mostrar(a)";
+        String codigoQuetzal = "entero a = 12.5 + 15 ";
 
         System.out.println("======================================");
         System.out.println("🦅 COMPILADOR QUETZAL INICIADO 🦅");
