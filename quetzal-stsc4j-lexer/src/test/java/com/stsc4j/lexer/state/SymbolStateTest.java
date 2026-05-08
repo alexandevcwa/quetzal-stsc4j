@@ -14,7 +14,7 @@ class SymbolStateTest {
     @Test
     void testSimbolosArroba(){
         LexerContext c = new LexerContext();
-        c.process("@");
+        assertThrows(Exception.class, () -> c.process("@"));
     }
 
 }
