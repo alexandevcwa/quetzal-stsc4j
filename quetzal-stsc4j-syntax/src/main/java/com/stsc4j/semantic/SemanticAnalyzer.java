@@ -121,6 +121,16 @@ public class SemanticAnalyzer implements Visitor<String> {
         return semanticStatementLoopFor.visit(statementLoopFor);
     }
 
+    @Override
+    public String visit(StatementLoopForEach statementLoopForEach) {
+        return null;
+    }
+
+    @Override
+    public String visit(StatementIncDec statementIncDec) {
+        return null;
+    }
+
 
     // EXPRESIONES
 
@@ -177,5 +187,10 @@ public class SemanticAnalyzer implements Visitor<String> {
     @Override
     public String visit(ExpressionIncDec expressionIncDec) {
         return semanticExpressionIncDec.visit(expressionIncDec);
+    }
+
+    @Override
+    public String visit(ExpressionForEachVar expressionForEachVar) {
+        return null;
     }
 }
