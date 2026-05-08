@@ -47,6 +47,8 @@ public class ClassifierKeywords implements Classifier {
         KEYWORDS_MAP.put(NEW_INSTANCE, TokenType.NEW_INSTANCE);
         KEYWORDS_MAP.put(IMPORT_MODULE, TokenType.IMPORT_MODULE);
         KEYWORDS_MAP.put(IMPORT_MODULE_L, TokenType.IMPORT_MODULE_L);
+        KEYWORDS_MAP.put(C_CONSOLE, TokenType.C_CONSOLE);
+        KEYWORDS_MAP.put(F_PRINT,TokenType.F_PRINT);
     }
 
     @Override

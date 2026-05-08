@@ -65,6 +65,7 @@ public enum TokenType {
     BRACES_CLOSE,
     COMMA,
     DOUBLE_DOT,
+    SEMICOLON,
     DOT,
     QUESTION,
 
@@ -76,6 +77,9 @@ public enum TokenType {
     LIT_FALSE,
 
     // End of file/input
-    EOF
+    EOF,
 
+    // RESERVED KEYWORDS FOR QUETZAL
+    C_CONSOLE,
+    F_PRINT,
 }

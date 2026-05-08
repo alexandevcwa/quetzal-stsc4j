@@ -64,10 +64,15 @@ public class ParserExpressions extends Parser {
         Expression expression = parseRelationalExpression();
         while (tokenStream.match(TokenType.EQUAL, TokenType.EXCLAMATION)) {
             Token operator = tokenStream.show();
-            Token secondaryOperator = null;
+
+            Token secondaryOperator;
             if (tokenStream.match(TokenType.EQUAL)) {
                 secondaryOperator = tokenStream.before();
+            } else {
+                tokenStream.back();
+                return expression;
             }
+
             Expression right = parseRelationalExpression();
             if (secondaryOperator != null) {
                 final Token[] operators = {operator, secondaryOperator};
@@ -112,11 +117,35 @@ public class ParserExpressions extends Parser {
 
     // Maneja * y /
     private Expression parseMultiplyAndDivideExpression() {
-        Expression expression = parseMethodCall();
+        Expression expression = parsePostfixExpression();
         while (tokenStream.match(TokenType.MULTIPLY, TokenType.DIVIDE)) {
             Token operator = tokenStream.before();
-            Expression right = parseMethodCall();
+            Expression right = parsePostfixExpression();
             expression = new ExpressionBinary(expression, operator, right);
+        }
+        return expression;
+    }
+
+    // Maneja ++ y -- como operadores de postfijo
+    private Expression parsePostfixExpression() {
+        Expression expression = parseMethodCall();
+        if (expression instanceof ExpressionVariable) {
+            boolean isOk1 = tokenStream.match(TokenType.PLUS, TokenType.MINUS);
+            if (!isOk1) {
+                return expression;
+            }
+            Token operator1 = tokenStream.before();
+            boolean isOk2 = tokenStream.match(TokenType.PLUS, TokenType.MINUS);
+            if (!isOk2) {
+                tokenStream.back();
+                return expression;
+            }
+            Token operator2 = tokenStream.before();
+            if (operator1.getType().equals(operator2.getType())) {
+                return new ExpressionIncDec((ExpressionVariable) expression, new Token[]{operator1, operator2});
+            }
+            tokenStream.back(2);
+            throw new ParserException("Operadores de incremento/decremento deben ser iguales para formar '++' o '--'.");
         }
         return expression;
     }
@@ -209,10 +238,20 @@ public class ParserExpressions extends Parser {
                 indexList = new ArrayList<>();
             }
             Expression idx = parseExpression();
-            indexList.add(idx);
-            tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
+            if (idx instanceof ExpressionVariable || (idx instanceof ExpressionLiteral)) {
+                if (idx instanceof ExpressionLiteral) {
+                    ExpressionLiteral literal = (ExpressionLiteral) idx;
+                    if (!literal.token.getType().equals(TokenType.LIT_INTEGER)) {
+                        throw new ParserException("El índice de acceso debe ser un entero o una variable.");
+                    }
+                }
+                indexList.add(idx);
+                tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
+            } else {
+                throw new ParserException("El índice de acceso debe ser una expresión válida (variable o literal numérica).");
+            }
         }
-        if(indexList != null) {
+        if (indexList != null) {
             expression = new ExpressionIndexAccess(expression, indexList);
         }
         return expression;
@@ -237,6 +276,9 @@ public class ParserExpressions extends Parser {
         }
         if (tokenStream.match(TokenType.IDENTIFIER)) {
             return new ExpressionVariable(tokenStream.before());
+        }
+        if (tokenStream.match(TokenType.NULL)) {
+            return new ExpressionNull(tokenStream.before());
         }
         if (tokenStream.match(TokenType.LEFT_PARENT)) {
             Expression expression = parseExpression();

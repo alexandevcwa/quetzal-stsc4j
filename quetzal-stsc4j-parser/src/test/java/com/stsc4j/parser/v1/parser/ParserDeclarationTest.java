@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.ExpressionIndexAccess;
 import com.stsc4j.parser.v1.ast.Statement;
@@ -45,15 +44,9 @@ class ParserDeclarationTest {
     @DisplayName("Test - Declaración de variable con tipo de dato primitivo")
     void testDeclaracionVariable() {
         // Arrange: crear tokens manuales
-        tokens.add(new Token(TokenType.PRIMITIVE_BOOLEAN, "log", 1));
-        tokens.add(new Token(TokenType.IDENTIFIER, "a", 1));
-        tokens.add(new Token(TokenType.EQUAL, "=", 1));
-        tokens.add(new Token(TokenType.LIT_FALSE, "false", 1));
-        tokens.add(new Token(TokenType.EOF, "", 1));
-
-        var tokenStream = new TokenStream(tokens);
-        parser = new ParserDeclaration(tokenStream, new ParserExpressions(tokenStream));
-
+        final String code = "log a = false";
+        context.process(code);
+        tokens.addAll(context.getTokens());
         // Act
         final Statement sta = parser.parseStatement();
 
@@ -67,13 +60,9 @@ class ParserDeclarationTest {
     @Test
     @DisplayName("Test - Variable con identificador primero que tipo de dato")
     void testVariableConIdentificadorPrimeroQueTipoDato() {
-        tokens.add(new Token(TokenType.IDENTIFIER, "a", 1));
-        tokens.add(new Token(TokenType.PRIMITIVE_INTEGER, "número", 1));
-        tokens.add(new Token(TokenType.EQUAL, "=", 1));
-        tokens.add(new Token(TokenType.LIT_INTEGER, "1", 1));
-        tokens.add(new Token(TokenType.EOF, "", 1));
-        var tokenStream = new TokenStream(tokens);
-        parser = new ParserDeclaration(tokenStream, new ParserExpressions(tokenStream));
+        final String code = "a número = 1";
+        context.process(code);
+        tokens.addAll(context.getTokens());
         assertThrows(ParserException.class, () -> parser.parseStatement());
         tokens.clear();
     }
@@ -81,12 +70,9 @@ class ParserDeclarationTest {
     @Test
     @DisplayName("Test - Variable sin identificador")
     void testVariableSinIdentificador() {
-        tokens.add(new Token(TokenType.PRIMITIVE_BOOLEAN, "log", 1));
-        tokens.add(new Token(TokenType.EQUAL, "=", 1));
-        tokens.add(new Token(TokenType.LIT_FALSE, "false", 1));
-        tokens.add(new Token(TokenType.EOF, "", 1));
-        var tokenStream = new TokenStream(tokens);
-        parser = new ParserDeclaration(tokenStream, new ParserExpressions(tokenStream));
+        final String coder = "log = false";
+        context.process(coder);
+        tokens.addAll(context.getTokens());
         assertThrows(ParserException.class, () -> parser.parseStatement());
         tokens.clear();
     }
@@ -94,20 +80,12 @@ class ParserDeclarationTest {
     @Test
     @DisplayName("Test - Variable existente con nueva asignación")
     void testVariableExistenteConNuevaAsignacion() {
-        tokens.add(new Token(TokenType.IDENTIFIER, "a", 1));
-        tokens.add(new Token(TokenType.EQUAL, "=", 1));
-        tokens.add(new Token(TokenType.LIT_INTEGER, "1", 1));
-        tokens.add(new Token(TokenType.PLUS, "+", 1));
-        tokens.add(new Token(TokenType.IDENTIFIER, "a", 1));
-        tokens.add(new Token(TokenType.PLUS, "+", 1));
-        tokens.add(new Token(TokenType.LIT_INTEGER, "2", 1));
-        tokens.add(new Token(TokenType.EOF, "", 1));
-        var tokenStream = new TokenStream(tokens);
-        parser = new ParserDeclaration(tokenStream, new ParserExpressions(tokenStream));
+        final String code = "entero a = 1 + a + 2";
+        context.process(code);
+        tokens.addAll(context.getTokens());
         var sta = parser.parseStatement();
         assertThat(sta)
                 .matches(s -> s instanceof StatementVariable);
-        tokens.clear();
     }
 
     @Test
@@ -127,6 +105,7 @@ class ParserDeclarationTest {
     void testVariableDeclaracionConValorMatrixN2() {
         final String code = "entero valorMatriz = matriz_n2[1][2]";
         context.process(code);
+        tokens.forEach(System.out::println);
         tokens.addAll(context.getTokens());
         var ast = parser.parseStatement();
 

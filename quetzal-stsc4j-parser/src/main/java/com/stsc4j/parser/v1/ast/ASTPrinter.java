@@ -35,7 +35,7 @@ public class ASTPrinter implements Visitor<String> {
     @Override
     public String visit(ExpressionBinary expressionBinary) {
         StringBuilder sb = new StringBuilder();
-        String operator = null;
+        String operator;
         if (null != expressionBinary.operators) {
             operator = Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
         } else {
@@ -272,6 +272,32 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ExpressionIncDec expressionIncDec) {
+        StringBuilder sb = new StringBuilder();
+        String operator = expressionIncDec.operator[0].getLexeme() + expressionIncDec.operator[1].getLexeme();
+        sb.append(getIndent()).append("Increment/Decrement Operation: ").append(operator).append("\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Variable:\n");
+        indentLevel++;
+        sb.append(expressionIncDec.identifier.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(ExpressionForEachVar expressionForEachVar) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("For-Each Variable\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Type: ").append(expressionForEachVar.type.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Variable:\n");
+        indentLevel++;
+        sb.append(expressionForEachVar.variable.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementIf statementIf) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("If Statement\n");
@@ -436,9 +462,7 @@ public class ASTPrinter implements Visitor<String> {
         }
 
         // Cerrar todos los brackets
-        for (int i = 0; i <= depth; i++) {
-            sb.append(">");
-        }
+        sb.append(">".repeat(Math.max(0, depth + 1)));
 
         return sb.toString();
     }
@@ -505,6 +529,146 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementLoopFor statementLoopFor) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("For Loop\n");
+        indentLevel++;
+
+        // Inicialización
+        if (statementLoopFor.declaration != null) {
+            sb.append(getIndent()).append("├─ Initialization:\n");
+            indentLevel++;
+            String declOutput = statementLoopFor.declaration.accept(this);
+            String[] lines = declOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            indentLevel--;
+            sb.append("\n");
+        }
+
+        // Condición
+        sb.append(getIndent()).append("├─ Condition:\n");
+        indentLevel++;
+        String condOutput = statementLoopFor.condition.accept(this);
+        String[] condLines = condOutput.split("\n");
+        sb.append(condLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < condLines.length; j++) {
+            sb.append("\n").append(condLines[j]);
+        }
+        indentLevel--;
+        sb.append("\n");
+
+        // Incremento
+        if (statementLoopFor.increment != null) {
+            sb.append(getIndent()).append("├─ Increment:\n");
+            indentLevel++;
+            String incOutput = statementLoopFor.increment.accept(this);
+            String[] incLines = incOutput.split("\n");
+            sb.append(incLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < incLines.length; j++) {
+                sb.append("\n").append(incLines[j]);
+            }
+            indentLevel--;
+            sb.append("\n");
+        }
+
+        // Bloque
+        sb.append(getIndent()).append("└─ Block:\n");
+        indentLevel++;
+        String blockOutput = statementLoopFor.block.accept(this);
+        String[] blockLines = blockOutput.split("\n");
+        sb.append(blockLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < blockLines.length; j++) {
+            sb.append("\n").append(blockLines[j]);
+        }
+        indentLevel--;
+
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementLoopForEach statementLoopForEach) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("For-Each Loop\n");
+        indentLevel++;
+
+        // Variable del for-each
+        sb.append(getIndent()).append("├─ Variable Declaration:\n");
+        indentLevel++;
+        String varOutput = statementLoopForEach.declaration.accept(this);
+        String[] varLines = varOutput.split("\n");
+        sb.append(varLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < varLines.length; j++) {
+            sb.append("\n").append(varLines[j]);
+        }
+        indentLevel--;
+        sb.append("\n");
+
+        // Lista a iterar
+        sb.append(getIndent()).append("├─ Collection:\n");
+        indentLevel++;
+        String listOutput = statementLoopForEach.listVariable.accept(this);
+        String[] listLines = listOutput.split("\n");
+        sb.append(listLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < listLines.length; j++) {
+            sb.append("\n").append(listLines[j]);
+        }
+        indentLevel--;
+        sb.append("\n");
+
+        // Bloque
+        sb.append(getIndent()).append("└─ Block:\n");
+        indentLevel++;
+        String blockOutput = statementLoopForEach.block.accept(this);
+        String[] blockLines = blockOutput.split("\n");
+        sb.append(blockLines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+        for (int j = 1; j < blockLines.length; j++) {
+            sb.append("\n").append(blockLines[j]);
+        }
+        indentLevel--;
+
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementIncDec statementIncDec) {
+        StringBuilder sb = new StringBuilder();
+        String operator = statementIncDec.expression.operator[0].getLexeme() + statementIncDec.expression.operator[1].getLexeme();
+        sb.append(getIndent()).append("Increment/Decrement Statement: ").append(operator).append("\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Variable:\n");
+        indentLevel++;
+        sb.append(statementIncDec.expression.identifier.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementMatrixAssignation statementMatrixAssignation) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Matrix/List Assignment\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Target (Index Access):\n");
+        indentLevel++;
+        sb.append(statementMatrixAssignation.matrix.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Value:\n");
+        indentLevel++;
+        sb.append(statementMatrixAssignation.expression.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(ExpressionNull expressionNull) {
+        return getIndent() + "Null (" + expressionNull.token.getType().toString() + ")";
+    }
+
+    @Override
     public String visit(StatementFunction statementFunction) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Function Declaration\n");
@@ -545,11 +709,9 @@ public class ASTPrinter implements Visitor<String> {
 
     @Override
     public String visit(StatementFunctionParameter statementFunctionParameter) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getIndent()).append("Parameter: ");
-        sb.append(statementFunctionParameter.type.getLexeme());
-        sb.append(" ");
-        sb.append(statementFunctionParameter.identified.getLexeme());
-        return sb.toString();
+        return getIndent() + "Parameter: " +
+                statementFunctionParameter.type.getLexeme() +
+                " " +
+                statementFunctionParameter.identified.getLexeme();
     }
 }

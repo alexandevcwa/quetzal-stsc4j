@@ -19,6 +19,7 @@ public class ParserDeclaration extends Parser {
     public Statement parseStatement() {
         if (tokenStream.notMatch(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
+            System.out.println(tokenStream.before().getLexeme());
             throw new ParserException("Se esperaba una declaración de variable con 'var' o una asignación a una variable ya declarada.");
         }
 
@@ -29,10 +30,10 @@ public class ParserDeclaration extends Parser {
         boolean isMutable = false;
 
         // Nombre de la variable
-        Token name = null;
+        Token name;
 
         // Valor inicial de la variable
-        Expression initialValue = null;
+        Expression initialValue;
 
         // Asignar nuevo valor a una variable ya declarada
         if (type.getType().equals(TokenType.IDENTIFIER)) {

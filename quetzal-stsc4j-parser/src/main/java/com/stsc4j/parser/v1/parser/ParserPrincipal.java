@@ -1,18 +1,19 @@
 package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.TokenType;
+import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.Statement;
+import com.stsc4j.parser.v1.ast.StatementExpression;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserPrincipal {
-    private final TokenStream tokenStream;
+public class ParserPrincipal extends ParserPrincipalValidations {
 
     private final ParserStatement parserStatement;
 
     public ParserPrincipal(TokenStream stream) {
-        this.tokenStream = stream;
-
+        super(stream);
         this.parserStatement = new ParserStatement(stream, this);
     }
 
@@ -37,62 +38,73 @@ public class ParserPrincipal {
     }
 
     public Statement parseNext() {
-        // Parser de Llamadas a Métodos y Funciones
-//        if (tokenStream.match(TokenType.IDENTIFIER) &&
-//                (tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
-//            Expression expr = parserExpressions.parseExpression();
-//            return new StatementExpression(expr);
-//        }
 
+        // Parser de Asignaciones e Incrementales/Decrementales
+        if (isIncrementalDecremental()) {
+            return parserStatement.parseIncremental().parseStatement();
+        }
+
+        // Parser de Llamadas a Métodos y Funciones
+        if (isFunctionCall()) {
+            Expression expr = parserStatement.parseExpressions().parseExpression();
+            return new StatementExpression(expr);
+        }
 
         // Parser (Funciones)
-        if (tokenStream.match(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
-                TokenType.PRIMITIVE_BOOLEAN, TokenType.PRIMITIVE_VOID)) {
-            if (tokenStream.match(TokenType.IDENTIFIER)) {
-                if (tokenStream.match(TokenType.LEFT_PARENT)) {
-                    tokenStream.back(3);
-                    // Llamar a parser
-                    return parserStatement.parseFunction().parseStatement();
-                } else {
-                    tokenStream.back(2);
-                }
-            } else {
-                tokenStream.back(1);
-            }
+        if (isFunctionDeclaration()) {
+            return parserStatement.parseFunction().parseStatement();
+        }
+
+        // Parser (Matrix Assignation)
+        if(isMatrixAssignation()){
+            return parserStatement.parseMatrixAssignation().parseStatement();
         }
 
         // Parser (Variables)
-        if (tokenStream.matchNotAdvance(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
-                TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER)) {
+        if (isVariableDeclaration()) {
             return parserStatement.parseVar().parseStatement();
         }
 
         // Parser (Listas)
-        if (tokenStream.match(TokenType.LIST)) {
+        if (isListDeclaration()) {
             return parserStatement.parseList().parseStatement();
         }
 
         // Parser (If)
-        if (tokenStream.matchNotAdvance(TokenType.IF)) {
-
+        if (isIfDeclaration()) {
             return parserStatement.parseIf().parseStatement();
         }
 
         // Parser (Return)
-        if (tokenStream.match(TokenType.RETURN)) {
-            tokenStream.back();
+        if (isReturnDeclaration()) {
             return parserStatement.parseReturn().parseStatement();
         }
 
         // Parser (JSN)
-        if (tokenStream.matchNotAdvance(TokenType.JSN)) {
+        if (isJSNDeclaration()) {
             return parserStatement.parseJsn().parseStatement();
         }
 
-        if(tokenStream.matchNotAdvance(TokenType.LOOP_WHILE)){
+        // Parser (Loop While)
+        if (isLoopWhileDeclaration()) {
             return parserStatement.parseLoopWhile().parseStatement();
         }
 
-        throw new RuntimeException("Unrecognized token...");
+        // Parser (Loop Do While)
+        if (isLoopDoWhileDeclaration()) {
+            return parserStatement.parseLoopDoWhile().parseStatement();
+        }
+
+        // Parser (Loop For Each)
+        if (isLoopForEach()) {
+            return parserStatement.parseLoopForEach().parseStatement();
+        }
+
+        // Parser (Loop For)
+        if (isLoopForDeclaration()) {
+            return parserStatement.parseLoopFor().parseStatement();
+        }
+
+        throw new RuntimeException("Token no reconocido........................");
     }
 }

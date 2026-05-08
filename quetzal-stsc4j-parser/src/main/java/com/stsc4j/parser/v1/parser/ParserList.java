@@ -19,6 +19,7 @@ public class ParserList extends Parser {
 
     @Override
     public Statement parseStatement() {
+        tokenStream.consume(TokenType.LIST, "Se esperaba 'lista'");
         TypeList typeList = (TypeList) parseListType();
         boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
         Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el identificador de la lista.");
