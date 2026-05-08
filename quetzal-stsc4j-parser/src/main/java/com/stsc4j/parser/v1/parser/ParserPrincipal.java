@@ -55,6 +55,11 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseFunction().parseStatement();
         }
 
+        // Parser (Matrix Assignation)
+        if(isMatrixAssignation()){
+            return parserStatement.parseMatrixAssignation().parseStatement();
+        }
+
         // Parser (Variables)
         if (isVariableDeclaration()) {
             return parserStatement.parseVar().parseStatement();
@@ -100,6 +105,6 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseLoopFor().parseStatement();
         }
 
-        throw new RuntimeException("Unrecognized token...");
+        throw new RuntimeException("Token no reconocido........................");
     }
 }

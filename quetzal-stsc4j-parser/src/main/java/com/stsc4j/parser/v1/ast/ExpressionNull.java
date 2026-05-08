@@ -2,11 +2,10 @@ package com.stsc4j.parser.v1.ast;
 
 import com.stsc4j.lexer.Token;
 
-public class ExpressionVariable extends Expression{
-
+public class ExpressionNull extends Expression{
     public final Token token;
 
-    public ExpressionVariable(Token token) {
+    public ExpressionNull(Token token) {
         this.token = token;
     }
 
