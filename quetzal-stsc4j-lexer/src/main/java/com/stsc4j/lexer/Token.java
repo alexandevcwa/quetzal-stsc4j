@@ -1,9 +1,9 @@
 package com.stsc4j.lexer;
 
 public class Token {
-    final TokenType type;
-    final String lexeme;
-    final int line;
+    public final TokenType type;
+    public final String lexeme;
+    public final int line;
 
     public Token(TokenType type, String value, int line) {
         this.type = type;

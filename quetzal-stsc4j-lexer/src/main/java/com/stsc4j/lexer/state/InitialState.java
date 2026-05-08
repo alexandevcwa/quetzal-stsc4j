@@ -16,7 +16,6 @@ public class InitialState implements LexerState {
             }
             return;
         }
-
         // Analyze special characters like symbols
         // EL igual = puede ser procesado
         if ((!Character.isLetterOrDigit(c) && '_' != c && '"' != c) || c == 'y' || c == 'o') {
