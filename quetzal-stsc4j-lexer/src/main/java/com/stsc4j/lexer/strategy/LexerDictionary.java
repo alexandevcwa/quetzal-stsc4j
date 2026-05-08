@@ -40,12 +40,18 @@ public class LexerDictionary {
     public static final String NEW_INSTANCE = "nuevo";
     public static final String IMPORT_MODULE = "importar";
     public static final String IMPORT_MODULE_L = "desde";
+
+    // Palabras, Funciones Predefinidas
+    public static final String C_CONSOLE = "consola";
+    public static final String F_PRINT = "mostrar";
+    //TODO: Agregar funciones predefinidas luego, ahora no tengo tiempo (Deja de rascarte el fundillo mother_fuker)
+
     public static final Set<String> KEYWORDS = Set.of(
             ENTERO, NUMERO, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,
             IF, ELSE, NULL, LIST, JSN, LOOP_WHILE, LOOP_DO, LOOP_FOR, LOOP_EACH_1,
             LOOP_EACH_2, BREAK, CONTINUE, RETURN, THROW, TRY, CATCH, EXCEPTION,
             FINALLY, OBJECT, PUBLIC_ACCESS, PRIVATE_ACCESS, STATIC, THIS, ASYNC, AWAIT,
-            NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L
+            NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L, C_CONSOLE, F_PRINT
     );
 
     public static final char PLUS = '+';

@@ -1,9 +1,9 @@
 package com.stsc4j.parser.v1.ast;
 
-public class StatementExpression extends Statement {
-    public final Expression expression;
+public class StatementIncDec extends Statement{
+    public final ExpressionIncDec expression;
 
-    public StatementExpression(Expression expression) {
+    public StatementIncDec(ExpressionIncDec expression) {
         this.expression = expression;
     }
 

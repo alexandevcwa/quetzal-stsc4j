@@ -1,8 +1,5 @@
 package com.stsc4j.parser.v1.parser;
 
-import com.stsc4j.parser.v1.ast.*;
-
-
 public class ParserStatement {
     private final TokenStream tokenStream;
 
@@ -19,6 +16,10 @@ public class ParserStatement {
     private ParserList parserList;
     private ParserDeclaration parserDeclaration;
     private ParserLoopWhile parserLoopWhile;
+    private ParserLoopDoWhile parserLoopDoWhile;
+    private ParserLoopFor parserLoopFor;
+    private ParserLoopForEach parserLoopForEach;
+    private ParserIncremental parserIncremental;
 
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
@@ -27,11 +28,11 @@ public class ParserStatement {
         this.parserPrincipal = parserPrincipal;
     }
 
-    public Parser parseExpressions(){
+    public Parser parseExpressions() {
         return parserExpressions;
     }
 
-    public Parser parseVar(){
+    public Parser parseVar() {
         if (parserDeclaration == null) {
             parserDeclaration = new ParserDeclaration(tokenStream, parserExpressions);
         }
@@ -45,7 +46,7 @@ public class ParserStatement {
         return parserIf;
     }
 
-    public Parser parseList(){
+    public Parser parseList() {
         if (parserList == null) {
             parserList = new ParserList(tokenStream, parserExpressions);
         }
@@ -80,10 +81,38 @@ public class ParserStatement {
         return parserReturn;
     }
 
-    public Parser parseLoopWhile(){
-        if(parserLoopWhile == null){
+    public Parser parseLoopWhile() {
+        if (parserLoopWhile == null) {
             parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
         }
-        return null;
+        return parserLoopWhile;
+    }
+
+    public Parser parseLoopDoWhile() {
+        if (parserLoopDoWhile == null) {
+            parserLoopDoWhile = new ParserLoopDoWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return parserLoopDoWhile;
+    }
+
+    public Parser parseIncremental() {
+        if (parserIncremental == null) {
+            parserIncremental = new ParserIncremental(parserExpressions);
+        }
+        return parserIncremental;
+    }
+
+    public Parser parseLoopForEach(){
+        if (parserLoopForEach == null){
+            parserLoopForEach = new ParserLoopForEach(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return parserLoopForEach;
+    }
+
+    public Parser parseLoopFor() {
+        if (parserLoopFor == null) {
+            parserLoopFor = new ParserLoopFor(tokenStream, parserDeclaration, parserExpressions, (ParserBlock) parseBlock());
+        }
+        return parserLoopFor;
     }
 }
