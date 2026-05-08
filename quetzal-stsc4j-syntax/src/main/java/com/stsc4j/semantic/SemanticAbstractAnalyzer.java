@@ -60,6 +60,10 @@ public abstract class SemanticAbstractAnalyzer implements Visitor <String> {
     }
 
     @Override
+    public String visit(ExpressionForEachVar expressionForEachVar) {
+        return null;
+    }
+    @Override
     public String visit(StatementIf statementIf) {
         return null;
     }
@@ -128,4 +132,14 @@ public abstract class SemanticAbstractAnalyzer implements Visitor <String> {
     public String visit(StatementLoopFor statementLoopFor) {
         return null;
     }
+
+    @Override
+    public String visit(StatementLoopForEach statementLoopForEach) {
+        return null;
+    }
+    @Override
+    public String visit(StatementIncDec statementIncDec) {
+        return null;
+    }
+
 }

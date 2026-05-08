@@ -1,6 +1,9 @@
 package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.ExpressionBinary;
+import com.stsc4j.parser.v1.ast.ExpressionForEachVar;
+import com.stsc4j.parser.v1.ast.StatementIncDec;
+import com.stsc4j.parser.v1.ast.StatementLoopForEach;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
 import com.stsc4j.semantic.SemanticError;

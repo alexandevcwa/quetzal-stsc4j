@@ -32,6 +32,10 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticExpressionJsnBlock semanticExpressionJsnBlock = new SemanticExpressionJsnBlock(currentEnv);
     private final SemanticExpressionJsn semanticExpressionJsn = new SemanticExpressionJsn(currentEnv);
     private final SemanticExpressionIncDec semanticExpressionIncDec = new SemanticExpressionIncDec(currentEnv);
+    private final SemanticStatementLoopForEach semanticStatementLoopForEach = new SemanticStatementLoopForEach(currentEnv, this);
+    private final SemanticStatementIncDec semanticStatementIncDec = new SemanticStatementIncDec(currentEnv, this);
+    private final SemanticExpressionPropertyAccess semanticExpressionPropertyAccess = new SemanticExpressionPropertyAccess(currentEnv, this);
+    private final SemanticExpressionForEachVar semanticExpressionForEachVar = new SemanticExpressionForEachVar(currentEnv, this);
 
 
 
@@ -123,14 +127,13 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(StatementLoopForEach statementLoopForEach) {
-        return null;
+        return semanticStatementLoopForEach.visit(statementLoopForEach);
     }
 
     @Override
     public String visit(StatementIncDec statementIncDec) {
-        return null;
+        return semanticStatementIncDec.visit(statementIncDec);
     }
-
 
     // EXPRESIONES
 
@@ -180,17 +183,17 @@ public class SemanticAnalyzer implements Visitor<String> {
     }
 
     @Override
-    public String visit(ExpressionPropertyAccess expressionPropertyAccess) {
-        return null;
-    }
-
-    @Override
     public String visit(ExpressionIncDec expressionIncDec) {
         return semanticExpressionIncDec.visit(expressionIncDec);
     }
 
     @Override
+    public String visit(ExpressionPropertyAccess expressionPropertyAccess) {
+        return semanticExpressionPropertyAccess.visit(expressionPropertyAccess);
+    }
+
+    @Override
     public String visit(ExpressionForEachVar expressionForEachVar) {
-        return null;
+        return semanticExpressionForEachVar.visit(expressionForEachVar);
     }
 }
