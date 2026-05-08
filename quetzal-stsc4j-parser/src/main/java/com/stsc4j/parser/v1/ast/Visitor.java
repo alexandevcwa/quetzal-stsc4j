@@ -225,4 +225,20 @@ public interface Visitor<T> {
      * @return un objeto de tipo T que representa el resultado de la visita
      */
     T visit(StatementIncDec statementIncDec);
+
+    /**
+     * Visits a StatementMatrixAssignation and processes it.
+     *
+     * @param statementMatrixAssignation the StatementMatrixAssignation object to be visited
+     * @return an object of type T resulting from the processing of the statementMatrixAssignation
+     */
+    T visit(StatementMatrixAssignation statementMatrixAssignation);
+
+    /**
+     * Visits the provided ExpressionNull instance and processes it according to the implementation.
+     *
+     * @param expressionNull an instance of ExpressionNull to be visited
+     * @return the result of processing the ExpressionNull instance
+     */
+    T visit(ExpressionNull expressionNull);
 }

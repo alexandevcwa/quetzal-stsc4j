@@ -64,10 +64,15 @@ public class ParserExpressions extends Parser {
         Expression expression = parseRelationalExpression();
         while (tokenStream.match(TokenType.EQUAL, TokenType.EXCLAMATION)) {
             Token operator = tokenStream.show();
-            Token secondaryOperator = null;
+
+            Token secondaryOperator;
             if (tokenStream.match(TokenType.EQUAL)) {
                 secondaryOperator = tokenStream.before();
+            } else {
+                tokenStream.back();
+                return expression;
             }
+
             Expression right = parseRelationalExpression();
             if (secondaryOperator != null) {
                 final Token[] operators = {operator, secondaryOperator};
@@ -233,8 +238,18 @@ public class ParserExpressions extends Parser {
                 indexList = new ArrayList<>();
             }
             Expression idx = parseExpression();
-            indexList.add(idx);
-            tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
+            if (idx instanceof ExpressionVariable || (idx instanceof ExpressionLiteral)) {
+                if (idx instanceof ExpressionLiteral) {
+                    ExpressionLiteral literal = (ExpressionLiteral) idx;
+                    if (!literal.token.getType().equals(TokenType.LIT_INTEGER)) {
+                        throw new ParserException("El índice de acceso debe ser un entero o una variable.");
+                    }
+                }
+                indexList.add(idx);
+                tokenStream.consume(TokenType.BRACKETS_CLOSE, "Se esperaba ']' después del índice.");
+            } else {
+                throw new ParserException("El índice de acceso debe ser una expresión válida (variable o literal numérica).");
+            }
         }
         if (indexList != null) {
             expression = new ExpressionIndexAccess(expression, indexList);
@@ -261,6 +276,9 @@ public class ParserExpressions extends Parser {
         }
         if (tokenStream.match(TokenType.IDENTIFIER)) {
             return new ExpressionVariable(tokenStream.before());
+        }
+        if (tokenStream.match(TokenType.NULL)) {
+            return new ExpressionNull(tokenStream.before());
         }
         if (tokenStream.match(TokenType.LEFT_PARENT)) {
             Expression expression = parseExpression();

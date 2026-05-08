@@ -20,6 +20,7 @@ public class ParserStatement {
     private ParserLoopFor parserLoopFor;
     private ParserLoopForEach parserLoopForEach;
     private ParserIncremental parserIncremental;
+    private ParserMatrixAssignation parserMatrixAssignation;
 
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
@@ -114,5 +115,12 @@ public class ParserStatement {
             parserLoopFor = new ParserLoopFor(tokenStream, parserDeclaration, parserExpressions, (ParserBlock) parseBlock());
         }
         return parserLoopFor;
+    }
+
+    public Parser parseMatrixAssignation(){
+        if (parserMatrixAssignation == null){
+            parserMatrixAssignation = new ParserMatrixAssignation(tokenStream, parserExpressions);
+        }
+        return parserMatrixAssignation;
     }
 }

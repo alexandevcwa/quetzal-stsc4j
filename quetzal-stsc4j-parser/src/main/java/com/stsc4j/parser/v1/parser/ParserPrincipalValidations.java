@@ -106,4 +106,16 @@ public abstract class ParserPrincipalValidations {
     protected boolean isLoopForDeclaration() {
         return tokenStream.matchNotAdvance(TokenType.LOOP_FOR);
     }
+
+
+    protected boolean isMatrixAssignation(){
+        if(tokenStream.notMatch(TokenType.IDENTIFIER)){
+            return false;
+        }
+        if(tokenStream.notMatch(TokenType.LEFT_PARENT)){
+            tokenStream.back();
+            return false;
+        }
+        return true;
+    }
 }
