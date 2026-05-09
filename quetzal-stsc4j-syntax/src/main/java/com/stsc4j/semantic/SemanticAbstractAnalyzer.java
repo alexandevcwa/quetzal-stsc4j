@@ -142,4 +142,33 @@ public abstract class SemanticAbstractAnalyzer implements Visitor <String> {
         return null;
     }
 
+    @Override
+    public String visit(StatementMatrixAssignation statementMatrixAssignation) {
+        return null;
+    }
+
+    @Override
+    public String visit(ExpressionNull expressionNull) {
+        return null;
+    }
+
+    @Override
+    public String visit(StatementTryCatchFinally statementTryCatchFinally) {
+        return null;
+    }
+
+    @Override
+    public String visit(StatementConsolaOut statementConsolaOut) {
+        return null;
+    }
+
+    @Override
+    public String visit(StatementContinue statementContinue) {
+        return null;
+    }
+
+    @Override
+    public String visit(StatementBreak statementBreak) {
+        return null;
+    }
 }
