@@ -14,7 +14,13 @@ public class Main {
     public static void main(String[] args) {
 
         String codigoQuetzal = "entero a = 15 \n" +
-                "entero b = 15.5 \n"+
+                "número b = 15.5 \n"+
+                "número d = 10 \n"+
+                "número c = 3 \n"+
+                "consola.mostrar (a*b) \n"+
+                "consola.mostrar (a/b) \n"+
+                "consola.mostrar (c/d) \n"+
+                "consola.mostrar (d/c) \n"+
                 "consola.mostrar (a+b)";
 
         System.out.println("======================================");
