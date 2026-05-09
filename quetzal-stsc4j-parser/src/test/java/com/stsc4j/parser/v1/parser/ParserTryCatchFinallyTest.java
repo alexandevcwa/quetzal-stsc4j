@@ -44,7 +44,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally correcto")
-    void testTryCatchFinallyCorrecto(){
+    void testTryCatchFinallyCorrecto() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "} capturar (excepcion error) {\n" +
@@ -61,7 +61,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch sin Finally")
-    void testTryCatchSinFinally(){
+    void testTryCatchSinFinally() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "} capturar (excepcion error) {\n" +
@@ -77,7 +77,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con múltiples statements en Try")
-    void testTryCatchFinallyMultipleStatementsInTry(){
+    void testTryCatchFinallyMultipleStatementsInTry() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "    entero b = 2\n" +
@@ -98,7 +98,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con múltiples statements en Catch")
-    void testTryCatchFinallyMultipleStatementsInCatch(){
+    void testTryCatchFinallyMultipleStatementsInCatch() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "} capturar (excepcion error) {\n" +
@@ -117,7 +117,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con Finally vacío")
-    void testTryCatchFinallyWithEmptyFinally(){
+    void testTryCatchFinallyWithEmptyFinally() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "} capturar (excepcion error) {\n" +
@@ -133,7 +133,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally anidado")
-    void testTryCatchFinallyNested(){
+    void testTryCatchFinallyNested() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "    intentar {\n" +
@@ -157,7 +157,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con expresiones complejas")
-    void testTryCatchFinallyComplexExpressions(){
+    void testTryCatchFinallyComplexExpressions() {
         final String code = "intentar {\n" +
                 "    entero resultado = 10 + 5 * 2\n" +
                 "    texto mensaje = \"Error\"\n" +
@@ -175,7 +175,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con condicional en Try")
-    void testTryCatchFinallyWithConditionalInTry(){
+    void testTryCatchFinallyWithConditionalInTry() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "    si (a > 0) {\n" +
@@ -195,7 +195,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con bucle en Catch")
-    void testTryCatchFinallyWithLoopInCatch(){
+    void testTryCatchFinallyWithLoopInCatch() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "} capturar (excepcion error) {\n" +
@@ -214,7 +214,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con lista en Try")
-    void testTryCatchFinallyWithListInTry(){
+    void testTryCatchFinallyWithListInTry() {
         final String code = "intentar {\n" +
                 "    lista<entero> numeros = [1, 2, 3, 4, 5]\n" +
                 "} capturar (excepcion error) {\n" +
@@ -231,7 +231,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Try-Catch-Finally con llamada a método")
-    void testTryCatchFinallyWithMethodCall(){
+    void testTryCatchFinallyWithMethodCall() {
         final String code = "intentar {\n" +
                 "    entero resultado = miObjeto.metodo(5, 10)\n" +
                 "} capturar (excepcion error) {\n" +
@@ -248,7 +248,7 @@ class ParserTryCatchFinallyTest {
 
     @Test
     @DisplayName("Test - Verificar estructura AST de Try-Catch-Finally")
-    void testVerifyASTStructure(){
+    void testVerifyASTStructure() {
         final String code = "intentar {\n" +
                 "    entero a = 1\n" +
                 "} capturar (excepcion miError) {\n" +
