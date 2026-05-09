@@ -44,7 +44,12 @@ public class LexerDictionary {
     // Palabras, Funciones Predefinidas
     public static final String C_CONSOLE = "consola";
     public static final String F_PRINT = "mostrar";
-    //TODO: Agregar funciones predefinidas luego, ahora no tengo tiempo (Deja de rascarte el fundillo mother_fuker)
+    public static final String F_PRINT_ERROR = "mostrar_error";
+    public static final String F_PRINT_WARNING = "mostrar_advertencia";
+    public static final String F_PRINT_INFO = "mostrar_informacion";
+    public static final String F_PRINT_SUCCESS = "mostrar_exito";
+    public static final String F_SCANNER = "pedir";
+    public static final String F_SCANNER_SECRET = "pedir_secreto";
 
     public static final Set<String> KEYWORDS = Set.of(
             ENTERO, NUMERO, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,

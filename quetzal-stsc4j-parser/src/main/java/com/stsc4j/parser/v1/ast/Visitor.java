@@ -241,4 +241,15 @@ public interface Visitor<T> {
      * @return the result of processing the ExpressionNull instance
      */
     T visit(ExpressionNull expressionNull);
+
+    /**
+     * Visits the provided StatementTryCatchFinally object and performs operations
+     * defined in the implementation of this method.
+     *
+     * @param statementTryCatchFinally the try-catch-finally statement node to visit
+     * @return a result of type T after processing the provided statement
+     */
+    T visit(StatementTryCatchFinally statementTryCatchFinally);
+
+    T visit(StatementConsolaOut statementConsolaOut);
 }
