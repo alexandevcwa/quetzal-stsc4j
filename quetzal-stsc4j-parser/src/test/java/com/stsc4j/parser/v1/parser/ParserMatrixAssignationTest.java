@@ -20,7 +20,7 @@ class ParserMatrixAssignationTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
+    private static final ASTPrinter astPrinter = new ASTPrinter();
 
     public static ParserMatrixAssignation parser;
 
