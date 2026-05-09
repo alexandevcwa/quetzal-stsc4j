@@ -251,5 +251,28 @@ public interface Visitor<T> {
      */
     T visit(StatementTryCatchFinally statementTryCatchFinally);
 
+    /**
+     * Visits the specified StatementConsolaOut instance and performs an operation or computation.
+     *
+     * @param statementConsolaOut the StatementConsolaOut instance to be visited
+     * @return a result of type T produced by visiting the statement
+     */
     T visit(StatementConsolaOut statementConsolaOut);
+
+    /**
+     * Processes the given StatementContinue object and performs a specific action or computation.
+     *
+     * @param statementContinue the StatementContinue object to be visited and processed
+     * @return the result of processing the StatementContinue object
+     */
+    T visit(StatementContinue statementContinue);
+
+    /**
+     * Visits the specified StatementBreak and allows custom processing or operations
+     * to be performed on the StatementBreak instance.
+     *
+     * @param statementBreak the StatementBreak instance to be visited
+     * @return a result of the type T based on the processing of the StatementBreak
+     */
+    T visit(StatementBreak statementBreak);
 }

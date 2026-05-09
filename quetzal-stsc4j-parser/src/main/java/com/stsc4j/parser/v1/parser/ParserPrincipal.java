@@ -112,8 +112,16 @@ public class ParserPrincipal extends ParserPrincipalValidations {
         }
 
         // Parser (Console.Out)
-        if(isConsoleClass()){
+        if (isConsoleClass()) {
             return parserStatement.parseConsoleOut().parseStatement();
+        }
+
+        if (isBreakDeclaration()) {
+            return parserStatement.parseBreak().parseStatement();
+        }
+
+        if (isContinueDeclaration()) {
+            return parserStatement.parseContinue().parseStatement();
         }
 
         Token current = tokenStream.show();
