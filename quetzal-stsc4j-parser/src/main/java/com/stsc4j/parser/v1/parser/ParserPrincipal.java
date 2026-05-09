@@ -116,10 +116,12 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseConsoleOut().parseStatement();
         }
 
+        // Parser (Break)
         if (isBreakDeclaration()) {
             return parserStatement.parseBreak().parseStatement();
         }
 
+        // Parser (Continue)
         if (isContinueDeclaration()) {
             return parserStatement.parseContinue().parseStatement();
         }
