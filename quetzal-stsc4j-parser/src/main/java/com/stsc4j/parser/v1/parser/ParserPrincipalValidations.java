@@ -126,4 +126,12 @@ public abstract class ParserPrincipalValidations {
     protected boolean isConsoleClass(){
         return tokenStream.matchNotAdvance(TokenType.C_CONSOLE);
     }
+
+    protected boolean isBreakDeclaration(){
+        return tokenStream.matchNotAdvance(TokenType.BREAK);
+    }
+
+    protected boolean isContinueDeclaration(){
+        return tokenStream.matchNotAdvance(TokenType.CONTINUE);
+    }
 }

@@ -718,6 +718,16 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementContinue statementContinue) {
+        return getIndent() + "Continue Statement";
+    }
+
+    @Override
+    public String visit(StatementBreak statementBreak) {
+        return getIndent() + "Break Statement";
+    }
+
+    @Override
     public String visit(StatementFunction statementFunction) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Function Declaration\n");
