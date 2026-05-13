@@ -21,7 +21,6 @@ class ParserContinueTest {
     private static LexerContext context;
     private static TokenStream tokenStream;
     private static ParserContinue parser;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
 
     @AfterEach
     void clean() {
@@ -43,10 +42,8 @@ class ParserContinueTest {
         final String code = "continuar";
         context.process(code);
         var ast = parser.parseStatement();
-
         assertNotNull(ast);
         assertThat(ast).isInstanceOf(StatementContinue.class);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -55,10 +52,8 @@ class ParserContinueTest {
         final String code = "   continuar   ";
         context.process(code);
         var ast = parser.parseStatement();
-
         assertNotNull(ast);
         assertThat(ast).isInstanceOf(StatementContinue.class);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -68,7 +63,6 @@ class ParserContinueTest {
         context.process(code);
         var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
         assertThat(ex.getMessage()).contains("Se esperaba 'continuar'");
-        System.out.println(ex.getMessage());
     }
 
     @Test
@@ -77,10 +71,8 @@ class ParserContinueTest {
         final String code = "continuar";
         context.process(code);
         var ast = parser.parseStatement();
-
         StatementContinue statementContinue = (StatementContinue) ast;
         assertNotNull(statementContinue.token);
         assertThat(statementContinue.token.getLexeme()).isEqualTo("continuar");
-        System.out.println("Token lexeme: " + statementContinue.token.getLexeme());
     }
 }

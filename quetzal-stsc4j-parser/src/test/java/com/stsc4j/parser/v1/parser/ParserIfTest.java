@@ -50,7 +50,6 @@ class ParserIfTest {
         var ast = parser.parseStatement();
         assertThat(ast)
                 .matches(s -> s instanceof StatementIf);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -59,8 +58,7 @@ class ParserIfTest {
         final String code = "si () { edad = 3 } sino { edad = 4 }";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -69,8 +67,7 @@ class ParserIfTest {
         final String code = "si (edad >= 18)";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -79,8 +76,7 @@ class ParserIfTest {
         final String code = "sino { edad = 4 }";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -89,8 +85,7 @@ class ParserIfTest {
         final String code = "si(a==b){ a=1 } sino";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -99,8 +94,7 @@ class ParserIfTest {
         final String code = "si(a==b) sino { a = 1}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -114,7 +108,6 @@ class ParserIfTest {
         var ast = parser.parseStatement();
         assertThat(ast)
                 .matches(s -> s instanceof StatementIf);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -123,8 +116,7 @@ class ParserIfTest {
         final String code = "si (a>1 ||| b>4){ a = 1}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -133,8 +125,7 @@ class ParserIfTest {
         final String code = "si (a>1 &&& b>4){ a = 1}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var exception = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(exception.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -146,7 +137,6 @@ class ParserIfTest {
         var ast = parser.parseStatement();
         assertThat(ast)
                 .matches(s -> s instanceof StatementIf);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -174,7 +164,6 @@ class ParserIfTest {
         var ast = parser.parseStatement();
         assertThat(ast)
                 .matches(s -> s instanceof StatementIf);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -186,6 +175,5 @@ class ParserIfTest {
         var ast = parser.parseStatement();
         assertThat(ast)
                 .matches(s -> s instanceof StatementIf);
-        System.out.println(astPrinter.print(ast));
     }
 }
