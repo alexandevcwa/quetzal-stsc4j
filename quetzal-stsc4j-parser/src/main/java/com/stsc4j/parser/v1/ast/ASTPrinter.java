@@ -364,8 +364,18 @@ public class ASTPrinter implements Visitor<String> {
         String mutability = statementVariable.mutable ? "mutable" : "immutable";
         sb.append(getIndent()).append("Variable Declaration (").append(mutability).append(")\n");
         indentLevel++;
-        sb.append(getIndent()).append("├─ Type: ").append(statementVariable.typo.getLexeme()).append("\n");
+        sb.append(getIndent()).append("├─ Type: ").append(statementVariable.type.getLexeme()).append("\n");
         sb.append(getIndent()).append("├─ Name: ").append(statementVariable.name.getLexeme()).append("\n");
+
+        if (statementVariable.assignation != null && statementVariable.assignation.length > 0) {
+            String assignOperator = Arrays.stream(statementVariable.assignation)
+                    .map(Token::getLexeme)
+                    .reduce((a, b) -> a + b)
+                    .orElse("");
+
+            sb.append(getIndent()).append("├─ Assignation: ").append(assignOperator).append("\n");
+        }
+
         sb.append(getIndent()).append("└─ Initializer:\n");
         indentLevel++;
         sb.append(statementVariable.initialValue.accept(this));
@@ -787,6 +797,7 @@ public class ASTPrinter implements Visitor<String> {
         return getIndent() + "Parameter: " +
                 statementFunctionParameter.type.getLexeme() +
                 " " +
-                statementFunctionParameter.identified.getLexeme();
+                statementFunctionParameter.identified.getLexeme() +
+                " (" + (statementFunctionParameter.mutable ? "mutable" : "immutable") + ")";
     }
 }
