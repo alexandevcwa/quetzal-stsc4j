@@ -43,10 +43,8 @@ class ParserBreakTest {
         final String code = "romper";
         context.process(code);
         var ast = parser.parseStatement();
-
         assertNotNull(ast);
         assertThat(ast).isInstanceOf(StatementBreak.class);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -55,10 +53,8 @@ class ParserBreakTest {
         final String code = "   romper   ";
         context.process(code);
         var ast = parser.parseStatement();
-
         assertNotNull(ast);
         assertThat(ast).isInstanceOf(StatementBreak.class);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -68,7 +64,6 @@ class ParserBreakTest {
         context.process(code);
         var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
         assertThat(ex.getMessage()).contains("Se esperaba 'romper'");
-        System.out.println(ex.getMessage());
     }
 
     @Test
@@ -77,11 +72,9 @@ class ParserBreakTest {
         final String code = "romper";
         context.process(code);
         var ast = parser.parseStatement();
-
         StatementBreak statementBreak = (StatementBreak) ast;
         assertNotNull(statementBreak.token);
         assertThat(statementBreak.token.getLexeme()).isEqualTo("romper");
-        System.out.println("Token lexeme: " + statementBreak.token.getLexeme());
     }
 }
 

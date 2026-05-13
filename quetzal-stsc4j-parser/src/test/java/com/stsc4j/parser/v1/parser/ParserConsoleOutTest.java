@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.StatementConsolaOut;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +18,6 @@ class ParserConsoleOutTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
-    private static final ASTPrinter astPrinter = new ASTPrinter();
 
     private static ParserConsoleOut parser;
 
@@ -46,7 +44,6 @@ class ParserConsoleOutTest {
         var ast = assertDoesNotThrow(() -> parser.parseStatement());
         assertNotNull(ast);
         assertThat(ast).matches(s -> s instanceof StatementConsolaOut);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test

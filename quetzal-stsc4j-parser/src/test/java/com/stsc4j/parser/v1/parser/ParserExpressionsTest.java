@@ -20,7 +20,6 @@ class ParserExpressionsTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
 
     public static ParserExpressions parser;
 
@@ -45,7 +44,6 @@ class ParserExpressionsTest {
         context.process(code);
         tokens.addAll(context.getTokens());
         var ast = parser.parseExpression();
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -55,7 +53,6 @@ class ParserExpressionsTest {
         context.process(code);
         tokens.addAll(context.getTokens());
         var ast = parser.parseExpression();
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -66,7 +63,6 @@ class ParserExpressionsTest {
         tokens.addAll(context.getTokens());
         var ex = assertThrows(ParserException.class, () -> parser.parseExpression());
         assertNotNull(ex);
-        System.out.println(ex.getMessage());
     }
 
     @Test
@@ -77,7 +73,6 @@ class ParserExpressionsTest {
         tokens.addAll(context.getTokens());
         var ex = assertThrows(ParserException.class, () -> parser.parseExpression());
         assertNotNull(ex);
-        System.out.println(ex.getMessage());
     }
 
     @Test
@@ -88,6 +83,5 @@ class ParserExpressionsTest {
         tokens.addAll(context.getTokens());
         var ex = assertThrows(ParserException.class, () -> parser.parseExpression());
         assertNotNull(ex);
-        System.out.println(ex.getMessage());
     }
 }

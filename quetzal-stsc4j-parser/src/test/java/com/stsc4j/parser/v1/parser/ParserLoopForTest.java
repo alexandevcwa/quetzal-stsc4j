@@ -22,8 +22,6 @@ class ParserLoopForTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
-
     public static ParserLoopFor parser;
 
     @AfterEach
@@ -59,7 +57,6 @@ class ParserLoopForTest {
         var ast = parser.parseStatement();
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementLoopFor);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -71,8 +68,7 @@ class ParserLoopForTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -84,8 +80,7 @@ class ParserLoopForTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -97,8 +92,7 @@ class ParserLoopForTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -110,8 +104,7 @@ class ParserLoopForTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -123,8 +116,7 @@ class ParserLoopForTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -133,8 +125,7 @@ class ParserLoopForTest {
         final String code = "para (entero var i = 0; i < 5; i++)";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -146,8 +137,7 @@ class ParserLoopForTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -162,6 +152,5 @@ class ParserLoopForTest {
         var ast = parser.parseStatement();
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementLoopFor);
-        System.out.println(astPrinter.print(ast));
     }
 }
