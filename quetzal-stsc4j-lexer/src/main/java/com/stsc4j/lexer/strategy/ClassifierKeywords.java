@@ -57,8 +57,8 @@ public class ClassifierKeywords implements Classifier {
         KEYWORDS_MAP.put(F_SCANNER, TokenType.F_SCANNER);
         KEYWORDS_MAP.put(F_SCANNER_SECRET, TokenType.F_SCANNER_SECRET);
 
-        KEYWORDS_MAP.put(String.valueOf(AND_ESP), TokenType.AND_ESP);
-        KEYWORDS_MAP.put(String.valueOf(OR_ESP), TokenType.OR_ESP);
+        KEYWORDS_MAP.put(AND_ESP, TokenType.AND_ESP);
+        KEYWORDS_MAP.put(OR_ESP, TokenType.OR_ESP);
     }
 
     @Override

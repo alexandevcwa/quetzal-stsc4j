@@ -51,12 +51,16 @@ public class LexerDictionary {
     public static final String F_SCANNER = "pedir";
     public static final String F_SCANNER_SECRET = "pedir_secreto";
 
+    public static final String AND_ESP = "y";
+    public static final String OR_ESP = "o";
+
     public static final Set<String> KEYWORDS = Set.of(
             ENTERO, NUMERO, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,
             IF, ELSE, NULL, LIST, JSN, LOOP_WHILE, LOOP_DO, LOOP_FOR, LOOP_EACH_1,
             LOOP_EACH_2, BREAK, CONTINUE, RETURN, THROW, TRY, CATCH, EXCEPTION,
             FINALLY, OBJECT, PUBLIC_ACCESS, PRIVATE_ACCESS, STATIC, THIS, ASYNC, AWAIT,
-            NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L, C_CONSOLE, F_PRINT
+            NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L, C_CONSOLE, F_PRINT,
+            AND_ESP, OR_ESP
     );
 
     public static final char PLUS = '+';
@@ -68,9 +72,7 @@ public class LexerDictionary {
     public static final char LESS_THAN = '<';
     public static final char GREATER_THAN = '>';
     public static final char AND = '&';
-    public static final char AND_ESP = 'y';
     public static final char OR = '|';
-    public static final char OR_ESP = 'o';
     public static final char MODULO = '%';
     public static final char PARENTHESES_OPEN = '(';
     public static final char PARENTHESES_CLOSE = ')';
@@ -85,7 +87,7 @@ public class LexerDictionary {
     public static final char QUESTION = '?';
     public static final Set<Character> SYMBOLS = Set.of(
             PLUS, MINUS, MULTIPLY, DIVIDE, EQUALS, EXCLAMATION,
-            LESS_THAN, GREATER_THAN, AND, AND_ESP, OR, OR_ESP, MODULO, PARENTHESES_OPEN,
+            LESS_THAN, GREATER_THAN, AND, OR, MODULO, PARENTHESES_OPEN,
             PARENTHESES_CLOSE, BRACKETS_OPEN, BRACKETS_CLOSE,
             BRACES_OPEN, BRACES_CLOSE,
             COMMA,

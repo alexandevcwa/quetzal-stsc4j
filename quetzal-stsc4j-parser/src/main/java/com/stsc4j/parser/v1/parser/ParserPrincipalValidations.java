@@ -134,4 +134,8 @@ public abstract class ParserPrincipalValidations {
     protected boolean isContinueDeclaration(){
         return tokenStream.matchNotAdvance(TokenType.CONTINUE);
     }
+
+    protected boolean isThrowDeclaration(){
+        return tokenStream.matchNotAdvance(TokenType.THROW);
+    }
 }

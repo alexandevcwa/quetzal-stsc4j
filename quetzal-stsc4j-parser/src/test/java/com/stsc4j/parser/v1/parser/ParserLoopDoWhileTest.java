@@ -19,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ParserLoopDoWhileTest {
     private static LexerContext context;
     private static TokenStream tokenStream;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
-
     public static ParserLoopDoWhile parser;
 
     @AfterEach
@@ -53,7 +51,6 @@ class ParserLoopDoWhileTest {
         var ast = parser.parseStatement();
         assertNotNull(ast);
         assertThat(ast).matches(s -> s instanceof StatementLoopDoWhile);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -61,8 +58,7 @@ class ParserLoopDoWhileTest {
     void testDeclaracionDoWhileLoopIncorrectaSinExpresion() {
         final String code = "hacer { texto_temporal = \"Hola mundo\" + iterador_hacer } mientras";
         context.process(code);
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -70,8 +66,7 @@ class ParserLoopDoWhileTest {
     void testDeclaracionDoWhileLoopConDobleParentesisPeroSinExpresion() {
         final String code = "hacer () { texto_temporal = \"Hola mundo\" + iterador_hacer } mientras (1>2)";
         context.process(code);
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -79,8 +74,7 @@ class ParserLoopDoWhileTest {
     void testDeclaracionDoWhileLoopConParentesisPeroSinExpresion() {
         final String code = "hacer { texto_temporal = \"Hola mundo\" + iterador_hacer } mientras ()";
         context.process(code);
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -88,8 +82,7 @@ class ParserLoopDoWhileTest {
     void testDeclaracionDoWhileLoopSinBloque() {
         final String code = "hacer (iterador_hacer < 10)";
         context.process(code);
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -97,8 +90,7 @@ class ParserLoopDoWhileTest {
     void testDeclaracionDoWhileLoopSinDo(){
         final String code = "{ a = 1 } mientras (iterador_mientras < 10)";
         context.process(code);
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -106,7 +98,6 @@ class ParserLoopDoWhileTest {
     void testDeclaracionDoWhileLoopSinWhile(){
         final String code = "hacer { a = 1 }";
         context.process(code);
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 }

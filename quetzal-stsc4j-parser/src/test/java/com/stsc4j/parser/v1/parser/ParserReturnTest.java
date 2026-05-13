@@ -81,6 +81,5 @@ public class ParserReturnTest {
         tokens.addAll(context.getTokens());
         var ast = parser.parseStatement();
         assertNotNull(ast);
-        System.out.println(astPrinter.print(ast));
     }
 }

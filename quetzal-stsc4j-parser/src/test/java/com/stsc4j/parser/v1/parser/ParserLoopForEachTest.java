@@ -20,7 +20,6 @@ class ParserLoopForEachTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
 
     public static ParserLoopForEach parser;
 
@@ -54,7 +53,6 @@ class ParserLoopForEachTest {
         tokens.addAll(context.getTokens());
         var ast = parser.parseStatement();
         assertNotNull(ast);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -65,8 +63,7 @@ class ParserLoopForEachTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -77,8 +74,7 @@ class ParserLoopForEachTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -89,8 +85,7 @@ class ParserLoopForEachTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -101,8 +96,7 @@ class ParserLoopForEachTest {
                 "}";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 
     @Test
@@ -111,7 +105,6 @@ class ParserLoopForEachTest {
         final String code = "para (entero var valor_numero en lista_numeros)";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
-        System.out.println(ex.getMessage());
+        assertThrows(ParserException.class, () -> parser.parseStatement());
     }
 }

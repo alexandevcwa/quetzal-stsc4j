@@ -59,7 +59,7 @@ public class ParserPrincipal extends ParserPrincipalValidations {
         // Parser (Matrix Assignation)
         if (isMatrixAssignation()) {
             return parserStatement.parseMatrixAssignation().parseStatement();
-		}
+        }
 
         // Parser (Variables)
         if (isVariableDeclaration()) {
@@ -124,6 +124,11 @@ public class ParserPrincipal extends ParserPrincipalValidations {
         // Parser (Continue)
         if (isContinueDeclaration()) {
             return parserStatement.parseContinue().parseStatement();
+        }
+
+        // Parser (Throw)
+        if (isThrowDeclaration()) {
+            return parserStatement.parseThrow().parseStatement();
         }
 
         Token current = tokenStream.show();
