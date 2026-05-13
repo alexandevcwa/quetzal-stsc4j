@@ -37,7 +37,7 @@ class ParserTryCatchFinallyTest {
 
         parser = new ParserTryCatchFinally(
                 new ParserBlock(tokenStream, new ParserPrincipal(tokenStream)),
-                new ParserExpressions(tokenStream),
+                new ParserExpression(tokenStream),
                 tokenStream
         );
     }

@@ -5,7 +5,7 @@ public class ParserStatement {
 
     // Required Parsers
     private final ParserPrincipal parserPrincipal;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
     // Parser for Statement
     private ParserBlock parserBlock;
@@ -30,31 +30,31 @@ public class ParserStatement {
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = new ParserExpressions(tokenStream);
+        this.parserExpression = new ParserExpression(tokenStream);
         this.parserPrincipal = parserPrincipal;
     }
 
     public Parser parseExpressions() {
-        return parserExpressions;
+        return parserExpression;
     }
 
     public Parser parseVar() {
         if (parserDeclaration == null) {
-            parserDeclaration = new ParserDeclaration(tokenStream, parserExpressions);
+            parserDeclaration = new ParserDeclaration(tokenStream, parserExpression);
         }
         return parserDeclaration;
     }
 
     public Parser parseIf() {
         if (parserIf == null) {
-            parserIf = new ParserIf(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+            parserIf = new ParserIf(tokenStream, parserExpression, (ParserBlock) parseBlock());
         }
         return parserIf;
     }
 
     public Parser parseList() {
         if (parserList == null) {
-            parserList = new ParserList(tokenStream, parserExpressions);
+            parserList = new ParserList(tokenStream, parserExpression);
         }
         return parserList;
     }
@@ -68,7 +68,7 @@ public class ParserStatement {
 
     public Parser parseJsn() {
         if (parserJsn == null) {
-            parserJsn = new ParserJsn(tokenStream, parserExpressions);
+            parserJsn = new ParserJsn(tokenStream, parserExpression);
         }
         return parserJsn;
     }
@@ -82,63 +82,63 @@ public class ParserStatement {
 
     public Parser parseReturn() {
         if (parserReturn == null) {
-            parserReturn = new ParserReturn(parserExpressions, tokenStream);
+            parserReturn = new ParserReturn(parserExpression, tokenStream);
         }
         return parserReturn;
     }
 
     public Parser parseLoopWhile() {
         if (parserLoopWhile == null) {
-            parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+            parserLoopWhile = new ParserLoopWhile(tokenStream, parserExpression, (ParserBlock) parseBlock());
         }
         return parserLoopWhile;
     }
 
     public Parser parseLoopDoWhile() {
         if (parserLoopDoWhile == null) {
-            parserLoopDoWhile = new ParserLoopDoWhile(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+            parserLoopDoWhile = new ParserLoopDoWhile(tokenStream, parserExpression, (ParserBlock) parseBlock());
         }
         return parserLoopDoWhile;
     }
 
     public Parser parseIncremental() {
         if (parserIncremental == null) {
-            parserIncremental = new ParserIncremental(parserExpressions);
+            parserIncremental = new ParserIncremental(parserExpression);
         }
         return parserIncremental;
     }
 
     public Parser parseLoopForEach() {
         if (parserLoopForEach == null) {
-            parserLoopForEach = new ParserLoopForEach(tokenStream, parserExpressions, (ParserBlock) parseBlock());
+            parserLoopForEach = new ParserLoopForEach(tokenStream, parserExpression, (ParserBlock) parseBlock());
         }
         return parserLoopForEach;
     }
 
     public Parser parseLoopFor() {
         if (parserLoopFor == null) {
-            parserLoopFor = new ParserLoopFor(tokenStream, parserDeclaration, parserExpressions, (ParserBlock) parseBlock());
+            parserLoopFor = new ParserLoopFor(tokenStream, parserDeclaration, parserExpression, (ParserBlock) parseBlock());
         }
         return parserLoopFor;
     }
 
     public Parser parseMatrixAssignation() {
         if (parserMatrixAssignation == null) {
-            parserMatrixAssignation = new ParserMatrixAssignation(tokenStream, parserExpressions);
+            parserMatrixAssignation = new ParserMatrixAssignation(tokenStream, parserExpression);
         }
         return parserMatrixAssignation;
     }
 
     public Parser parseTryCatchFinally() {
         if (parserTryCatchFinally == null) {
-            parserTryCatchFinally = new ParserTryCatchFinally((ParserBlock) parseBlock(), parserExpressions, tokenStream);
+            parserTryCatchFinally = new ParserTryCatchFinally((ParserBlock) parseBlock(), parserExpression, tokenStream);
         }
         return parserTryCatchFinally;
     }
 
     public Parser parseConsoleOut() {
         if (parserConsoleOut == null) {
-            parserConsoleOut = new ParserConsoleOut(tokenStream, parserExpressions);
+            parserConsoleOut = new ParserConsoleOut(tokenStream, parserExpression);
         }
         return parserConsoleOut;
     }
@@ -159,7 +159,7 @@ public class ParserStatement {
 
     public Parser parseThrow(){
         if(parserThrow == null){
-            parserThrow = new ParserThrow(tokenStream, parserExpressions);
+            parserThrow = new ParserThrow(tokenStream, parserExpression);
         }
         return parserThrow;
     }

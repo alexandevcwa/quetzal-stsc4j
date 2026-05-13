@@ -9,12 +9,12 @@ import com.stsc4j.parser.v1.ast.StatementLoopWhile;
 public class ParserLoopWhile extends Parser {
 
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
     private final ParserBlock parserBlock;
 
-    public ParserLoopWhile(TokenStream context, ParserExpressions parserExpressions, ParserBlock parserBlock) {
+    public ParserLoopWhile(TokenStream context, ParserExpression parserExpression, ParserBlock parserBlock) {
         this.tokenStream = context;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
         this.parserBlock = parserBlock;
     }
 
@@ -22,7 +22,7 @@ public class ParserLoopWhile extends Parser {
     public Statement parseStatement() {
         tokenStream.consume(TokenType.LOOP_WHILE, "Se esperaba 'mientras'");
         tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '('");
-        Expression expression = parserExpressions.parseExpression();
+        Expression expression = parserExpression.parseExpression();
         tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')'");
         Statement block = parserBlock.parseStatement();
         return new StatementLoopWhile(expression, (StatementBlock) block);

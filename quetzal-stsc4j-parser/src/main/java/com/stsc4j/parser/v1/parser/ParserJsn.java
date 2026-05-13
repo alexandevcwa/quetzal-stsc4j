@@ -11,9 +11,9 @@ public class ParserJsn extends Parser {
     private final TokenStream tokenStream;
     private final ParserJsnExpression parserJsnExpression;
 
-    public ParserJsn(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserJsn(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserJsnExpression = new ParserJsnExpression(tokenStream, parserExpressions);
+        this.parserJsnExpression = new ParserJsnExpression(tokenStream, parserExpression);
     }
 
     @Override

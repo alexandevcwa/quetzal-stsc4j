@@ -12,11 +12,11 @@ import static com.stsc4j.lexer.TokenType.*;
 public class ParserConsoleOut extends Parser {
 
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserConsoleOut(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserConsoleOut(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ParserConsoleOut extends Parser {
         }
         Token function = tokenStream.before();
         tokenStream.consume(LEFT_PARENT, "Se esperaba un '(' después de la función de consola");
-        Expression expression = parserExpressions.parseExpression();
+        Expression expression = parserExpression.parseExpression();
         tokenStream.consume(RIGHT_PARENT, "Se esperaba un ')' después de la expresión de consola");
         return new StatementConsolaOut(function, expression);
     }

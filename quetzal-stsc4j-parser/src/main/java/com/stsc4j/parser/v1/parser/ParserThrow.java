@@ -10,17 +10,17 @@ import com.stsc4j.parser.v1.exception.ParserException;
 public class ParserThrow extends Parser {
 
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserThrow(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserThrow(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
     }
 
     @Override
     public Statement parseStatement() {
         tokenStream.consume(TokenType.THROW, "Se esperaba 'lanzar'");
-        Expression message = parserExpressions.parseExpression();
+        Expression message = parserExpression.parseExpression();
         if (message instanceof ExpressionLiteral) {
             ExpressionLiteral literal = (ExpressionLiteral) message;
             if (literal.token.type.equals(TokenType.LIT_STRING)) {

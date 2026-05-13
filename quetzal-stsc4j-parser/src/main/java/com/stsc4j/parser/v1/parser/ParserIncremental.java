@@ -7,15 +7,15 @@ import com.stsc4j.parser.v1.ast.StatementIncDec;
 import com.stsc4j.parser.v1.exception.ParserException;
 
 public class ParserIncremental extends Parser {
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserIncremental(ParserExpressions parserExpressions) {
-        this.parserExpressions = parserExpressions;
+    public ParserIncremental(ParserExpression parserExpression) {
+        this.parserExpression = parserExpression;
     }
 
     @Override
     public Statement parseStatement() {
-        Expression expression = parserExpressions.parseExpression();
+        Expression expression = parserExpression.parseExpression();
         if (expression instanceof ExpressionIncDec) {
             return new StatementIncDec((ExpressionIncDec) expression);
         }

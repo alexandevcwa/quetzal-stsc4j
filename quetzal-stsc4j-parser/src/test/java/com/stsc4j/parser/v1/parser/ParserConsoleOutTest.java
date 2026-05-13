@@ -32,7 +32,7 @@ class ParserConsoleOutTest {
         context = new LexerContext();
         tokens = new ArrayList<>();
         tokenStream = new TokenStream(tokens);
-        parser = new ParserConsoleOut(tokenStream, new ParserExpressions(tokenStream));
+        parser = new ParserConsoleOut(tokenStream, new ParserExpression(tokenStream));
     }
 
     @Test

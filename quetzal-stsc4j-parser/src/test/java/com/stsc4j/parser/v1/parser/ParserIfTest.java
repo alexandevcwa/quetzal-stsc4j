@@ -36,7 +36,7 @@ class ParserIfTest {
         tokenStream = new TokenStream(tokens);
         parser = new ParserIf(
                 tokenStream,
-                new ParserExpressions(tokenStream),
+                new ParserExpression(tokenStream),
                 new ParserBlock(tokenStream, new ParserPrincipal(tokenStream))
         );
     }

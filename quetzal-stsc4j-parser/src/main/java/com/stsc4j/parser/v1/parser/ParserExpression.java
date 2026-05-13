@@ -8,11 +8,11 @@ import com.stsc4j.parser.v1.exception.ParserException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserExpressions extends Parser {
+public class ParserExpression extends Parser {
 
     private final TokenStream tokenStream;
 
-    public ParserExpressions(TokenStream tokenStream) {
+    public ParserExpression(TokenStream tokenStream) {
         this.tokenStream = tokenStream;
     }
 
@@ -22,7 +22,6 @@ public class ParserExpressions extends Parser {
         return parseSymbolicExpression();
     }
 
-    /////
     private Expression parseSymbolicExpression() {
         Expression expression = parseEspaniolExpression();
         while (tokenStream.match(TokenType.AND, TokenType.OR)) {

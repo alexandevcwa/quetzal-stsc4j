@@ -10,11 +10,11 @@ import java.util.List;
 public class ParserList extends Parser {
 
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserList(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserList(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ParserList extends Parser {
                 element = parseMultidimensionalList((short) (currentDepth - 1));
             } else {
                 // Caso base: parsear expresión primitiva
-                element = parserExpressions.parseExpression();
+                element = parserExpression.parseExpression();
             }
 
             elements.add(element);

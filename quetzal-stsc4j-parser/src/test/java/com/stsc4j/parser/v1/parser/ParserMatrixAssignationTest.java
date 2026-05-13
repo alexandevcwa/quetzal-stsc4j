@@ -38,7 +38,7 @@ class ParserMatrixAssignationTest {
 
         parser = new ParserMatrixAssignation(
                 tokenStream,
-                new ParserExpressions(tokenStream)
+                new ParserExpression(tokenStream)
         );
     }
 

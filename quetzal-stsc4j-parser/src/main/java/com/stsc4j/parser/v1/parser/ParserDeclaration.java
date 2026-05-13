@@ -7,11 +7,11 @@ import com.stsc4j.parser.v1.ast.*;
 
 public class ParserDeclaration extends Parser {
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserDeclaration(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserDeclaration(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
     }
 
 
@@ -52,13 +52,13 @@ public class ParserDeclaration extends Parser {
             tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
         }
 
-        initialValue = parserExpressions.parseExpression();
+        initialValue = parserExpression.parseExpression();
 
         Expression ternary = null;
         // Verificar operador ternario
         if (tokenStream.matchNotAdvance(TokenType.QUESTION)) {
             tokenStream.advance();
-            ternary = parserExpressions.parseTernaryExpression((ExpressionBinary) initialValue);
+            ternary = parserExpression.parseTernaryExpression((ExpressionBinary) initialValue);
         }
 
         return new StatementVariable(type, isMutable, name,assignation,
