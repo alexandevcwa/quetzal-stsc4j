@@ -1,5 +1,6 @@
 package com.stsc4j.parser.v1.parser;
 
+import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.Statement;
@@ -56,9 +57,9 @@ public class ParserPrincipal extends ParserPrincipalValidations {
         }
 
         // Parser (Matrix Assignation)
-        if(isMatrixAssignation()){
+        if (isMatrixAssignation()) {
             return parserStatement.parseMatrixAssignation().parseStatement();
-        }
+		}
 
         // Parser (Variables)
         if (isVariableDeclaration()) {
@@ -105,6 +106,31 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseLoopFor().parseStatement();
         }
 
-        throw new RuntimeException("Token no reconocido........................");
+        // Parser (Try Catch Finally)
+        if (isTryCatchDeclaration()) {
+            return parserStatement.parseTryCatchFinally().parseStatement();
+        }
+
+        // Parser (Console.Out)
+        if (isConsoleClass()) {
+            return parserStatement.parseConsoleOut().parseStatement();
+        }
+
+        // Parser (Break)
+        if (isBreakDeclaration()) {
+            return parserStatement.parseBreak().parseStatement();
+        }
+
+        // Parser (Continue)
+        if (isContinueDeclaration()) {
+            return parserStatement.parseContinue().parseStatement();
+        }
+
+        Token current = tokenStream.show();
+        String sb = "Token no reconocido.......................................\n" +
+                String.format("%-18s -> %s\n", "Tipo", current.type.toString()) +
+                String.format("%-18s -> %s\n", "Lexema", current.lexeme) +
+                String.format("%-18s -> %s\n", "Linea", current.line);
+        throw new RuntimeException(sb);
     }
 }

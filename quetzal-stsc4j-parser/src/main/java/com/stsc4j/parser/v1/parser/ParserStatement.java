@@ -21,6 +21,10 @@ public class ParserStatement {
     private ParserLoopForEach parserLoopForEach;
     private ParserIncremental parserIncremental;
     private ParserMatrixAssignation parserMatrixAssignation;
+    private ParserTryCatchFinally parserTryCatchFinally;
+    private ParserConsoleOut parserConsoleOut;
+    private ParserContinue parserContinue;
+    private ParserBreak parserBreak;
 
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
@@ -103,8 +107,8 @@ public class ParserStatement {
         return parserIncremental;
     }
 
-    public Parser parseLoopForEach(){
-        if (parserLoopForEach == null){
+    public Parser parseLoopForEach() {
+        if (parserLoopForEach == null) {
             parserLoopForEach = new ParserLoopForEach(tokenStream, parserExpressions, (ParserBlock) parseBlock());
         }
         return parserLoopForEach;
@@ -117,10 +121,38 @@ public class ParserStatement {
         return parserLoopFor;
     }
 
-    public Parser parseMatrixAssignation(){
-        if (parserMatrixAssignation == null){
+    public Parser parseMatrixAssignation() {
+        if (parserMatrixAssignation == null) {
             parserMatrixAssignation = new ParserMatrixAssignation(tokenStream, parserExpressions);
         }
         return parserMatrixAssignation;
+    }
+
+    public Parser parseTryCatchFinally() {
+        if (parserTryCatchFinally == null) {
+            parserTryCatchFinally = new ParserTryCatchFinally((ParserBlock) parseBlock(), parserExpressions, tokenStream);
+        }
+        return parserTryCatchFinally;
+    }
+
+    public Parser parseConsoleOut() {
+        if (parserConsoleOut == null) {
+            parserConsoleOut = new ParserConsoleOut(tokenStream, parserExpressions);
+        }
+        return parserConsoleOut;
+    }
+
+    public Parser parseContinue() {
+        if (parserContinue == null) {
+            parserContinue = new ParserContinue(tokenStream);
+        }
+        return parserContinue;
+    }
+
+    public Parser parseBreak() {
+        if (parserBreak == null) {
+            parserBreak = new ParserBreak(tokenStream);
+        }
+        return parserBreak;
     }
 }

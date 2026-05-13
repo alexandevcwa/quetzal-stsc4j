@@ -96,10 +96,10 @@ public abstract class ParserPrincipalValidations {
         }
         tokenStream.advance(4);
         if (tokenStream.notMatch(TokenType.LOOP_EACH_1, TokenType.LOOP_EACH_2)) {
-            tokenStream.back(4);
+            tokenStream.back(5);
             return false;
         }
-        tokenStream.back(5);
+        tokenStream.back(6);
         return true;
     }
 
@@ -117,5 +117,21 @@ public abstract class ParserPrincipalValidations {
             return false;
         }
         return true;
+    }
+
+    protected boolean isTryCatchDeclaration() {
+        return tokenStream.matchNotAdvance(TokenType.TRY);
+    }
+
+    protected boolean isConsoleClass(){
+        return tokenStream.matchNotAdvance(TokenType.C_CONSOLE);
+    }
+
+    protected boolean isBreakDeclaration(){
+        return tokenStream.matchNotAdvance(TokenType.BREAK);
+    }
+
+    protected boolean isContinueDeclaration(){
+        return tokenStream.matchNotAdvance(TokenType.CONTINUE);
     }
 }

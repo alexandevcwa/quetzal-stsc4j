@@ -669,6 +669,65 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementTryCatchFinally statementTryCatchFinally) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Try-Catch-Finally Statement\n");
+        indentLevel++;
+
+        // Try block
+        sb.append(getIndent()).append("├─ Try Block:\n");
+        indentLevel++;
+        sb.append(statementTryCatchFinally.tryBlock.accept(this)).append("\n");
+        indentLevel--;
+
+        // Exception variable
+        sb.append(getIndent()).append("├─ Exception Variable:\n");
+        indentLevel++;
+        sb.append(statementTryCatchFinally.exception.accept(this)).append("\n");
+        indentLevel--;
+
+        // Catch block
+        sb.append(getIndent()).append("├─ Catch Block:\n");
+        indentLevel++;
+        sb.append(statementTryCatchFinally.catchBlock.accept(this)).append("\n");
+        indentLevel--;
+
+        // Finally block (optional)
+        if (statementTryCatchFinally.finallyBlock != null) {
+            sb.append(getIndent()).append("└─ Finally Block:\n");
+            indentLevel++;
+            sb.append(statementTryCatchFinally.finallyBlock.accept(this));
+            indentLevel--;
+        }
+
+        indentLevel--;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementConsolaOut statementConsolaOut) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Console Output Statement\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Function: ").append(statementConsolaOut.functionName.getLexeme()).append("\n");
+        sb.append(getIndent()).append("└─ Expression:\n");
+        indentLevel++;
+        sb.append(statementConsolaOut.expression.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementContinue statementContinue) {
+        return getIndent() + "Continue Statement";
+    }
+
+    @Override
+    public String visit(StatementBreak statementBreak) {
+        return getIndent() + "Break Statement";
+    }
+
+    @Override
     public String visit(StatementFunction statementFunction) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Function Declaration\n");

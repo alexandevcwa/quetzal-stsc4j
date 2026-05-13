@@ -131,6 +131,49 @@ public class BytecodeGenerator implements Visitor<Void> {
     }
 
     @Override
+    public Void visit(StatementMatrixAssignation statementMatrixAssignation) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ExpressionNull expressionNull) {
+        return null;
+    }
+
+    @Override
+    public Void visit(StatementTryCatchFinally statementTryCatchFinally) {
+        return null;
+    }
+
+    @Override
+    public Void visit(StatementConsolaOut statementConsolaOut) {
+
+        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+
+        // 2. Evaluamos la expresión que el usuario quiere imprimir (ej: "a", o "12 + 15")
+        // Al llamar a accept(), el BytecodeGenerator viajará por el árbol y dejará el resultado final en la cima de la pila.
+        if (statementConsolaOut.expression != null) {
+            statementConsolaOut.expression.accept(this);
+        }
+
+        // 3. INVOKEVIRTUAL: Llamamos al método nativo "println" para que imprima lo que quedó en la pila.
+        // NOTA: "(I)V" significa que recibe un Entero (Integer) y no devuelve nada (Void).
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false);
+
+        return null;
+    }
+
+    @Override
+    public Void visit(StatementContinue statementContinue) {
+        return null;
+    }
+
+    @Override
+    public Void visit(StatementBreak statementBreak) {
+        return null;
+    }
+
+    @Override
     public Void visit(ExpressionVariable expressionVariable) {
         String nombreVar = expressionVariable.token.getLexeme();
         int indiceMemoria = envJVM.obtenerIndice(nombreVar);

@@ -47,8 +47,18 @@ public class ClassifierKeywords implements Classifier {
         KEYWORDS_MAP.put(NEW_INSTANCE, TokenType.NEW_INSTANCE);
         KEYWORDS_MAP.put(IMPORT_MODULE, TokenType.IMPORT_MODULE);
         KEYWORDS_MAP.put(IMPORT_MODULE_L, TokenType.IMPORT_MODULE_L);
+
         KEYWORDS_MAP.put(C_CONSOLE, TokenType.C_CONSOLE);
-        KEYWORDS_MAP.put(F_PRINT,TokenType.F_PRINT);
+        KEYWORDS_MAP.put(F_PRINT, TokenType.F_PRINT);
+        KEYWORDS_MAP.put(F_PRINT_ERROR, TokenType.F_PRINT_ERROR);
+        KEYWORDS_MAP.put(F_PRINT_WARNING, TokenType.F_PRINT_WARNING);
+        KEYWORDS_MAP.put(F_PRINT_INFO, TokenType.F_PRINT_INFO);
+        KEYWORDS_MAP.put(F_PRINT_SUCCESS, TokenType.F_PRINT_SUCCESS);
+        KEYWORDS_MAP.put(F_SCANNER, TokenType.F_SCANNER);
+        KEYWORDS_MAP.put(F_SCANNER_SECRET, TokenType.F_SCANNER_SECRET);
+
+        KEYWORDS_MAP.put(String.valueOf(AND_ESP), TokenType.AND_ESP);
+        KEYWORDS_MAP.put(String.valueOf(OR_ESP), TokenType.OR_ESP);
     }
 
     @Override

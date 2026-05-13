@@ -2,7 +2,7 @@ package com.stsc4j.parser.v1.ast;
 
 import com.stsc4j.lexer.Token;
 
-public class StatementVariable extends Statement {
+public class    StatementVariable extends Statement {
     public final Token typo;
     public final boolean mutable;
     public final Token name;

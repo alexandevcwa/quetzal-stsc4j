@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-        String sourceCode = "texto edad = aaa + 25";
+        String sourceCode = "entero edad = 1 \nconsola.mostrar(edad)";
 
 
         System.out.println("=== Código fuente en Quetzal ===");
