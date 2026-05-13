@@ -25,6 +25,7 @@ public class ParserStatement {
     private ParserConsoleOut parserConsoleOut;
     private ParserContinue parserContinue;
     private ParserBreak parserBreak;
+    private ParserThrow parserThrow;
 
 
     public ParserStatement(TokenStream tokenStream, ParserPrincipal parserPrincipal) {
@@ -154,5 +155,12 @@ public class ParserStatement {
             parserBreak = new ParserBreak(tokenStream);
         }
         return parserBreak;
+    }
+
+    public Parser parseThrow(){
+        if(parserThrow == null){
+            parserThrow = new ParserThrow(tokenStream, parserExpressions);
+        }
+        return parserThrow;
     }
 }

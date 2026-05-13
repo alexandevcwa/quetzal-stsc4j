@@ -728,6 +728,22 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementThrow statementThrow) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Throw Statement\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Message:\n");
+        indentLevel++;
+        if (statementThrow.message != null) {
+            sb.append(statementThrow.message.accept(this));
+        } else {
+            sb.append(getIndent()).append("null");
+        }
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(StatementFunction statementFunction) {
         StringBuilder sb = new StringBuilder();
         sb.append(getIndent()).append("Function Declaration\n");
