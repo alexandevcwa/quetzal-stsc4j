@@ -59,7 +59,7 @@ public class ParserPrincipal extends ParserPrincipalValidations {
         // Parser (Matrix Assignation)
         if (isMatrixAssignation()) {
             return parserStatement.parseMatrixAssignation().parseStatement();
-        }
+		}
 
         // Parser (Variables)
         if (isVariableDeclaration()) {
