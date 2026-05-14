@@ -105,7 +105,7 @@ public class ParserExpression extends Parser {
     }
 
     // Maneja %
-    private Expression parseModuleExpression(){
+    private Expression parseModuleExpression() {
         Expression expression = parseAddAndSubtractExpression();
         while (tokenStream.match(TokenType.MODULE)) {
             Token operator = tokenStream.before();
@@ -243,6 +243,12 @@ public class ParserExpression extends Parser {
     // Manejar expresiones de acceso a índices 'lista[1]'
     private Expression parseIndexAccess() {
         Expression expression = primaryParser();
+
+        if (tokenStream.matchNotAdvance(TokenType.BRACKETS_OPEN)) {
+            if (!(expression instanceof ExpressionVariable)) {
+                throw new ParserException("El nombre de la lista no es una variable válida.");
+            }
+        }
         List<Expression> indexList = null;
         while (tokenStream.match(TokenType.BRACKETS_OPEN)) {
             if (indexList == null) {

@@ -99,4 +99,29 @@ class ParserFunctionTest {
         var ast = assertDoesNotThrow(() -> parser.parseStatement());
         assertNotNull(ast);
     }
+
+    @Test
+    @DisplayName("Test - Función con retorno de tipo lista no tipado")
+    void testFuncionConRetornoListaNoTipada(){
+        final String code = "lista obtener_numeros() {\n" +
+                "lista miLista = [1,falso,1.2]" +
+                "retornar miLista\n" +
+                "}";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertNotNull(ast);
+    }
+
+    @Test
+    @DisplayName("Test - Función con retorno de tipo lista no tipado inline")
+    void testFuncionConRetornoListaNoTipadaInline(){
+        final String code = "lista obtener_numeros() {\n" +
+                "retornar [1,falso,1.2]\n" +
+                "}";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertNotNull(ast);
+    }
 }
