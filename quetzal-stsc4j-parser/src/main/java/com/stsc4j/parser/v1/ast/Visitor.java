@@ -275,4 +275,6 @@ public interface Visitor<T> {
      * @return a result of the type T based on the processing of the StatementBreak
      */
     T visit(StatementBreak statementBreak);
+
+    T visit(StatementThrow statementThrow);
 }

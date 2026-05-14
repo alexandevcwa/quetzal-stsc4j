@@ -126,6 +126,11 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseContinue().parseStatement();
         }
 
+        // Parser (Throw)
+        if (isThrowDeclaration()) {
+            return parserStatement.parseThrow().parseStatement();
+        }
+
         Token current = tokenStream.show();
         String sb = "Token no reconocido.......................................\n" +
                 String.format("%-18s -> %s\n", "Tipo", current.type.toString()) +

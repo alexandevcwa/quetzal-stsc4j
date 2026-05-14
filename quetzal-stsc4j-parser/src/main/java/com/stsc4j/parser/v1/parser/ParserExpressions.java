@@ -22,6 +22,7 @@ public class ParserExpressions extends Parser {
         return parseSymbolicExpression();
     }
 
+    /////
     private Expression parseSymbolicExpression() {
         Expression expression = parseEspaniolExpression();
         while (tokenStream.match(TokenType.AND, TokenType.OR)) {
@@ -86,20 +87,31 @@ public class ParserExpressions extends Parser {
 
     // Maneja >, <, >=, <=
     private Expression parseRelationalExpression() {
-        Expression expression = parseAddAndSubtractExpression();
+        Expression expression = parseModuleExpression();
         while (tokenStream.match(TokenType.GREATER_THAN, TokenType.LESS_THAN)) {
             Token operator = tokenStream.before();
             Token secondaryOperator = null;
             if (tokenStream.match(TokenType.EQUAL)) {
                 secondaryOperator = tokenStream.before();
             }
-            Expression right = parseAddAndSubtractExpression();
+            Expression right = parseModuleExpression();
             if (secondaryOperator != null) {
                 final Token[] operators = {operator, secondaryOperator};
                 expression = new ExpressionBinary(expression, operators, right);
             } else {
                 expression = new ExpressionBinary(expression, operator, right);
             }
+        }
+        return expression;
+    }
+
+    // Maneja %
+    private Expression parseModuleExpression(){
+        Expression expression = parseAddAndSubtractExpression();
+        while (tokenStream.match(TokenType.MODULE)) {
+            Token operator = tokenStream.before();
+            Expression right = parseAddAndSubtractExpression();
+            expression = new ExpressionBinary(expression, operator, right);
         }
         return expression;
     }
@@ -181,9 +193,9 @@ public class ParserExpressions extends Parser {
             expression = parseDirectMethodCall(expression, before);
         }
 
+
         // Controlar acceso mediante punto: obj.prop o obj.metodo()
         expression = parsePropertyAndMethodAccess(expression);
-
         return expression;
     }
 

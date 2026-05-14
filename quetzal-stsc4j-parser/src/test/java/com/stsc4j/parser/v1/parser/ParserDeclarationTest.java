@@ -21,8 +21,6 @@ class ParserDeclarationTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
-    private final static ASTPrinter astPrinter = new ASTPrinter();
-
     private static ParserDeclaration parser;
 
     @AfterEach
@@ -53,7 +51,6 @@ class ParserDeclarationTest {
         // Assert
         assertThat(sta)
                 .matches(s -> s instanceof StatementVariable);
-        tokens.clear();
 
     }
 
@@ -64,7 +61,6 @@ class ParserDeclarationTest {
         context.process(code);
         tokens.addAll(context.getTokens());
         assertThrows(ParserException.class, () -> parser.parseStatement());
-        tokens.clear();
     }
 
     @Test
@@ -74,7 +70,6 @@ class ParserDeclarationTest {
         context.process(coder);
         tokens.addAll(context.getTokens());
         assertThrows(ParserException.class, () -> parser.parseStatement());
-        tokens.clear();
     }
 
     @Test
@@ -97,7 +92,6 @@ class ParserDeclarationTest {
         var ast = assertDoesNotThrow(() -> parser.parseStatement());
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementVariable);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test
@@ -113,7 +107,6 @@ class ParserDeclarationTest {
         assertThat(ast).matches(s -> s instanceof StatementVariable);
         var formated = (StatementVariable) ast;
         assertThat(((ExpressionIndexAccess) formated.initialValue).indexList.size()).isEqualTo(2);
-        System.out.println(astPrinter.print(ast));
     }
 
     @Test

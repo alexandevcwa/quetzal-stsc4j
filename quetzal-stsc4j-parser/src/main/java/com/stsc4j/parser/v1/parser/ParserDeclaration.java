@@ -30,15 +30,21 @@ public class ParserDeclaration extends Parser {
         boolean isMutable = false;
 
         // Nombre de la variable
-        Token name;
+        Token name = null;
 
         // Valor inicial de la variable
         Expression initialValue;
 
+        Token[] assignation = null;
+
         // Asignar nuevo valor a una variable ya declarada
         if (type.getType().equals(TokenType.IDENTIFIER)) {
-            tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
             name = type;
+            if (tokenStream.match(TokenType.EQUAL)) {
+                assignation = new Token[]{tokenStream.before()};
+            } else {
+                assignation = obtainAssignation();
+            }
         } else {
             // Nueva variable declarada
             isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
@@ -55,8 +61,18 @@ public class ParserDeclaration extends Parser {
             ternary = parserExpressions.parseTernaryExpression((ExpressionBinary) initialValue);
         }
 
-        return new StatementVariable(type, isMutable, name,
+        return new StatementVariable(type, isMutable, name,assignation,
                 ternary != null ? ternary : initialValue
         );
+    }
+
+    private Token[] obtainAssignation() {
+        if (tokenStream.match(TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MODULE)) {
+            Token fistOperator = tokenStream.before();
+            Token secondOperator = tokenStream.consume(TokenType.EQUAL, "Se esperaba '=' después del operador aritmetico para la asignación.");
+            return new Token[]{fistOperator, secondOperator};
+        } else {
+            throw new ParserException("Se esperaba un operador aritmetico.");
+        }
     }
 }

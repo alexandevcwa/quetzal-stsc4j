@@ -8,7 +8,7 @@ import com.stsc4j.parser.v1.ast.StatementFunctionParameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserFunctionParameter extends Parser{
+public class ParserFunctionParameter extends Parser {
 
     public TokenStream tokenStream;
 
@@ -31,8 +31,11 @@ public class ParserFunctionParameter extends Parser{
                 throw new RuntimeException("Se esperaba un tipo de dato primitivo para el parámetro de la función");
             }
             Token type = tokenStream.before();
+
+            boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
+
             Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba un identificador para el parámetro de la función");
-            parameters.add(new StatementFunctionParameter(type, identified));
+            parameters.add(new StatementFunctionParameter(type, isMutable, identified));
             if (tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
                 stop = true;
             } else {
