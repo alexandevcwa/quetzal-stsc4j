@@ -8,11 +8,11 @@ import com.stsc4j.parser.v1.exception.ParserException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserExpressions extends Parser {
+public class ParserExpression extends Parser {
 
     private final TokenStream tokenStream;
 
-    public ParserExpressions(TokenStream tokenStream) {
+    public ParserExpression(TokenStream tokenStream) {
         this.tokenStream = tokenStream;
     }
 
@@ -22,7 +22,6 @@ public class ParserExpressions extends Parser {
         return parseSymbolicExpression();
     }
 
-    /////
     private Expression parseSymbolicExpression() {
         Expression expression = parseEspaniolExpression();
         while (tokenStream.match(TokenType.AND, TokenType.OR)) {
@@ -106,7 +105,7 @@ public class ParserExpressions extends Parser {
     }
 
     // Maneja %
-    private Expression parseModuleExpression(){
+    private Expression parseModuleExpression() {
         Expression expression = parseAddAndSubtractExpression();
         while (tokenStream.match(TokenType.MODULE)) {
             Token operator = tokenStream.before();
@@ -244,6 +243,12 @@ public class ParserExpressions extends Parser {
     // Manejar expresiones de acceso a índices 'lista[1]'
     private Expression parseIndexAccess() {
         Expression expression = primaryParser();
+
+        if (tokenStream.matchNotAdvance(TokenType.BRACKETS_OPEN)) {
+            if (!(expression instanceof ExpressionVariable)) {
+                throw new ParserException("El nombre de la lista no es una variable válida.");
+            }
+        }
         List<Expression> indexList = null;
         while (tokenStream.match(TokenType.BRACKETS_OPEN)) {
             if (indexList == null) {

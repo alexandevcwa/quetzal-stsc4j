@@ -8,13 +8,13 @@ public class ParserLoopFor extends Parser {
 
     private final TokenStream tokenStream;
     private final ParserDeclaration parserDeclaration;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
     private final ParserBlock parserBlock;
 
-    public ParserLoopFor(TokenStream tokenStream, ParserDeclaration parserDeclaration, ParserExpressions parserExpressions, ParserBlock parserBlock) {
+    public ParserLoopFor(TokenStream tokenStream, ParserDeclaration parserDeclaration, ParserExpression parserExpression, ParserBlock parserBlock) {
         this.tokenStream = tokenStream;
         this.parserDeclaration = parserDeclaration;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
         this.parserBlock = parserBlock;
     }
 
@@ -27,7 +27,7 @@ public class ParserLoopFor extends Parser {
         boolean isIdentifier = tokenStream.matchNotAdvance(TokenType.IDENTIFIER);
         ExpressionVariable identifier = null;
         if (isIdentifier) {
-            Expression expression = parserExpressions.parseExpression();
+            Expression expression = parserExpression.parseExpression();
             if (!(expression instanceof ExpressionVariable)) {
                 throw new ParserException("Se esperava una declaración de variable o la referencia a una variable ya declarada en el ciclo 'para'");
             }
@@ -41,7 +41,7 @@ public class ParserLoopFor extends Parser {
 
         // Condicional del ciclo 'para'
         ExpressionBinary condition;
-        Expression temp1 = parserExpressions.parseExpression();
+        Expression temp1 = parserExpression.parseExpression();
         if (temp1 instanceof ExpressionBinary) {
             condition = (ExpressionBinary) temp1;
         } else {
@@ -51,7 +51,7 @@ public class ParserLoopFor extends Parser {
 
         // Operador de incremento
         ExpressionIncDec incDec;
-        Expression temp2 = parserExpressions.parseExpression();
+        Expression temp2 = parserExpression.parseExpression();
         if (temp2 instanceof ExpressionIncDec) {
             incDec = (ExpressionIncDec) temp2;
         } else {

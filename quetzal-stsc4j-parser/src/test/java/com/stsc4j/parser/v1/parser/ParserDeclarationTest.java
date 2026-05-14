@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.ExpressionIndexAccess;
 import com.stsc4j.parser.v1.ast.Statement;
 import com.stsc4j.parser.v1.ast.StatementVariable;
@@ -35,7 +34,7 @@ class ParserDeclarationTest {
         context = new LexerContext();
         tokens = new ArrayList<>();
         tokenStream = new TokenStream(tokens);
-        parser = new ParserDeclaration(tokenStream, new ParserExpressions(tokenStream));
+        parser = new ParserDeclaration(tokenStream, new ParserExpression(tokenStream));
     }
 
     @Test

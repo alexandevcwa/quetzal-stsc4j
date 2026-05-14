@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.StatementLoopDoWhile;
 import com.stsc4j.parser.v1.exception.ParserException;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +34,7 @@ class ParserLoopDoWhileTest {
 
         parser = new ParserLoopDoWhile(
                 tokenStream,
-                new ParserExpressions(tokenStream),
+                new ParserExpression(tokenStream),
                 new ParserBlock(tokenStream, new ParserPrincipal(tokenStream))
         );
     }

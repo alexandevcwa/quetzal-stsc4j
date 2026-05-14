@@ -26,6 +26,9 @@ public class ParserFunctionParameter extends Parser {
         List<Statement> parameters = new ArrayList<>();
 
         while (!stop) {
+            if (tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
+                return parameters;
+            }
             if (tokenStream.notMatch(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
                     TokenType.PRIMITIVE_BOOLEAN)) {
                 throw new RuntimeException("Se esperaba un tipo de dato primitivo para el parámetro de la función");

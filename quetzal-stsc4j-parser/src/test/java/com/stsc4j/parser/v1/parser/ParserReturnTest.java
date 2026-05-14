@@ -36,7 +36,7 @@ public class ParserReturnTest {
         tokenStream = new TokenStream(tokens);
 
         parser = new ParserReturn(
-                new ParserExpressions(tokenStream),
+                new ParserExpression(tokenStream),
                 tokenStream
         );
     }
