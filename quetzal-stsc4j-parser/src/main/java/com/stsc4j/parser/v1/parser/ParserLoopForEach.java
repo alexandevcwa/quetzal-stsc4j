@@ -8,12 +8,12 @@ import com.stsc4j.parser.v1.exception.ParserException;
 public class ParserLoopForEach extends Parser {
 
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
     private final ParserBlock parserBlock;
 
-    public ParserLoopForEach(TokenStream tokenStream, ParserExpressions parserExpressions, ParserBlock parserBlock) {
+    public ParserLoopForEach(TokenStream tokenStream, ParserExpression parserExpression, ParserBlock parserBlock) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
         this.parserBlock = parserBlock;
     }
 
@@ -30,7 +30,7 @@ public class ParserLoopForEach extends Parser {
 
         tokenStream.consume(TokenType.MUTABLE_VARIABLE, " Se esperaba 'var' en la declaración de variable del ciclo 'para'");
 
-        Expression expression = parserExpressions.parseExpression();
+        Expression expression = parserExpression.parseExpression();
         if (!(expression instanceof ExpressionVariable)) {
             throw new ParserException("Se esperaba una declaración de variable con un nombre válido en la declaración del ciclo 'para'");
         }
@@ -43,7 +43,7 @@ public class ParserLoopForEach extends Parser {
         }
 
         // Variable que contiene la lista de elementos a iterar
-        Expression listVariable = parserExpressions.parseExpression();
+        Expression listVariable = parserExpression.parseExpression();
         if (!(listVariable instanceof ExpressionVariable)) {
             throw new ParserException("Se esperaba una variable que contenga una lista en la declaración del ciclo 'para'");
         }

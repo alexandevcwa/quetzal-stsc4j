@@ -472,7 +472,7 @@ public class ASTPrinter implements Visitor<String> {
         }
 
         // Cerrar todos los brackets
-        sb.append(">".repeat(Math.max(0, depth + 1)));
+        sb.append(">".repeat(Math.max(0, depth -1  + 1)));
 
         return sb.toString();
     }

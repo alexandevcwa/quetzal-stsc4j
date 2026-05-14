@@ -11,12 +11,12 @@ import java.util.List;
 
 public class ParserJsnExpression {
 
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
     private final TokenStream tokenStream;
 
-    public ParserJsnExpression(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserJsnExpression(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
     }
 
     public ExpressionJsnBlock parserJsnExpression() {
@@ -46,7 +46,7 @@ public class ParserJsnExpression {
         // Parsear literales
         if (tokenStream.matchNotAdvance(TokenType.LIT_DECIMAL, TokenType.LIT_INTEGER,
                 TokenType.LIT_STRING, TokenType.LIT_TRUE, TokenType.LIT_FALSE)) {
-            value = parserExpressions.parseExpression();
+            value = parserExpression.parseExpression();
         }
         // Parsear objetos JSN anidados
         else if (tokenStream.matchNotAdvance(TokenType.BRACES_OPEN)) {
@@ -70,7 +70,7 @@ public class ParserJsnExpression {
                 expressions.add(parseJsnBlock());
             } else if (tokenStream.matchNotAdvance(TokenType.LIT_DECIMAL, TokenType.LIT_INTEGER,
                     TokenType.LIT_STRING, TokenType.LIT_TRUE, TokenType.LIT_FALSE)) {
-                expressions.add(parserExpressions.parseExpression());
+                expressions.add(parserExpression.parseExpression());
             }
             boolean isComma = tokenStream.match(TokenType.COMMA);
             if (!isComma) {

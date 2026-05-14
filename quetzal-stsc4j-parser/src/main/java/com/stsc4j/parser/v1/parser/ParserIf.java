@@ -9,11 +9,11 @@ public class ParserIf extends Parser {
 
     private final TokenStream tokenStream;
     private final ParserBlock parserBlock;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserIf(TokenStream tokenStream,ParserExpressions parserExpressions, ParserBlock parserBlock) {
+    public ParserIf(TokenStream tokenStream, ParserExpression parserExpression, ParserBlock parserBlock) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
         this.parserBlock = parserBlock;
     }
 
@@ -29,7 +29,7 @@ public class ParserIf extends Parser {
      */
     private Statement parseIfChain() {
         tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' después del si.");
-        Expression condition = parserExpressions.parseExpression();
+        Expression condition = parserExpression.parseExpression();
         tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de la condición.");
         Statement thenBranch = parserBlock.parseStatement();
         Statement elseBranch = null;

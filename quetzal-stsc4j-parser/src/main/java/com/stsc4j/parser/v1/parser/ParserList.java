@@ -4,79 +4,38 @@ import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ParserList extends Parser {
 
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserList(TokenStream tokenStream, ParserExpressions parserExpressions) {
+    public ParserList(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
     }
 
     @Override
     public Statement parseStatement() {
         tokenStream.consume(TokenType.LIST, "Se esperaba 'lista'");
-        TypeList typeList = (TypeList) parseListType();
+
+        // Verificar si la lista tiene tipo especificado (lista<tipo>) o sin tipo (lista)
+        TypeList typeList = null;
+        if (tokenStream.matchNotAdvance(TokenType.LESS_THAN)) {
+            typeList = (TypeList) parseListType();
+        }
+
         boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
         Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el identificador de la lista.");
         tokenStream.consume(TokenType.EQUAL, "Se esperaba '=' después del identificador de la lista.");
-        short depth = listDepth(typeList);
+
+        short depth = typeList != null ? listDepth(typeList) : 0;
 
         // Usar la función recursiva para parsear listas multidimensionales
-        ExpressionList expressionList = parseMultidimensionalList(depth);
+        ExpressionList expressionList = (ExpressionList) ParserListExpression.builder(tokenStream, parserExpression)
+                .depth(depth).build()
+                .parseExpression();
 
         return new StatementList(typeList, isMutable, identified, expressionList);
-    }
-
-    /**
-     * Función recursiva auto-ejecutable para parsear matrices multidimensionales.
-     * Maneja listas de cualquier profundidad: [1,2,3], [[1,2], [3,4]], [[[...]]]
-     *
-     * @param currentDepth Profundidad actual de recursión (0 = elementos primitivos)
-     * @return ExpressionList que contiene todas las expresiones parseadas recursivamente
-     */
-    private ExpressionList parseMultidimensionalList(short currentDepth) {
-        tokenStream.consume(TokenType.BRACKETS_OPEN, "Se esperaba '[' para iniciar la declaración de la lista.");
-
-        List<Expression> elements = new ArrayList<>();
-        boolean isFirstElement = true;
-
-        // Bucle principal para parsear elementos de la lista actual
-        //TODO: Mejorar el manejo del bucle
-        while (true) {
-            // Verificar si hemos llegado al final de la lista
-            if (tokenStream.match(TokenType.BRACKETS_CLOSE)) {
-                break;
-            }
-
-            // No permitir coma al inicio
-            if (!isFirstElement) {
-                tokenStream.consume(TokenType.COMMA, "Se esperaba ',' entre elementos de la lista.");
-            }
-            isFirstElement = false;
-
-            Expression element;
-
-            // Si la profundidad es mayor a 0, significa que necesitamos listas anidadas
-            if (currentDepth > 0) {
-                // Llamada recursiva: parsear sub-lista
-                element = parseMultidimensionalList((short) (currentDepth - 1));
-            } else {
-                // Caso base: parsear expresión primitiva
-                element = parserExpressions.parseExpression();
-            }
-
-            elements.add(element);
-        }
-
-        // Crear y retornar la ExpressionList con los elementos parseados
-        ExpressionList expressionList = new ExpressionList();
-        expressionList.expressions = elements;
-        return expressionList;
     }
 
     /**
