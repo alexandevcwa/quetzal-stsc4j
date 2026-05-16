@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.exception.ParserException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,7 +34,7 @@ class ParserLoopForEachTest {
         tokens = new ArrayList<>();
         tokenStream = new TokenStream(tokens);
 
-        var parserExpression = new ParserExpressions(tokenStream);
+        var parserExpression = new ParserExpression(tokenStream);
         parser = new ParserLoopForEach(
                 tokenStream,
                 parserExpression,

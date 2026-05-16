@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.exception.ParserException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,13 +14,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("ParserExpressions - Tests")
-class ParserExpressionsTest {
+class ParserExpressionTest {
 
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
 
-    public static ParserExpressions parser;
+    public static ParserExpression parser;
 
     @AfterEach
     void cleanTokens() {
@@ -34,7 +33,7 @@ class ParserExpressionsTest {
         context = new LexerContext();
         tokens = new ArrayList<>();
         tokenStream = new TokenStream(tokens);
-        parser = new ParserExpressions(tokenStream);
+        parser = new ParserExpression(tokenStream);
     }
 
     @Test

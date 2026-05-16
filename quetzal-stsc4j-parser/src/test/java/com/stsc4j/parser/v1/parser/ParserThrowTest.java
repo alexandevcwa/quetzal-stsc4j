@@ -33,7 +33,7 @@ class ParserThrowTest {
         context = new LexerContext();
         tokens = new ArrayList<>();
         tokenStream = new TokenStream(tokens);
-        parser = new ParserThrow(tokenStream, new ParserExpressions(tokenStream));
+        parser = new ParserThrow(tokenStream, new ParserExpression(tokenStream));
     }
 
     @Test

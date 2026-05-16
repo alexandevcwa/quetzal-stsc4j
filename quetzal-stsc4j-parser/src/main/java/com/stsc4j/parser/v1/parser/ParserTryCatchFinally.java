@@ -7,12 +7,12 @@ import com.stsc4j.parser.v1.exception.ParserException;
 public class ParserTryCatchFinally extends Parser{
 
     private final ParserBlock parserBlock;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
     private final TokenStream tokenStream;
 
-    public ParserTryCatchFinally(ParserBlock parserBlock, ParserExpressions parserExpressions, TokenStream tokenStream) {
+    public ParserTryCatchFinally(ParserBlock parserBlock, ParserExpression parserExpression, TokenStream tokenStream) {
         this.parserBlock = parserBlock;
-        this.parserExpressions = parserExpressions;
+        this.parserExpression = parserExpression;
         this.tokenStream = tokenStream;
     }
 
@@ -25,7 +25,7 @@ public class ParserTryCatchFinally extends Parser{
         tokenStream.consume(TokenType.CATCH, "Se esperaba 'capturar'");
         tokenStream.consume(TokenType.LEFT_PARENT, "Se esperaba '(' para el bloque de captura");
         tokenStream.consume(TokenType.EXCEPTION, "Se experaba 'excepcion' en el bloque de captura");
-        Expression exceptionType = parserExpressions.parseExpression();
+        Expression exceptionType = parserExpression.parseExpression();
         if(!(exceptionType instanceof ExpressionVariable)){
             throw new ParserException("Se esperaba un nombre de variable para la excepción en el bloque de captura");
         }

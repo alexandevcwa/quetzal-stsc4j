@@ -41,7 +41,7 @@ class ParserLoopWhileTest {
 
         parser = new ParserLoopWhile(
                 tokenStream,
-                new ParserExpressions(tokenStream),
+                new ParserExpression(tokenStream),
                 new ParserBlock(tokenStream, new ParserPrincipal(tokenStream))
         );
     }

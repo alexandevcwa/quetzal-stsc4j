@@ -7,17 +7,17 @@ import com.stsc4j.parser.v1.ast.StatementReturn;
 
 public class ParserReturn extends Parser{
     private final TokenStream tokenStream;
-    private final ParserExpressions parserExpressions;
+    private final ParserExpression parserExpression;
 
-    public ParserReturn(ParserExpressions parserExpressions, TokenStream tokenStream) {
-        this.parserExpressions = parserExpressions;
+    public ParserReturn(ParserExpression parserExpression, TokenStream tokenStream) {
+        this.parserExpression = parserExpression;
         this.tokenStream = tokenStream;
     }
 
     @Override
     public Statement parseStatement() {
         tokenStream.consume(TokenType.RETURN, "Se esperaba 'retornar'");
-        Expression returnExpression = parserExpressions.parseExpression();
+        Expression returnExpression = parserExpression.parseExpression();
         return new StatementReturn(returnExpression);
     }
 }
