@@ -28,9 +28,9 @@ public class ParserConsoleOut extends Parser {
             throw new ParserException(String.format("La función '%s', no esta definida en la clase 'consola' para salida de datos", tokenStream.before().getLexeme()));
         }
         Token function = tokenStream.before();
-        tokenStream.consume(LEFT_PARENT, "Se esperaba un '(' después de la función de consola");
+        tokenStream.consume(LEFT_PARENT, "Se esperaba un apertura de parentesis '(' despues de la llamada de la función");
         Expression expression = parserExpression.parseExpression();
-        tokenStream.consume(RIGHT_PARENT, "Se esperaba un ')' después de la expresión de consola");
+        tokenStream.consume(RIGHT_PARENT, "Se esperaba un cierre de parentesis ')' para finalizar la llamada a la función");
         return new StatementConsolaOut(function, expression);
     }
 }

@@ -8,10 +8,12 @@ import com.stsc4j.parser.v1.ast.*;
 public class ParserDeclaration extends Parser {
     private final TokenStream tokenStream;
     private final ParserExpression parserExpression;
+    private final ParserConsoleIn parserConsoleIn;
 
     public ParserDeclaration(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
         this.parserExpression = parserExpression;
+        this.parserConsoleIn = new ParserConsoleIn(tokenStream, parserExpression);
     }
 
 
@@ -37,7 +39,7 @@ public class ParserDeclaration extends Parser {
 
         Token[] assignation = null;
 
-        // Asignar nuevo valor a una variable ya declarada
+        // Asignar nuevo valor a una variable ya declarada (a = 1)
         if (type.getType().equals(TokenType.IDENTIFIER)) {
             name = type;
             if (tokenStream.match(TokenType.EQUAL)) {
@@ -45,14 +47,22 @@ public class ParserDeclaration extends Parser {
             } else {
                 assignation = obtainAssignation();
             }
-        } else {
-            // Nueva variable declarada
+        }
+        // Declarar una variable (entero var a = 1)
+        else {
             isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
             name = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
             tokenStream.match(TokenType.EQUAL, "Se esperaba '=' después del nombre de la variable o luego de 'var'.");
         }
 
-        initialValue = parserExpression.parseExpression();
+        // Obtener valor inicial por consola
+        if (tokenStream.matchNotAdvance(TokenType.C_CONSOLE)) {
+            initialValue = parserConsoleIn.parseExpression();
+        }
+        // Obtener variable o literal
+        else {
+            initialValue = parserExpression.parseExpression();
+        }
 
         Expression ternary = null;
         // Verificar operador ternario
@@ -61,7 +71,7 @@ public class ParserDeclaration extends Parser {
             ternary = parserExpression.parseTernaryExpression((ExpressionBinary) initialValue);
         }
 
-        return new StatementVariable(type, isMutable, name,assignation,
+        return new StatementVariable(type, isMutable, name, assignation,
                 ternary != null ? ternary : initialValue
         );
     }

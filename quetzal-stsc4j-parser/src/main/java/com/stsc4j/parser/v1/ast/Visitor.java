@@ -277,4 +277,6 @@ public interface Visitor<T> {
     T visit(StatementBreak statementBreak);
 
     T visit(StatementThrow statementThrow);
+
+    T visit(ExpressionConsoleIn expressionConsoleIn);
 }
