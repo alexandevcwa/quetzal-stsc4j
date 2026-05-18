@@ -15,7 +15,7 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementVariable semanticStatementVariable = new SemanticStatementVariable(currentEnv, this);
     private final SemanticStatementBlock semanticStatementBlock = new SemanticStatementBlock(currentEnv);
     private final SemanticStatementIf semanticStatementIf = new SemanticStatementIf(currentEnv);
-    private final SemanticStatementList semanticStatementList = new SemanticStatementList(currentEnv);
+    private final SemanticStatementList semanticStatementList = new SemanticStatementList(currentEnv, this);
     private final SemanticStatementJsn semanticStatementJsn = new SemanticStatementJsn(currentEnv);
     private final SemanticStatementFunctionParameter semanticStatementFunctionParameter = new SemanticStatementFunctionParameter(currentEnv);
     private final SemanticStatementFunction semanticStatementFunction = new SemanticStatementFunction(currentEnv);
@@ -28,7 +28,7 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticExpressionTernary semanticExpressionTernary = new SemanticExpressionTernary(currentEnv);
     private final SemanticExpressionMethodCall semanticExpressionMethodCall = new SemanticExpressionMethodCall(currentEnv);
     private final SemanticExpressionIndexAccess semanticExpressionIndexAccess = new SemanticExpressionIndexAccess(currentEnv);
-    private final SemanticExpressionList semanticExpressionList = new SemanticExpressionList(currentEnv);
+    private final SemanticExpressionList semanticExpressionList = new SemanticExpressionList(currentEnv, this);
     private final SemanticExpressionJsnBlock semanticExpressionJsnBlock = new SemanticExpressionJsnBlock(currentEnv);
     private final SemanticExpressionJsn semanticExpressionJsn = new SemanticExpressionJsn(currentEnv);
     private final SemanticExpressionIncDec semanticExpressionIncDec = new SemanticExpressionIncDec(currentEnv);
@@ -37,6 +37,15 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticExpressionPropertyAccess semanticExpressionPropertyAccess = new SemanticExpressionPropertyAccess(currentEnv, this);
     private final SemanticExpressionForEachVar semanticExpressionForEachVar = new SemanticExpressionForEachVar(currentEnv, this);
     private final SemanticStatementConsoleOut semanticStatementConsoleOut = new SemanticStatementConsoleOut(currentEnv);
+    private final SemanticTypeList semanticTypeList = new SemanticTypeList(currentEnv);
+    private final SemanticTypePrimitive semanticTypePrimitive = new SemanticTypePrimitive(currentEnv);
+    private final SemanticStatementMatrxiAssignation semanticStatementMatrxiAssignation = new SemanticStatementMatrxiAssignation(currentEnv);
+    private final SemanticExpressionNull semanticExpressionNull = new SemanticExpressionNull(currentEnv);
+    private final SemanticStatementTryCatchFinally semanticStatementTryCatchFinally = new SemanticStatementTryCatchFinally(currentEnv);
+    private final SemanticStatementContinue semanticStatementContinue = new SemanticStatementContinue(currentEnv);
+    private final SemanticStatementBreak semanticStatementBreak = new SemanticStatementBreak(currentEnv);
+    private final SemanticStatementThrow semanticStatementThrow = new SemanticStatementThrow(currentEnv);
+
 
 
     // Metod para iniciar a leer las sentencias
@@ -82,12 +91,12 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(TypeList typeList) {
-        return "";
+        return semanticTypeList.visit(typeList);
     }
 
     @Override
     public String visit(TypePrimitive type) {
-        return "";
+        return semanticTypePrimitive.visit(type);
     }
 
     @Override
@@ -137,17 +146,17 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(StatementMatrixAssignation statementMatrixAssignation) {
-        return "";
+        return semanticStatementMatrxiAssignation.visit(statementMatrixAssignation);
     }
 
     @Override
     public String visit(ExpressionNull expressionNull) {
-        return "";
+        return semanticExpressionNull.visit(expressionNull);
     }
 
     @Override
     public String visit(StatementTryCatchFinally statementTryCatchFinally) {
-        return "";
+        return semanticStatementTryCatchFinally.visit(statementTryCatchFinally);
     }
 
     @Override
@@ -157,12 +166,17 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     @Override
     public String visit(StatementContinue statementContinue) {
-        return "";
+        return semanticStatementConsoleOut.visit(statementContinue);
     }
 
     @Override
     public String visit(StatementBreak statementBreak) {
-        return "";
+        return semanticStatementBreak.visit(statementBreak);
+    }
+
+    @Override
+    public String visit(StatementThrow statementThrow) {
+        return semanticStatementThrow.visit(statementThrow);
     }
 
     // EXPRESIONES

@@ -9,7 +9,7 @@ public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
     private final Environment currentEnv;
 
-    public SemanticExpressionLiteral (Environment currentEnv) {
+    public SemanticExpressionLiteral(Environment currentEnv) {
         this.currentEnv = currentEnv;
     }
 
@@ -21,16 +21,16 @@ public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
             case LIT_INTEGER:
                 return "entero";
             case LIT_STRING:
-                return "cadena";
+                // Ajustado al tipo oficial de Quetzal
+                return "texto";
             case LIT_DECIMAL:
-                return "decimal";
+                // Ajustado al tipo oficial de Quetzal
+                return "número";
+            case LIT_TRUE:
             case LIT_FALSE:
-                return "booleano";
+                return "log";
             default:
-                // Si el token no es un literal reconocido, podríamos lanzar un error semántico o devolver "desconocido"
                 return "desconocido";
         }
-
     }
-
 }

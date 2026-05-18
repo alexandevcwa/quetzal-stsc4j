@@ -28,14 +28,14 @@ public class SemanticStatementVariable extends SemanticAbstractAnalyzer {
 
         // 2. TRUCO DEL PARSER:
         // Si el tipo es un IDENTIFIER, significa que es una reasignación (ej. a = 20)
-        if (statementVariable.typo.getType().toString().equals("IDENTIFIER")) {
+        if (statementVariable.type.getType().toString().equals("IDENTIFIER")) {
 
             // La memoria (Environment) se encargará de validar si se puede reasignar
             currentEnv.assign(nombreVariable, tipoReal);
 
         } else {
             // 3. ES UNA DECLARACIÓN NUEVA (ej. entero a = 20 o decimal b = 15)
-            String tipoEsperado = statementVariable.typo.getLexeme();
+            String tipoEsperado = statementVariable.type.getLexeme();
 
             // Lógica de flexibilidad de tipos (Coerción implícita)
             boolean sonCompatibles = false;

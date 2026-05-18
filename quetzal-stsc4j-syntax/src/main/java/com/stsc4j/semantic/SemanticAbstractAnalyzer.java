@@ -171,4 +171,9 @@ public abstract class SemanticAbstractAnalyzer implements Visitor <String> {
     public String visit(StatementBreak statementBreak) {
         return null;
     }
+
+    @Override
+    public String visit(StatementThrow statementThrow) {
+        return null;
+    }
 }
