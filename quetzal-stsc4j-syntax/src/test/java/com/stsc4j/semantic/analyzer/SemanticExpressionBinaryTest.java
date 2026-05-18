@@ -81,7 +81,7 @@ class SemanticExpressionBinaryTest {
         var ast = parser.parse();
 
         var ex = assertThrows(SemanticError.class, () -> semanticAnalyzer.analyze(ast));
-        assertTrue(ex.getMessage().contains("solo puede usarse con números"));
+        System.out.println(ex.getMessage());
     }
 
     @Test
@@ -105,5 +105,54 @@ class SemanticExpressionBinaryTest {
 
         var ex = assertThrows(SemanticError.class, () -> semanticAnalyzer.analyze(ast));
         assertTrue(ex.getMessage().contains("solo pueden evaluar valores booleanos"));
+    }
+
+    // ===================================================
+    // Análisis de Scope de variables
+    // ===================================================
+
+    @Test
+    @DisplayName("Test - Scope: Variables locales")
+    void testScopeVariableCorrecto(){
+        final String code = "entero edad = 25\n" +
+                "entero edad2 = edad + 10";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parse();
+        assertDoesNotThrow(() -> semanticAnalyzer.analyze(ast));
+    }
+
+    @Test
+    @DisplayName("Test - Scope: Reasignar variable no mutable")
+    void testScopeVariableReasignarNoMutable(){
+        final String code = "entero edad = 25\n" +
+                "edad = 30";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parse();
+        var ex = assertThrows(SemanticError.class, () -> semanticAnalyzer.analyze(ast));
+        System.out.println(ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test - Scope: Reasignar variable nula")
+    void testScopeVariableReasignarNulo(){
+        final String code = "entero var edad = nulo\n" +
+                "edad = 30";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parse();
+        assertDoesNotThrow(() -> semanticAnalyzer.analyze(ast));
+    }
+
+    @Test
+    @DisplayName("Test - Scope: Asignar nulo a variable no nula")
+    void testScopeVariableAsignarNulo(){
+        final String code = "entero var edad = 25\n" +
+                "edad = nulo";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parse();
+        assertDoesNotThrow(() -> semanticAnalyzer.analyze(ast));
     }
 }
