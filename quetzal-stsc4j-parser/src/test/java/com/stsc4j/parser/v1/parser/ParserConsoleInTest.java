@@ -2,6 +2,7 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
+import com.stsc4j.parser.v1.ast.ASTPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +20,7 @@ class ParserConsoleInTest {
     private static TokenStream tokenStream;
 
     private static ParserConsoleIn parser;
+    private final static ASTPrinter astPrinter = new ASTPrinter();
 
     @AfterEach
     void clean() {
@@ -42,6 +44,7 @@ class ParserConsoleInTest {
         tokens.addAll(context.getTokens());
         var ast = assertDoesNotThrow(() -> parser.parseExpression());
         assertNotNull(ast);
+        System.out.println(astPrinter.print(ast));
     }
 
     @Test
