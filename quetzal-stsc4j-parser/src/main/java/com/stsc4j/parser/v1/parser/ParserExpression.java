@@ -4,6 +4,7 @@ import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
 import com.stsc4j.parser.v1.exception.ParserException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -298,9 +299,14 @@ public class ParserExpression extends Parser {
             return new ExpressionLiteral(token, token.getLexeme());
         }
 
-        // Controla variables
-        if (tokenStream.match(TokenType.IDENTIFIER)) {
-            return new ExpressionVariable(tokenStream.before());
+        // Controla variables y negación de variables
+        if (tokenStream.match(TokenType.IDENTIFIER, TokenType.EXCLAMATION)) {
+            Token token = tokenStream.before();
+            if (token.getType() == TokenType.EXCLAMATION) {
+                Token id = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
+                return new ExpressionVariable(id, true);
+            }
+            return new ExpressionVariable(token, false);
         }
 
         // Controla null
