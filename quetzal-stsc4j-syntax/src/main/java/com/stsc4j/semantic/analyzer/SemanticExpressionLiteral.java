@@ -19,18 +19,17 @@ public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
         switch (tipoToken) {
             case LIT_INTEGER:
-                return "entero";
+                return TokenType.PRIMITIVE_INTEGER.name(); // "PRIMITIVE_INTEGER"
             case LIT_STRING:
-                // Ajustado al tipo oficial de Quetzal
-                return "texto";
+                return TokenType.PRIMITIVE_STRING.name();  // "PRIMITIVE_STRING"
             case LIT_DECIMAL:
-                // Ajustado al tipo oficial de Quetzal
-                return "número";
+                return TokenType.PRIMITIVE_DECIMAL.name(); // "PRIMITIVE_DECIMAL"
             case LIT_TRUE:
             case LIT_FALSE:
-                return "log";
+                return TokenType.PRIMITIVE_BOOLEAN.name(); // "PRIMITIVE_BOOLEAN"
             default:
-                return "desconocido";
+                // token de error
+                return TokenType.UNKNOW.name();
         }
     }
 }

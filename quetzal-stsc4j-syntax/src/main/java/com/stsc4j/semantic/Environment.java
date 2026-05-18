@@ -22,6 +22,42 @@ public class Environment {
     // Tabla hash rápida O(1) para: NombreVariable -> TipoDato
     private final Map<String, VariableInfo> values = new HashMap<>();
 
+
+    // --- NUEVO: SOPORTE PARA FUNCIONES ---
+    public static class FunctionInfo {
+        public String returnType;
+        public java.util.List<String> paramTypes;
+
+        FunctionInfo(String returnType, java.util.List<String> paramTypes) {
+            this.returnType = returnType;
+            this.paramTypes = paramTypes;
+        }
+    }
+
+    // Tabla hash para: NombreFuncion -> DetallesDeLaFuncion
+    private final Map<String, FunctionInfo> functions = new HashMap<>();
+
+    public void defineFunction(String name, String returnType, java.util.List<String> paramTypes) {
+        if (isFunctionDeclared(name)) {
+            throw new SemanticError("Error Semántico: La función '" + name + "' ya está declarada.");
+        }
+        functions.put(name, new FunctionInfo(returnType, paramTypes));
+    }
+
+    private boolean isFunctionDeclared(String name) {
+        if (functions.containsKey(name)) return true;
+        if (enclosing != null) return enclosing.isFunctionDeclared(name);
+        return false;
+    }
+
+    public FunctionInfo resolveFunction(String name) {
+        if (functions.containsKey(name)) return functions.get(name);
+        if (enclosing != null) return enclosing.resolveFunction(name);
+        throw new SemanticError("Error Semántico: La función '" + name + "' no existe o no ha sido declarada.");
+    }
+    // --- FIN NUEVO ---
+
+
     // Constructor para el entorno global
     public Environment() {
         this.enclosing = null;
