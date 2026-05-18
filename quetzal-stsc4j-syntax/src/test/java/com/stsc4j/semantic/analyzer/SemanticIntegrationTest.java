@@ -68,13 +68,17 @@ class SemanticControlFlowIntegrationTest {
     }
 
     @Test
-    @DisplayName("Prueba 3 - Solo ciclo FOR (Sin Listas)")
-    void testSoloFor() {
+    @DisplayName("Prueba 3 - Ciclos For, Listas y For-Each")
+    void testSoloForYListas() {
         semanticAnalyzer = new SemanticAnalyzer();
         final String code =
                 "entero limite = 5\n" +
+                        "lista<entero> puntuaciones = [10, 20]\n" +
                         "para (entero i = 0; i < limite; i++) {\n" +
                         "    entero multiplicador = 2\n" +
+                        "}\n" +
+                        "por cada (entero puntos : puntuaciones) {\n" +
+                        "    entero doble = 2\n" +
                         "}\n";
         ejecutar(code);
     }

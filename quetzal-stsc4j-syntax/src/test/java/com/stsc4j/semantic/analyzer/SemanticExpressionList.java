@@ -76,8 +76,8 @@ class SemanticExpressionListTest {
 
         var ex = assertThrows(SemanticError.class, () -> semanticAnalyzer.analyze(ast));
 
-        // ACTUALIZADO: Ahora buscamos el mensaje real que lanza tu compilador
-        assertTrue(ex.getMessage().contains("se encontró un elemento de tipo"),
+        // ACTUALIZADO: Buscamos el mensaje exacto que configuramos en SemanticStatementList
+        assertTrue(ex.getMessage().contains("esperaba elementos de tipo"),
                 "El error no coincide con la validación de la lista. Error actual: " + ex.getMessage());
     }
 
