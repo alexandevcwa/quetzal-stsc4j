@@ -300,9 +300,9 @@ public class ParserExpression extends Parser {
         }
 
         // Controla variables y negación de variables
-        if (tokenStream.match(TokenType.IDENTIFIER, TokenType.EXCLAMATION)) {
+        if (tokenStream.match(TokenType.IDENTIFIER, TokenType.EXCLAMATION, TokenType.NEGATION_ESP)) {
             Token token = tokenStream.before();
-            if (token.getType() == TokenType.EXCLAMATION) {
+            if (token.getType() == TokenType.EXCLAMATION || token.getType() == TokenType.NEGATION_ESP) {
                 Token id = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
                 return new ExpressionVariable(id, true);
             }

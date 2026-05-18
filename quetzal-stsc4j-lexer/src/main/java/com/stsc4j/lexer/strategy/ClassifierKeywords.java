@@ -59,6 +59,7 @@ public class ClassifierKeywords implements Classifier {
 
         KEYWORDS_MAP.put(AND_ESP, TokenType.AND_ESP);
         KEYWORDS_MAP.put(OR_ESP, TokenType.OR_ESP);
+        KEYWORDS_MAP.put(NEGATION_ESP,TokenType.NEGATION_ESP);
     }
 
     @Override

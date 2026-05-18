@@ -174,4 +174,14 @@ class ParserDeclarationTest {
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementVariable);
     }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor booleano con operador de negación lógico en español")
+    void testVariableBooleanoNegacionESP(){
+        final String code = "log negado = no acceso";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+    }
 }
