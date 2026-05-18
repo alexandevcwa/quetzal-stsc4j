@@ -16,9 +16,14 @@ public class SemanticStatementLoopDoWhile extends SemanticAbstractAnalyzer {
 
     @Override
     public String visit(StatementLoopDoWhile statementLoopDoWhile) {
-        // 1. Analizamos el bloque de código
-        if (statementLoopDoWhile.block != null) {
-            statementLoopDoWhile.block.accept(analyzer);
+
+        analyzer.enterLoop();
+        try {
+            if (statementLoopDoWhile.block != null) {
+                statementLoopDoWhile.block.accept(analyzer);
+            }
+        } finally {
+            analyzer.exitLoop();
         }
 
         // 2. Validamos estrictamente la condición con el director

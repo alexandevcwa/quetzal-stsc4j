@@ -26,8 +26,14 @@ public class SemanticStatementLoopWhile extends SemanticAbstractAnalyzer {
             throw new SemanticError("Error Semántico: La condición del ciclo 'mientras' (while) debe ser booleana, pero se encontró: " + tipoCondicion);
         }
 
-        if (statementLoopWhile.block != null) {
-            statementLoopWhile.block.accept(analyzer);
+        analyzer.enterLoop();
+
+        try {
+            if (statementLoopWhile.block != null) {
+                statementLoopWhile.block.accept(analyzer);
+            }
+        } finally {
+            analyzer.exitLoop();
         }
 
         return null;

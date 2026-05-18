@@ -15,20 +15,20 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementVariable semanticStatementVariable = new SemanticStatementVariable(this);
     private final SemanticStatementBlock semanticStatementBlock = new SemanticStatementBlock(this);
     private final SemanticStatementIf semanticStatementIf = new SemanticStatementIf(currentEnv, this);
-    private final SemanticStatementList semanticStatementList = new SemanticStatementList(currentEnv, this);
+    private final SemanticStatementList semanticStatementList = new SemanticStatementList(this);
     private final SemanticStatementJsn semanticStatementJsn = new SemanticStatementJsn(currentEnv);
     private final SemanticStatementFunctionParameter semanticStatementFunctionParameter = new SemanticStatementFunctionParameter(currentEnv);
     private final SemanticStatementFunction semanticStatementFunction = new SemanticStatementFunction(this);
     private final SemanticStatementReturn semanticStatementReturn = new SemanticStatementReturn(this);
     private final SemanticStatementLoopWhile semanticStatementLoopWhile = new SemanticStatementLoopWhile(currentEnv, this);
     private final SemanticStatementLoopDoWhile semanticStatementLoopDoWhile = new SemanticStatementLoopDoWhile(this);
-    private final SemanticStatementLoopFor semanticStatementLoopFor = new SemanticStatementLoopFor(currentEnv);
+    private final SemanticStatementLoopFor semanticStatementLoopFor = new SemanticStatementLoopFor(this);
     private final SemanticExpressionBinary semanticExpressionBinary = new SemanticExpressionBinary(currentEnv, this);
     private final SemanticExpressionLiteral semanticExpressionLiteral = new SemanticExpressionLiteral(currentEnv);
     private final SemanticExpressionTernary semanticExpressionTernary = new SemanticExpressionTernary(currentEnv);
     private final SemanticExpressionMethodCall semanticExpressionMethodCall = new SemanticExpressionMethodCall(this);
-    private final SemanticExpressionIndexAccess semanticExpressionIndexAccess = new SemanticExpressionIndexAccess(currentEnv);
-    private final SemanticExpressionList semanticExpressionList = new SemanticExpressionList(currentEnv, this);
+    private final SemanticExpressionIndexAccess semanticExpressionIndexAccess = new SemanticExpressionIndexAccess(this);
+    private final SemanticExpressionList semanticExpressionList = new SemanticExpressionList(this);
     private final SemanticExpressionJsnBlock semanticExpressionJsnBlock = new SemanticExpressionJsnBlock(currentEnv);
     private final SemanticExpressionJsn semanticExpressionJsn = new SemanticExpressionJsn(currentEnv);
     private final SemanticExpressionIncDec semanticExpressionIncDec = new SemanticExpressionIncDec(currentEnv);
@@ -36,15 +36,16 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementIncDec semanticStatementIncDec = new SemanticStatementIncDec(currentEnv, this);
     private final SemanticExpressionPropertyAccess semanticExpressionPropertyAccess = new SemanticExpressionPropertyAccess(currentEnv, this);
     private final SemanticExpressionForEachVar semanticExpressionForEachVar = new SemanticExpressionForEachVar(this);
-    private final SemanticStatementConsoleOut semanticStatementConsoleOut = new SemanticStatementConsoleOut(currentEnv);
-    private final SemanticTypeList semanticTypeList = new SemanticTypeList(currentEnv);
-    private final SemanticTypePrimitive semanticTypePrimitive = new SemanticTypePrimitive(currentEnv);
+    private final SemanticStatementConsoleOut semanticStatementConsoleOut = new SemanticStatementConsoleOut(this);
+    private final SemanticTypeList semanticTypeList = new SemanticTypeList(this);
+    private final SemanticTypePrimitive semanticTypePrimitive = new SemanticTypePrimitive(this);
     private final SemanticStatementMatrxiAssignation semanticStatementMatrxiAssignation = new SemanticStatementMatrxiAssignation(currentEnv);
     private final SemanticExpressionNull semanticExpressionNull = new SemanticExpressionNull(currentEnv);
     private final SemanticStatementTryCatchFinally semanticStatementTryCatchFinally = new SemanticStatementTryCatchFinally(currentEnv);
-    private final SemanticStatementContinue semanticStatementContinue = new SemanticStatementContinue(currentEnv);
-    private final SemanticStatementBreak semanticStatementBreak = new SemanticStatementBreak(currentEnv);
+    private final SemanticStatementContinue semanticStatementContinue = new SemanticStatementContinue(this);
+    private final SemanticStatementBreak semanticStatementBreak = new SemanticStatementBreak(this);
     private final SemanticStatementThrow semanticStatementThrow = new SemanticStatementThrow(currentEnv);
+    private final SemanticExpressionConsoleIn semanticExpressionConsoleIn = new SemanticExpressionConsoleIn(this);
 
 
 
@@ -179,6 +180,11 @@ public class SemanticAnalyzer implements Visitor<String> {
         return semanticStatementThrow.visit(statementThrow);
     }
 
+    @Override
+    public String visit(ExpressionConsoleIn expressionConsoleIn) {
+        return semanticExpressionConsoleIn.visit(expressionConsoleIn);
+    }
+
     // EXPRESIONES
 
     @Override
@@ -250,4 +256,19 @@ public class SemanticAnalyzer implements Visitor<String> {
     public void setEnv(Environment env) {
         this.currentEnv = env;
     }
+
+    private int loopDepth = 0; // Nivel de profundidad de los ciclos anidados
+
+    public void enterLoop() {
+        this.loopDepth++;
+    }
+
+    public void exitLoop() {
+        this.loopDepth--;
+    }
+
+    public boolean isInLoop() {
+        return this.loopDepth > 0;
+    }
+
 }
