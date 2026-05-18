@@ -123,7 +123,7 @@ public class Environment {
             }
 
             // REGLA 2: Verificar que no le cambien el tipo de dato (ej. entero a cadena)
-            if (!info.Type.equals(newType)) {
+            if (newType != null && !newType.equals("null") && !newType.equals("nulo") && !info.Type.equals(newType)) {
                 throw new SemanticError("Conflicto de tipos: La variable '" + name + "' es de tipo '" + info.Type + "', no puedes asignarle un '" + newType + "'.");
             }
 

@@ -155,4 +155,5 @@ class SemanticExpressionBinaryTest {
         var ast = parser.parse();
         assertDoesNotThrow(() -> semanticAnalyzer.analyze(ast));
     }
+
 }
