@@ -88,7 +88,7 @@ class ParserListTest {
         assertThat(list.listName.getLexeme()).isEqualTo("nombres");
         assertThat(list.expressionList.expressions).hasSize(3);
 
-        System.out.println("\n✅ Lista tipada (textos):\n" + astPrinter.print(statement));
+        System.out.println("\nLista tipada (textos):\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -111,7 +111,7 @@ class ParserListTest {
         assertThat(list.listName.getLexeme()).isEqualTo("precios");
         assertThat(list.expressionList.expressions).hasSize(3);
 
-        System.out.println("\n✅ Lista tipada (números):\n" + astPrinter.print(statement));
+        System.out.println("\nLista tipada (números):\n" + astPrinter.print(statement));
     }
 
     // ==================== LISTAS VACÍAS ====================
@@ -136,7 +136,7 @@ class ParserListTest {
         assertThat(list.listName.getLexeme()).isEqualTo("vacia");
         assertThat(list.expressionList.expressions).isEmpty();
 
-        System.out.println("\n✅ Lista vacía:\n" + astPrinter.print(statement));
+        System.out.println("\nLista vacía:\n" + astPrinter.print(statement));
     }
 
     // ==================== LISTAS MUTABLES (var) ====================
@@ -162,7 +162,7 @@ class ParserListTest {
         assertThat(list.mutable).isTrue();
         assertThat(list.expressionList.expressions).hasSize(3);
 
-        System.out.println("\n✅ Lista mutable (var):\n" + astPrinter.print(statement));
+        System.out.println("\nLista mutable (var):\n" + astPrinter.print(statement));
     }
 
     // ==================== LISTAS BOOLEANAS ====================
@@ -187,7 +187,7 @@ class ParserListTest {
         assertThat(list.listName.getLexeme()).isEqualTo("banderas");
         assertThat(list.expressionList.expressions).hasSize(3);
 
-        System.out.println("\n✅ Lista tipada (booleanos):\n" + astPrinter.print(statement));
+        System.out.println("\nLista tipada (booleanos):\n" + astPrinter.print(statement));
     }
 
     // ==================== LISTAS CON EXPRESIONES ====================
@@ -211,7 +211,7 @@ class ParserListTest {
         StatementList list = (StatementList) statement;
         assertThat(list.expressionList.expressions).hasSize(3);
 
-        System.out.println("\n✅ Lista con expresiones:\n" + astPrinter.print(statement));
+        System.out.println("\nLista con expresiones:\n" + astPrinter.print(statement));
     }
 
     // ==================== CASOS DE ERROR ====================
@@ -303,7 +303,7 @@ class ParserListTest {
         assertThat(list.listName.getLexeme()).isEqualTo("matriz");
         assertThat(list.expressionList.expressions).hasSize(2);
 
-        System.out.println("\n✅ Lista bidimensional:\n" + astPrinter.print(statement));
+        System.out.println("\nLista bidimensional:\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -353,7 +353,7 @@ class ParserListTest {
         assertThat(list.expressionList.expressions).hasSize(4);
         assertThat(list.mutable).isFalse();
         
-        System.out.println("\n✅ Lista sin tipado (mixta):\n" + astPrinter.print(statement));
+        System.out.println("\nLista sin tipado (mixta):\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -378,7 +378,7 @@ class ParserListTest {
         assertThat(list.mutable).isTrue();
         assertThat(list.expressionList.expressions).hasSize(3);
         
-        System.out.println("\n✅ Lista mutable sin tipado:\n" + astPrinter.print(statement));
+        System.out.println("\nLista mutable sin tipado:\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -402,7 +402,7 @@ class ParserListTest {
         assertThat(list.type).isNull(); // Sin tipo especificado
         assertThat(list.expressionList.expressions).isEmpty();
         
-        System.out.println("\n✅ Lista vacía sin tipado:\n" + astPrinter.print(statement));
+        System.out.println("\nLista vacía sin tipado:\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -426,7 +426,7 @@ class ParserListTest {
         assertThat(list.type).isNull(); // Sin tipo especificado
         assertThat(list.expressionList.expressions).hasSize(3);
         
-        System.out.println("\n✅ Lista sin tipado (solo strings):\n" + astPrinter.print(statement));
+        System.out.println("\nLista sin tipado (solo strings):\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -450,7 +450,7 @@ class ParserListTest {
         assertThat(list.type).isNull(); // Sin tipo especificado
         assertThat(list.expressionList.expressions).hasSize(3);
         
-        System.out.println("\n✅ Lista sin tipado con expresiones:\n" + astPrinter.print(statement));
+        System.out.println("\nLista sin tipado con expresiones:\n" + astPrinter.print(statement));
     }
 
     @Test
@@ -474,6 +474,6 @@ class ParserListTest {
         assertThat(list.type).isNull(); // Sin tipo especificado
         assertThat(list.expressionList.expressions).hasSize(4);
         
-        System.out.println("\n✅ Lista sin tipado con nulos:\n" + astPrinter.print(statement));
+        System.out.println("\nLista sin tipado con nulos:\n" + astPrinter.print(statement));
     }
 }

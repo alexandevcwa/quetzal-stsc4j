@@ -2,6 +2,7 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
+import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.ExpressionIndexAccess;
 import com.stsc4j.parser.v1.ast.Statement;
 import com.stsc4j.parser.v1.ast.StatementVariable;
@@ -21,6 +22,7 @@ class ParserDeclarationTest {
     private static List<Token> tokens;
     private static TokenStream tokenStream;
     private static ParserDeclaration parser;
+    private static final ASTPrinter astPrinter = new ASTPrinter();
 
     @AfterEach
     void cleanTokens() {
@@ -140,4 +142,14 @@ class ParserDeclarationTest {
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementVariable);
     }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor inicial por consola")
+    void testVariableObtenerValorPorConsola(){
+        final String code = "entero valor = consola.pedir(\"Ingrese un valor: \")";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);    }
 }
