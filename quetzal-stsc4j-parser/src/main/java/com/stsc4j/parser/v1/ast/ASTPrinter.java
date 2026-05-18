@@ -394,6 +394,9 @@ public class ASTPrinter implements Visitor<String> {
         String typeNotation = getTypeListNotation(statementList.type);
         sb.append(getIndent()).append("├─ Type: ").append(typeNotation).append("\n");
 
+        // Anidamiento
+        sb.append(getIndent()).append("├─ Depth: ").append(statementList.depth).append("\n");
+
         // Mostrar nombre
         sb.append(getIndent()).append("├─ Name: ").append(statementList.listName.getLexeme()).append("\n");
 
@@ -402,6 +405,7 @@ public class ASTPrinter implements Visitor<String> {
 
         indentLevel++;
         List<Expression> expressions = statementList.expressionList.expressions;
+        sb.append(getIndent()).append("├─ Declaration Depth: ").append(statementList.expressionList.depth).append("\n");
         for (int i = 0; i < expressions.size(); i++) {
             if (i < expressions.size() - 1) {
                 sb.append(getIndent()).append("├─ ");
@@ -472,7 +476,7 @@ public class ASTPrinter implements Visitor<String> {
         }
 
         // Cerrar todos los brackets
-        sb.append(">".repeat(Math.max(0, depth -1  + 1)));
+        sb.append(">".repeat(Math.max(0, depth - 1 + 1)));
 
         return sb.toString();
     }
@@ -755,7 +759,14 @@ public class ASTPrinter implements Visitor<String> {
 
     @Override
     public String visit(ExpressionConsoleIn expressionConsoleIn) {
-        return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Console Input\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Message:\n");
+        indentLevel++;
+        sb.append(expressionConsoleIn.message.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
     }
 
     @Override
