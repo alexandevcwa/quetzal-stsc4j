@@ -1,43 +1,51 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.lexer.TokenType;
+import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.ExpressionMethodCall;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 import com.stsc4j.semantic.SemanticError;
 
 public class SemanticExpressionMethodCall extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionMethodCall (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionMethodCall(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
-    public String visit(ExpressionMethodCall expressionMethodCall) {
-        String tipoObjeto = expressionMethodCall.object.accept(this);
-        String nombreMetodo = expressionMethodCall.methodName.getLexeme();
+    public String visit(ExpressionMethodCall expr) {
+        String funcName = expr.methodName.getLexeme();
 
-        if (tipoObjeto != null && tipoObjeto.startsWith("lista<")) {
+        // 1. Buscamos la función en la memoria
+        Environment.FunctionInfo info = analyzer.getEnv().resolveFunction(funcName);
 
-            String tipoInterno = tipoObjeto.replace("lista<", "").replace(">", "");
+        // 2. Validamos Aridad (cantidad de argumentos)
+        if (expr.args.size() != info.paramTypes.size()) {
+            throw new SemanticError("Error Semántico: La función '" + funcName + "' espera " + info.paramTypes.size() + " argumentos, pero enviaste " + expr.args.size() + ".");
+        }
 
-            if (nombreMetodo.equals("agregar")) {
-                if (expressionMethodCall.args.size() != 1) {
-                    throw new SemanticError("El método 'agregar' necesita exactamente 1 argumento.");
-                }
+        // 3. Validamos los Tipos de cada argumento enviado vs esperado
+        for (int i = 0; i < expr.args.size(); i++) {
+            String tipoEnviado = expr.args.get(i).accept(analyzer);
+            String tipoEsperado = info.paramTypes.get(i);
 
-                String tipoArgumento = expressionMethodCall.args.get(0).accept(this);
+            boolean compatible = tipoEsperado.equals(tipoEnviado);
 
-                if (tipoArgumento != null && !tipoArgumento.equals(tipoInterno)) {
-                    throw new SemanticError("Intentaste agregar un dato tipo '" + tipoArgumento + "' a una lista estricta de '" + tipoInterno + "'.");
-                }
+            // Coerción (Ensanchamiento seguro)
+            if (tipoEsperado.equals(TokenType.PRIMITIVE_DECIMAL.name()) && tipoEnviado.equals(TokenType.PRIMITIVE_INTEGER.name())) {
+                compatible = true;
+            }
 
-                return tipoObjeto;
+            if (!compatible) {
+                throw new SemanticError("Error Semántico: Argumento inválido en la posición " + (i + 1) + " de '" + funcName + "'. Se esperaba '" + tipoEsperado + "', pero se envió '" + tipoEnviado + "'.");
             }
         }
 
-        return "desconocido";
+        // 4. Si  es correcto, la expresión "se convierte" en el tipo de retorno de la función
+        return info.returnType;
     }
-
 }

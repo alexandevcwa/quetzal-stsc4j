@@ -1,31 +1,35 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.StatementLoopWhile;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 import com.stsc4j.semantic.SemanticError;
 
 public class SemanticStatementLoopWhile extends SemanticAbstractAnalyzer {
 
     private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementLoopWhile(Environment currentEnv) {
+    public SemanticStatementLoopWhile(Environment currentEnv, SemanticAnalyzer analyzer) {
         this.currentEnv = currentEnv;
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(StatementLoopWhile statementLoopWhile) {
-        // 1. Validamos que la condición sea estrictamente booleana
-        String tipoCondicion = statementLoopWhile.condition.accept(this);
-        if (tipoCondicion != null && !tipoCondicion.equals("booleano")) {
-            throw new SemanticError("La condición del ciclo 'mientras' debe ser un 'booleano', pero se encontró un '" + tipoCondicion + "'.");
+        String tipoCondicion = statementLoopWhile.condition.accept(analyzer);
+        String booleanoReal = TokenType.PRIMITIVE_BOOLEAN.name();
+
+        if (tipoCondicion != null && !tipoCondicion.equals(booleanoReal)) {
+            throw new SemanticError("Error Semántico: La condición del ciclo 'mientras' (while) debe ser booleana, pero se encontró: " + tipoCondicion);
         }
 
-        // 2. Analizamos las sentencias dentro del bloque
-        // (El StatementBlock ya se encarga de crear su propio Environment interno)
-        statementLoopWhile.block.accept(this);
+        if (statementLoopWhile.block != null) {
+            statementLoopWhile.block.accept(analyzer);
+        }
 
         return null;
     }
-
 }

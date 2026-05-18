@@ -3,35 +3,48 @@ package com.stsc4j.semantic.analyzer;
 import com.stsc4j.parser.v1.ast.ExpressionList;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
-import com.stsc4j.semantic.SemanticError;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionList extends SemanticAbstractAnalyzer {
 
     private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionList (Environment currentEnv) {
+    public SemanticExpressionList(Environment currentEnv, SemanticAnalyzer analyzer) {
         this.currentEnv = currentEnv;
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(ExpressionList expressionList) {
-        //Si la lista esta vacia, se le da un tipo desconocido
+        // 1. Si la lista está vacía, devuelve un tipo comodín
         if (expressionList.expressions == null || expressionList.expressions.isEmpty()) {
-            return "lista<desconocido>";
+            return "lista<vacia>";
         }
 
-        //Tomamos el tipo del primer elemento como identificador
-        String tipoReferencia = expressionList.expressions.get(0).accept(this);
+        // 2. Tomamos el primer elemento como referencia
+        String tipoReferencia = expressionList.expressions.get(0).accept(analyzer);
+        boolean esMixta = false;
 
-        //Comparamos todos los demas elementos con esta regla
+        // 3. Revisamos los demás elementos
         for (int i = 1; i < expressionList.expressions.size(); i++) {
-            String tipoActual = expressionList.expressions.get(i).accept(this);
-            if (tipoActual != null && !tipoActual.equals(tipoReferencia)) {
-                throw new SemanticError("Todos los elementos de la lista deben ser del mismo tipo. Se detectó un '" + tipoActual + "' pero esperaba un '" + tipoReferencia + "'.");
+            String tipoActual = expressionList.expressions.get(i).accept(analyzer);
+
+            // Flexibilidad numérica: si mezclan enteros y números/decimales, lo convertimos a número
+            if (tipoReferencia.equals("entero") && (tipoActual.equals("número") || tipoActual.equals("decimal"))) {
+                tipoReferencia = "número";
+            } else if (tipoActual != null && !tipoActual.equals(tipoReferencia)) {
+                // Si encontramos algo totalmente diferente (ej. entero y texto), marcamos la lista como mixta
+                esMixta = true;
             }
         }
-        //Si todos pasaron la prueba devolvemos el tipo de la lista
+
+        // 4. Si se mezclaron tipos incompatibles, la lista completa se vuelve dinámica
+        if (esMixta) {
+            return "lista<dinamico>";
+        }
+
+        // 5. Si todos eran iguales (o eran números compatibles), devolvemos el tipo exacto
         return "lista<" + tipoReferencia + ">";
     }
-
 }

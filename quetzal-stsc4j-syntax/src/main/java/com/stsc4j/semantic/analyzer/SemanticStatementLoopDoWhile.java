@@ -1,31 +1,34 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.StatementLoopDoWhile;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 import com.stsc4j.semantic.SemanticError;
 
 public class SemanticStatementLoopDoWhile extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementLoopDoWhile (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementLoopDoWhile(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(StatementLoopDoWhile statementLoopDoWhile) {
-        // En análisis semántico, el orden de ejecución no cambia cómo validamos los tipos,
-        // pero seguimos la lógica del "hacer": primero el bloque, luego la condición.
+        // 1. Analizamos el bloque de código
+        if (statementLoopDoWhile.block != null) {
+            statementLoopDoWhile.block.accept(analyzer);
+        }
 
-        statementLoopDoWhile.block.accept(this);
+        // 2. Validamos estrictamente la condición con el director
+        String tipoCondicion = statementLoopDoWhile.condition.accept(analyzer);
+        String booleanoReal = TokenType.PRIMITIVE_BOOLEAN.name();
 
-        String tipoCondicion = statementLoopDoWhile.condition.accept(this);
-        if (tipoCondicion != null && !tipoCondicion.equals("booleano")) {
-            throw new SemanticError("La condición del ciclo 'hacer mientras' debe ser un 'booleano', pero se encontró un '" + tipoCondicion + "'.");
+        if (tipoCondicion != null && !tipoCondicion.equals(booleanoReal)) {
+            throw new SemanticError("Error Semántico: La condición del ciclo 'hacer-mientras' (do-while) debe ser booleana, pero se encontró un '" + tipoCondicion + "'.");
         }
 
         return null;
     }
-
 }

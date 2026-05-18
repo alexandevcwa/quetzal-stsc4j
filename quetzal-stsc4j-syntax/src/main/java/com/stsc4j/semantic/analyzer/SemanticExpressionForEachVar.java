@@ -1,25 +1,28 @@
 package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.ExpressionForEachVar;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
 import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionForEachVar extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionForEachVar(Environment currentEnv, SemanticAnalyzer analyzer) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionForEachVar(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(ExpressionForEachVar expr) {
-        String nombreVar = expr.type.getLexeme();
+        // Obtenemos el nombre exacto de la variable (ej: "elemento")
+        String nombreVar = expr.variable.token.getLexeme();
 
-        // Guardamos la variable temporal en la memoria
-        currentEnv.define(nombreVar, "dinamico", true);
+        // Obtenemos el nombre oficial del tipo (ej: "PRIMITIVE_INTEGER")
+        String tipoDeclarado = expr.type.getType().name();
 
-        return "dinamico";
+        // Guardamos la variable temporal en la memoria actual del director
+        analyzer.getEnv().define(nombreVar, tipoDeclarado, expr.mutable);
+
+        return tipoDeclarado;
     }
 }

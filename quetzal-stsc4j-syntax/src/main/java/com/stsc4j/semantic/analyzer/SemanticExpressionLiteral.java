@@ -9,7 +9,7 @@ public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
     private final Environment currentEnv;
 
-    public SemanticExpressionLiteral (Environment currentEnv) {
+    public SemanticExpressionLiteral(Environment currentEnv) {
         this.currentEnv = currentEnv;
     }
 
@@ -19,18 +19,17 @@ public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
         switch (tipoToken) {
             case LIT_INTEGER:
-                return "entero";
+                return TokenType.PRIMITIVE_INTEGER.name(); // "PRIMITIVE_INTEGER"
             case LIT_STRING:
-                return "cadena";
+                return TokenType.PRIMITIVE_STRING.name();  // "PRIMITIVE_STRING"
             case LIT_DECIMAL:
-                return "decimal";
+                return TokenType.PRIMITIVE_DECIMAL.name(); // "PRIMITIVE_DECIMAL"
+            case LIT_TRUE:
             case LIT_FALSE:
-                return "booleano";
+                return TokenType.PRIMITIVE_BOOLEAN.name(); // "PRIMITIVE_BOOLEAN"
             default:
-                // Si el token no es un literal reconocido, podríamos lanzar un error semántico o devolver "desconocido"
-                return "desconocido";
+                // token de error
+                return TokenType.UNKNOW.name();
         }
-
     }
-
 }
