@@ -1,20 +1,22 @@
 package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.StatementConsolaOut;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticStatementConsoleOut extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementConsoleOut(Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementConsoleOut(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(StatementConsolaOut statementConsolaOut) {
-        statementConsolaOut.expression.accept(this);
-        return super.visit(statementConsolaOut);
+        if (statementConsolaOut.expression != null) {
+            statementConsolaOut.expression.accept(analyzer);
+        }
+        return null;
     }
 }
