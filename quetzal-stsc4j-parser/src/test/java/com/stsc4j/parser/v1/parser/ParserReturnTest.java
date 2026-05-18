@@ -82,4 +82,24 @@ public class ParserReturnTest {
         var ast = parser.parseStatement();
         assertNotNull(ast);
     }
+
+    @Test
+    @DisplayName("Test - Retornar JSON inline")
+    void testReturnConJSONInline(){
+        final String code = "retornar {nombre:\"Juan\", edad:25}";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertNotNull(ast);
+    }
+
+    @Test
+    @DisplayName("Test - Retornar lista inline")
+    void testReturnConLista(){
+        final String code = "retornar [1,2,3,4,5]";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertNotNull(ast);
+    }
 }

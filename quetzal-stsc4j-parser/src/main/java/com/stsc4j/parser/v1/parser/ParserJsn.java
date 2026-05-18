@@ -13,7 +13,7 @@ public class ParserJsn extends Parser {
 
     public ParserJsn(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
-        this.parserJsnExpression = new ParserJsnExpression(tokenStream, parserExpression);
+        this.parserJsnExpression = ParserJsnExpression.builder(tokenStream, parserExpression).build();
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ParserJsn extends Parser {
         boolean isMutable = tokenStream.match(TokenType.MUTABLE_VARIABLE);
         Token identifier = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba una identificador para el JSN");
         tokenStream.consume(TokenType.EQUAL, "Se esperaba '=' luego del identificador del JSN");
-        ExpressionJsnBlock expression = parserJsnExpression.parserJsnExpression();
+        ExpressionJsnBlock expression = (ExpressionJsnBlock) parserJsnExpression.parseExpression();
         return new StatementJsn(identifier, isMutable, expression);
     }
 }
