@@ -21,6 +21,7 @@ public class ParserStatement {
     private ParserLoopForEach parserLoopForEach;
     private ParserIncremental parserIncremental;
     private ParserMatrixAssignation parserMatrixAssignation;
+    private ParserPropertyAssignation parserPropertyAssignation;
     private ParserTryCatchFinally parserTryCatchFinally;
     private ParserConsoleOut parserConsoleOut;
     private ParserContinue parserContinue;
@@ -127,6 +128,13 @@ public class ParserStatement {
             parserMatrixAssignation = new ParserMatrixAssignation(tokenStream, parserExpression);
         }
         return parserMatrixAssignation;
+    }
+
+    public Parser parsePropertyAssignation() {
+        if (parserPropertyAssignation == null) {
+            parserPropertyAssignation = new ParserPropertyAssignation(tokenStream, parserExpression);
+        }
+        return parserPropertyAssignation;
     }
 
     public Parser parseTryCatchFinally() {

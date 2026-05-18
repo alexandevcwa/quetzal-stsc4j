@@ -678,6 +678,22 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementPropertyAssignation statementPropertyAssignation) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Property Assignment\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Target (Property Access):\n");
+        indentLevel++;
+        sb.append(statementPropertyAssignation.property.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Value:\n");
+        indentLevel++;
+        sb.append(statementPropertyAssignation.expression.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(ExpressionNull expressionNull) {
         return getIndent() + "Null (" + expressionNull.token.getType().toString() + ")";
     }
