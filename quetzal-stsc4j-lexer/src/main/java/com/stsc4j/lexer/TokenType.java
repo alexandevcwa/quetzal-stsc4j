@@ -37,6 +37,7 @@ public enum TokenType {
     NEW_INSTANCE,
     IMPORT_MODULE,
     IMPORT_MODULE_L,
+    NEGATION_ESP,
 
     // Identifier for variable, function, class, etc.
     IDENTIFIER,
