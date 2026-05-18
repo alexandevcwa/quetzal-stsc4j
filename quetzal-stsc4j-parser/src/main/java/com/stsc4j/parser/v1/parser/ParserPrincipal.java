@@ -56,6 +56,11 @@ public class ParserPrincipal extends ParserPrincipalValidations {
             return parserStatement.parseFunction().parseStatement();
         }
 
+        // Parser (Property Assignation) - Debe ir ANTES de Matrix Assignation
+        if (isPropertyAssignation()) {
+            return parserStatement.parsePropertyAssignation().parseStatement();
+        }
+
         // Parser (Matrix Assignation)
         if (isMatrixAssignation()) {
             return parserStatement.parseMatrixAssignation().parseStatement();
