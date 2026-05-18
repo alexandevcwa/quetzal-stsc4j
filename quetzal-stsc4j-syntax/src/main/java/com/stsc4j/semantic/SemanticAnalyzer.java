@@ -41,10 +41,10 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticTypePrimitive semanticTypePrimitive = new SemanticTypePrimitive(this);
     private final SemanticStatementMatrxiAssignation semanticStatementMatrxiAssignation = new SemanticStatementMatrxiAssignation(currentEnv);
     private final SemanticExpressionNull semanticExpressionNull = new SemanticExpressionNull(currentEnv);
-    private final SemanticStatementTryCatchFinally semanticStatementTryCatchFinally = new SemanticStatementTryCatchFinally(currentEnv);
+    private final SemanticStatementTryCatchFinally semanticStatementTryCatchFinally = new SemanticStatementTryCatchFinally(this);
     private final SemanticStatementContinue semanticStatementContinue = new SemanticStatementContinue(this);
     private final SemanticStatementBreak semanticStatementBreak = new SemanticStatementBreak(this);
-    private final SemanticStatementThrow semanticStatementThrow = new SemanticStatementThrow(currentEnv);
+    private final SemanticStatementThrow semanticStatementThrow = new SemanticStatementThrow(this);
     private final SemanticExpressionConsoleIn semanticExpressionConsoleIn = new SemanticExpressionConsoleIn(this);
 
 
