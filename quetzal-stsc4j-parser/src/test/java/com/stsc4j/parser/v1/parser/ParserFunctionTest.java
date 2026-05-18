@@ -123,5 +123,6 @@ class ParserFunctionTest {
         tokens.addAll(context.getTokens());
         var ast = assertDoesNotThrow(() -> parser.parseStatement());
         assertNotNull(ast);
+        System.out.println(astPrinter.print(ast));
     }
 }

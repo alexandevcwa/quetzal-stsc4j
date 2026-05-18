@@ -9,6 +9,8 @@ public class ParserList extends Parser {
     private final TokenStream tokenStream;
     private final ParserExpression parserExpression;
 
+    private short depth = 0;
+
     public ParserList(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
         this.parserExpression = parserExpression;
@@ -28,35 +30,21 @@ public class ParserList extends Parser {
         Token identified = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el identificador de la lista.");
         tokenStream.consume(TokenType.EQUAL, "Se esperaba '=' después del identificador de la lista.");
 
-        short depth = typeList != null ? listDepth(typeList) : 0;
-
-        // Usar la función recursiva para parsear listas multidimensionales
+        // El parser detecta automáticamente la profundidad de la lista durante el parseo
         ExpressionList expressionList = (ExpressionList) ParserListExpression.builder(tokenStream, parserExpression)
-                .depth(depth).build()
+                .build()
                 .parseExpression();
+        short tempDepth = depth;
+        depth = 0;
 
-        return new StatementList(typeList, isMutable, identified, expressionList);
-    }
-
-    /**
-     * Obtiene la profundidad de la lista.
-     *
-     * @param typeList Lista de tipos
-     * @return Profundidad de la lista
-     */
-    private short listDepth(TypeList typeList) {
-        short depth = 0;
-        while (typeList != null) {
-            Type currentType = typeList.elementType;
-            if (currentType instanceof TypeList) {
-                depth++;
-                typeList = (TypeList) currentType;
-            } else {
-                break;
-            }
+        // Verificar si la profundidad de la lista coincide con la profundidad de los elementos de la lista o no tiene elementos
+        if (tempDepth != expressionList.depth && expressionList.depth != -1) {
+            throw new RuntimeException("La profundidad de la lista no coincide con la profundidad de los elementos de la lista.");
         }
-        return depth;
+
+        return new StatementList(typeList, isMutable, identified, expressionList, tempDepth);
     }
+
 
     /**
      * Parsea el tipo de lista.
@@ -73,6 +61,7 @@ public class ParserList extends Parser {
             tokenStream.consume(TokenType.GREATER_THAN, "Se esperaba '>' para cierre de declaración del tipo de lista.");
             return t;
         } else if (tokenStream.match(TokenType.LIST)) {
+            depth++;
             TypeList typeList = new TypeList(parseListType());
             tokenStream.consume(TokenType.GREATER_THAN, "Se esperaba '>' para cierre de declaración del tipo de lista.");
             return typeList;
