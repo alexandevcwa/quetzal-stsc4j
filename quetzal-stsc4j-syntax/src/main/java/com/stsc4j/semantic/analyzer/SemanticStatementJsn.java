@@ -1,29 +1,31 @@
 package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.StatementJsn;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticStatementJsn extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementJsn (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementJsn(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(StatementJsn statementJsn) {
-        //Analizamos el bloque {...} para encontrar errores internos
-        statementJsn.block.accept(this);
+        // 1. Analizamos el bloque interno {...} pasando el director central
+        if (statementJsn.block != null) {
+            statementJsn.block.accept(analyzer);
+        }
 
-        //Extraemos el nombre de la variable
+        // 2. Extraemos los datos de la declaración del AST
         String nombreVariable = statementJsn.identifier.getLexeme();
+        boolean esMutable = statementJsn.mutable; // ¡Usamos la mutabilidad real del código!
 
-        //Lo guardamos en nuestra memoria environment usando el tipo "jsn"
-        currentEnv.define(nombreVariable, "jsn", false); // Asumimos que los JSN son inmutables
+        // 3. Registramos el objeto en la tabla de símbolos actual como tipo "jsn"
+        analyzer.getEnv().define(nombreVariable, "jsn", esMutable);
 
         return null;
     }
-
 }

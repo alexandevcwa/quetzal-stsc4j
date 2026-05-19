@@ -2,31 +2,28 @@ package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.ExpressionJsn;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionJsn extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionJsn (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionJsn(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(ExpressionJsn expressionJsn) {
-        //Aqui se analizan las propiedades del JSN. Por ejemplo, si tenemos { nombre: "Juan", edad: 30 }
-
-        if (expressionJsn.value != null){
-            //si es un valor simple (cadena, entero) lo evalua
-            expressionJsn.value.accept(this);
-        } else if (expressionJsn.values != null){
-            for (Expression expr : expressionJsn.values){
-                expr.accept(this);
+        // Analizamos los valores internos asociados a la clave
+        if (expressionJsn.value != null) {
+            expressionJsn.value.accept(analyzer);
+        } else if (expressionJsn.values != null) {
+            for (Expression expr : expressionJsn.values) {
+                expr.accept(analyzer);
             }
         }
-        // El resultado de una propiedad JSN es simplemente "jsn", porque no nos interesa el tipo interno de cada propiedad, solo que es un bloque válido.
+
         return "jsn_field";
     }
-
 }

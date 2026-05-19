@@ -16,7 +16,7 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementBlock semanticStatementBlock = new SemanticStatementBlock(this);
     private final SemanticStatementIf semanticStatementIf = new SemanticStatementIf(currentEnv, this);
     private final SemanticStatementList semanticStatementList = new SemanticStatementList(this);
-    private final SemanticStatementJsn semanticStatementJsn = new SemanticStatementJsn(currentEnv);
+    private final SemanticStatementJsn semanticStatementJsn = new SemanticStatementJsn(this);
     private final SemanticStatementFunctionParameter semanticStatementFunctionParameter = new SemanticStatementFunctionParameter(currentEnv);
     private final SemanticStatementFunction semanticStatementFunction = new SemanticStatementFunction(this);
     private final SemanticStatementReturn semanticStatementReturn = new SemanticStatementReturn(this);
@@ -25,12 +25,12 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementLoopFor semanticStatementLoopFor = new SemanticStatementLoopFor(this);
     private final SemanticExpressionBinary semanticExpressionBinary = new SemanticExpressionBinary(currentEnv, this);
     private final SemanticExpressionLiteral semanticExpressionLiteral = new SemanticExpressionLiteral(currentEnv);
-    private final SemanticExpressionTernary semanticExpressionTernary = new SemanticExpressionTernary(currentEnv);
+    private final SemanticExpressionTernary semanticExpressionTernary = new SemanticExpressionTernary(this);
     private final SemanticExpressionMethodCall semanticExpressionMethodCall = new SemanticExpressionMethodCall(this);
     private final SemanticExpressionIndexAccess semanticExpressionIndexAccess = new SemanticExpressionIndexAccess(this);
     private final SemanticExpressionList semanticExpressionList = new SemanticExpressionList(this);
-    private final SemanticExpressionJsnBlock semanticExpressionJsnBlock = new SemanticExpressionJsnBlock(currentEnv);
-    private final SemanticExpressionJsn semanticExpressionJsn = new SemanticExpressionJsn(currentEnv);
+    private final SemanticExpressionJsnBlock semanticExpressionJsnBlock = new SemanticExpressionJsnBlock(this);
+    private final SemanticExpressionJsn semanticExpressionJsn = new SemanticExpressionJsn(this);
     private final SemanticExpressionIncDec semanticExpressionIncDec = new SemanticExpressionIncDec(currentEnv);
     private final SemanticStatementLoopForEach semanticStatementLoopForEach = new SemanticStatementLoopForEach(this);
     private final SemanticStatementIncDec semanticStatementIncDec = new SemanticStatementIncDec(currentEnv, this);

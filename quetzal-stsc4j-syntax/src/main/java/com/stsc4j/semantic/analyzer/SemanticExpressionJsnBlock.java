@@ -2,28 +2,27 @@ package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.ExpressionJsn;
 import com.stsc4j.parser.v1.ast.ExpressionJsnBlock;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionJsnBlock extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionJsnBlock (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionJsnBlock(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(ExpressionJsnBlock expressionJsnBlock) {
-        //Un bloque JSN es solo un contenedor.
-        //Su trabajo es iterar sobre todas las propiedades y se validan
-
-        if (expressionJsnBlock.expressions != null){
-            for (ExpressionJsn exprJsn : expressionJsnBlock.expressions){
-                exprJsn.accept(this);
+        // Iteramos y validamos semánticamente cada elemento del bloque JSN
+        if (expressionJsnBlock.expressions != null) {
+            for (ExpressionJsn exprJsn : expressionJsnBlock.expressions) {
+                exprJsn.accept(analyzer); // Despachado a través del director
             }
         }
-        // Informamos al nivel superior que es tipo jsn
+
+        // Retornamos el tipo de dato unificado
         return "jsn";
     }
 }
