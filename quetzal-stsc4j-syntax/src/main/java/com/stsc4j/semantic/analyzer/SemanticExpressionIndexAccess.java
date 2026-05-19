@@ -25,8 +25,8 @@ public class SemanticExpressionIndexAccess extends SemanticAbstractAnalyzer {
         }
 
         // 2. Validamos que TODOS los índices utilizados sean ENTEROS
-        if (expr.indexList != null) {
-            for (Expression indexExpr : expr.indexList) {
+        if (expr.index != null) {
+            for (Expression indexExpr : expr.index) {
                 String tipoIndice = indexExpr.accept(analyzer);
                 if (!TokenType.PRIMITIVE_INTEGER.name().equals(tipoIndice)) {
                     throw new SemanticError("Error Semántico: Los índices de las listas deben ser estrictamente números enteros.");
@@ -37,8 +37,8 @@ public class SemanticExpressionIndexAccess extends SemanticAbstractAnalyzer {
         // 3. Calculamos el tipo de dato que va a salir de la lista
         // (Sirve para matrices. Si es lista<lista<entero>> y accedemos [0], sale un lista<entero>)
         String tipoRetorno = tipoObjeto;
-        if (expr.indexList != null) {
-            for (int i = 0; i < expr.indexList.size(); i++) {
+        if (expr.index != null) {
+            for (int i = 0; i < expr.index.size(); i++) {
                 if (tipoRetorno.startsWith("lista<")) {
                     // Quitamos la capa exterior de la cebolla
                     tipoRetorno = tipoRetorno.substring(6, tipoRetorno.length() - 1);

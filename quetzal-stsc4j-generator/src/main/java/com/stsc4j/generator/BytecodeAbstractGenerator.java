@@ -41,4 +41,5 @@ public abstract class BytecodeAbstractGenerator implements Visitor<String> {
     @Override public String visit(ExpressionPropertyAccess expr) { return null; }
     @Override public String visit(ExpressionIncDec expr) { return null; }
     @Override public String visit(ExpressionForEachVar expr) { return null; }
+    @Override public String visit(StatementMethodCall stmt) { return null; }
 }

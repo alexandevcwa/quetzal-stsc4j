@@ -186,4 +186,9 @@ public abstract class SemanticAbstractAnalyzer implements Visitor <String> {
     public String visit(StatementPropertyAssignation statementPropertyAssignation) {
         return null;
     }
+
+    @Override
+    public String visit (StatementMethodCall statementMethodCall) {
+        return null;
+    }
 }

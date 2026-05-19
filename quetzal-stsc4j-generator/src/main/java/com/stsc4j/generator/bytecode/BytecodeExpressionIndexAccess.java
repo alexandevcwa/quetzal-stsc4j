@@ -19,20 +19,27 @@ public class BytecodeExpressionIndexAccess extends BytecodeAbstractGenerator {
     public String visit(ExpressionIndexAccess expr) {
         MethodVisitor mv = generator.getMv();
 
-        // 1. Cargar la referencia de la lista en la pila (esto hará un ALOAD por debajo)
-        String tipoArray = expr.objectList.accept(generator);
+        // 1. Cargar la referencia de la lista o mapa en la pila
+        String tipoBase = expr.objectList.accept(generator);
 
-        // 2. Cargar el índice que queremos leer (ej. el 0)
-        expr.indexList.get(0).accept(generator);
+        // 2. Cargar el índice o clave que queremos leer
+        expr.index.get(0).accept(generator);
 
-        // 3. Extraer el valor (Array Load) dependiendo de la firma secreta del arreglo
-        if ("[I".equals(tipoArray)) {
+        // 🚨 CASO NUEVO: Si es un objeto JSN, leemos usando corchetes como diccionario
+        if ("JSN_OBJECT".equals(tipoBase)) {
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "get",
+                    "(Ljava/lang/Object;)Ljava/lang/Object;", false);
+            return "JSN_OBJECT";
+        }
+
+        // CASO ORIGINAL: Arreglos tradicionales de Java
+        if ("[I".equals(tipoBase)) {
             mv.visitInsn(Opcodes.IALOAD);
             return TokenType.PRIMITIVE_INTEGER.name();
-        } else if ("[F".equals(tipoArray)) {
+        } else if ("[F".equals(tipoBase)) {
             mv.visitInsn(Opcodes.FALOAD);
             return TokenType.PRIMITIVE_DECIMAL.name();
-        } else if ("[Z".equals(tipoArray)) {
+        } else if ("[Z".equals(tipoBase)) {
             mv.visitInsn(Opcodes.BALOAD);
             return TokenType.PRIMITIVE_BOOLEAN.name();
         } else {
