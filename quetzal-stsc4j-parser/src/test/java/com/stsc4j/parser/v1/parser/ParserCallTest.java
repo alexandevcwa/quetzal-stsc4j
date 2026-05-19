@@ -15,12 +15,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("ParserPropertyAssignation - Tests")
-class ParserPropertyAssignationTest {
+class ParserCallTest {
     private static LexerContext context;
     private static List<Token> tokens;
     private static TokenStream tokenStream;
 
-    private static ParserPropertyAssignation parser;
+    private static ParserCall parser;
     private static final ASTPrinter astPrinter = new ASTPrinter();
 
     @AfterEach
@@ -34,7 +34,7 @@ class ParserPropertyAssignationTest {
         context = new LexerContext();
         tokens = new ArrayList<>();
         tokenStream = new TokenStream(tokens);
-        parser = new ParserPropertyAssignation(tokenStream, new ParserExpression(tokenStream));
+        parser = new ParserCall(tokenStream, new ParserExpression(tokenStream));
     }
 
     @Test
@@ -68,5 +68,16 @@ class ParserPropertyAssignationTest {
         var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
         assertNotNull(ex);
         System.out.println(ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test - Llamada a método sin asignación")
+    void testPA_LlamadaMetodo(){
+        final String code = "a.b.c(1,2,3).id = 123";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertNotNull(ast);
+        System.out.println(astPrinter.print(ast));
     }
 }

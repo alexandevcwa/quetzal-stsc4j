@@ -2,21 +2,24 @@ package com.stsc4j.parser.v1.ast;
 
 import java.util.List;
 
+/**
+ * Acceso a un indice de una lista.
+ */
 public class ExpressionIndexAccess extends Expression{
 
+    /**
+     * Objeto a acceder.
+     */
     public Expression objectList;
-    public List<Expression> indexList;
-    public Expression index;
 
-    @Deprecated
-    public ExpressionIndexAccess(Expression objectList, Expression index) {
+    /**
+     * Lista de indices.
+     */
+    public List<Expression> index;
+
+    public ExpressionIndexAccess(Expression objectList, List<Expression> index) {
         this.objectList = objectList;
         this.index = index;
-    }
-
-    public ExpressionIndexAccess(Expression objectList, List<Expression> indexList) {
-        this.objectList = objectList;
-        this.indexList = indexList;
     }
 
     @Override

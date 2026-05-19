@@ -28,14 +28,12 @@ public class ParserLoopForEach extends Parser {
         }
         Token type = tokenStream.before();
 
+        // Definir que debe ser siempre mutable la variable
         tokenStream.consume(TokenType.MUTABLE_VARIABLE, " Se esperaba 'var' en la declaración de variable del ciclo 'para'");
 
-        Expression expression = parserExpression.parseExpression();
-        if (!(expression instanceof ExpressionVariable)) {
-            throw new ParserException("Se esperaba una declaración de variable con un nombre válido en la declaración del ciclo 'para'");
-        }
-        ExpressionVariable declaration = (ExpressionVariable) expression;
-        ExpressionForEachVar forEachVar = new ExpressionForEachVar(type, declaration);
+        // Obtener nombre de la variable
+        Token identifier = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba un identificador para la declaración de variable del ciclo 'para'");
+        ExpressionForEachVar forEachVar = new ExpressionForEachVar(type, identifier);
 
         // Validación de palabras reservadas
         if (tokenStream.notMatch(TokenType.LOOP_EACH_1, TokenType.LOOP_EACH_2)) {
