@@ -233,7 +233,7 @@ public class ParserExpression extends Parser {
                 // Es un método: obj.metodo()
                 expression = parseDirectMethodCall(expression, accessName);
             } else {
-                // Es una propiedad JSN: obj.propiedad
+                    // Es una propiedad JSN: obj.propiedad
                 expression = new ExpressionPropertyAccess(expression, accessName);
             }
         }

@@ -12,12 +12,28 @@ public class ParserFunctionParameter extends Parser {
 
     public TokenStream tokenStream;
 
-    public ParserFunctionParameter(TokenStream tokenStream) {
+    private ParserFunctionParameter(TokenStream tokenStream) {
         this.tokenStream = tokenStream;
     }
 
+    public static ParserFunctionParameterBuilder builder(TokenStream tokenStream) {
+        return new ParserFunctionParameterBuilder(tokenStream);
+    }
+
+    public static class ParserFunctionParameterBuilder {
+        private final ParserFunctionParameter parser;
+
+        public ParserFunctionParameterBuilder(TokenStream tokenStream) {
+            parser = new ParserFunctionParameter(tokenStream);
+        }
+
+        public ParserFunctionParameter build() {
+            return parser;
+        }
+    }
+
     @Override
-    public List<Statement> parseStatements() {
+    public List<Statement>  parseStatements() {
         return parse();
     }
 
@@ -30,7 +46,7 @@ public class ParserFunctionParameter extends Parser {
                 return parameters;
             }
             if (tokenStream.notMatch(TokenType.PRIMITIVE_INTEGER, TokenType.PRIMITIVE_DECIMAL, TokenType.PRIMITIVE_STRING,
-                    TokenType.PRIMITIVE_BOOLEAN)) {
+                    TokenType.PRIMITIVE_BOOLEAN, TokenType.LIST)) {
                 throw new RuntimeException("Se esperaba un tipo de dato primitivo para el parámetro de la función");
             }
             Token type = tokenStream.before();
