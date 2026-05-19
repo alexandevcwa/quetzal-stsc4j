@@ -67,6 +67,11 @@ public class ParserDeclaration extends Parser {
         Expression ternary = null;
         // Verificar operador ternario
         if (tokenStream.matchNotAdvance(TokenType.QUESTION)) {
+
+            if (!(initialValue instanceof ExpressionBinary)){
+                throw new ParserException("Se esperaba una expresión binaria para el operador ternario.");
+            }
+
             tokenStream.advance();
             ternary = parserExpression.parseTernaryExpression((ExpressionBinary) initialValue);
         }
