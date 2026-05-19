@@ -23,7 +23,11 @@ public class ParserReturn extends Parser {
             returnExpression = ParserListExpression.builder(tokenStream, parserExpression)
                     .build()
                     .parseExpression();
-        }else {
+        } else if (tokenStream.matchNotAdvance(TokenType.BRACES_OPEN)) {
+            returnExpression = ParserJsnExpression.builder(tokenStream, parserExpression)
+                    .build()
+                    .parseExpression();
+        } else {
             returnExpression = parserExpression.parseExpression();
         }
 

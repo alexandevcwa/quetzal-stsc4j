@@ -119,6 +119,18 @@ public abstract class ParserPrincipalValidations {
         return true;
     }
 
+    protected boolean isPropertyAssignation(){
+        if(tokenStream.notMatch(TokenType.IDENTIFIER)){
+            return false;
+        }
+        if(tokenStream.notMatch(TokenType.DOT)){
+            tokenStream.back();
+            return false;
+        }
+        tokenStream.back(2);
+        return true;
+    }
+
     protected boolean isTryCatchDeclaration() {
         return tokenStream.matchNotAdvance(TokenType.TRY);
     }

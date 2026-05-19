@@ -40,6 +40,7 @@ public class LexerDictionary {
     public static final String NEW_INSTANCE = "nuevo";
     public static final String IMPORT_MODULE = "importar";
     public static final String IMPORT_MODULE_L = "desde";
+    public static final String NEGATION_ESP = "no";
 
     // Palabras, Funciones Predefinidas
     public static final String C_CONSOLE = "consola";
@@ -61,7 +62,7 @@ public class LexerDictionary {
             FINALLY, OBJECT, PUBLIC_ACCESS, PRIVATE_ACCESS, STATIC, THIS, ASYNC, AWAIT,
             NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L,
             C_CONSOLE, F_PRINT, F_PRINT_ERROR, F_PRINT_WARNING, F_PRINT_INFO, F_PRINT_SUCCESS, F_SCANNER, F_SCANNER_SECRET,
-            AND_ESP, OR_ESP
+            AND_ESP, OR_ESP, NEGATION_ESP
     );
 
     public static final char PLUS = '+';

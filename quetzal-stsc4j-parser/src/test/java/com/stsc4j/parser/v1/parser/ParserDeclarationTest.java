@@ -22,7 +22,6 @@ class ParserDeclarationTest {
     private static List<Token> tokens;
     private static TokenStream tokenStream;
     private static ParserDeclaration parser;
-    private static final ASTPrinter astPrinter = new ASTPrinter();
 
     @AfterEach
     void cleanTokens() {
@@ -145,11 +144,55 @@ class ParserDeclarationTest {
 
     @Test
     @DisplayName("Test - Variable con asignación de valor inicial por consola")
-    void testVariableObtenerValorPorConsola(){
+    void testVariableObtenerValorPorConsola() {
         final String code = "entero valor = consola.pedir(\"Ingrese un valor: \")";
         context.process(code);
         tokens.addAll(context.getTokens());
         var ast = assertDoesNotThrow(() -> parser.parseStatement());
         assertThat(ast).isNotNull();
-        assertThat(ast).matches(s -> s instanceof StatementVariable);    }
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor booleano con operadores lógicos")
+    void testVariableBooleano() {
+        final String code = "log acceso = (usuario y !usuario)";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor booleano con operadores lógicos y comparación")
+    void testVariableBooleano2() {
+        final String code = "log disponible = (stock > 0) o (pedido_en_camino == verdadero)";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor booleano con operador de negación lógico en español")
+    void testVariableBooleanoNegacionESP(){
+        final String code = "log negado = no acceso";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Test - Variable con asignación de valor booleano con operador de negación lógico en símbolo")
+    void testVariableObjetoAsignandoAPropiedad(){
+        final String code = "usuario.nombre = \"Juan\"";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertThat(ast).isNotNull();
+        assertThat(ast).matches(s -> s instanceof StatementVariable);
+    }
 }

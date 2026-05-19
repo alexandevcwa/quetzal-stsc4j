@@ -125,4 +125,16 @@ class ParserFunctionTest {
         assertNotNull(ast);
         System.out.println(astPrinter.print(ast));
     }
+
+    @Test
+    @DisplayName("Test - Función con parámetro de tipo lista y uso de método de lista en el cuerpo de la función")
+    void testFuncionesParametroLista(){
+        final String code = "número promedio_lista(lista<número> valores) {\n" +
+                "    retornar valores.promedio()\n" +
+                "}";
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = assertDoesNotThrow(() -> parser.parseStatement());
+        assertNotNull(ast);
+    }
 }

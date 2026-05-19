@@ -9,18 +9,35 @@ import com.stsc4j.parser.v1.ast.ExpressionJsnBlock;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserJsnExpression {
+public class ParserJsnExpression extends Parser{
 
     private final ParserExpression parserExpression;
     private final TokenStream tokenStream;
 
-    public ParserJsnExpression(TokenStream tokenStream, ParserExpression parserExpression) {
+    private ParserJsnExpression(TokenStream tokenStream, ParserExpression parserExpression) {
         this.tokenStream = tokenStream;
         this.parserExpression = parserExpression;
     }
 
-    public ExpressionJsnBlock parserJsnExpression() {
-        return (ExpressionJsnBlock) parseJsnBlock();
+    public static ParserJsnExpressionBuilder builder(TokenStream tokenStream, ParserExpression parserExpression) {
+        return new ParserJsnExpressionBuilder(tokenStream, parserExpression);
+    }
+
+    public static class ParserJsnExpressionBuilder {
+        private final ParserJsnExpression parserJsnExpression;
+
+        public ParserJsnExpressionBuilder(TokenStream tokenStream, ParserExpression parserExpression) {
+            this.parserJsnExpression = new ParserJsnExpression(tokenStream, parserExpression);
+        }
+
+        public ParserJsnExpression build() {
+            return parserJsnExpression;
+        }
+    }
+
+    @Override
+    public Expression parseExpression() {
+        return parseJsnBlock();
     }
 
     private Expression parseJsnBlock() {
