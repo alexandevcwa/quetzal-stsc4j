@@ -112,10 +112,11 @@ public abstract class ParserPrincipalValidations {
         if(tokenStream.notMatch(TokenType.IDENTIFIER)){
             return false;
         }
-        if(tokenStream.notMatch(TokenType.LEFT_PARENT)){
+        if(tokenStream.notMatch(TokenType.BRACKETS_OPEN)){
             tokenStream.back();
             return false;
         }
+        tokenStream.back(2);
         return true;
     }
 

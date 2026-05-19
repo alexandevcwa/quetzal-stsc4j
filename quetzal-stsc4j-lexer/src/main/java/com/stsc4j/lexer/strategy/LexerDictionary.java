@@ -6,7 +6,8 @@ import java.util.Set;
 public class LexerDictionary {
 
     public static final String ENTERO = "entero";
-    public static final String NUMERO = "número";
+    public static final String NUMERO_V1 = "número";
+    public static final String NUMERO_v2 = "numero";
     public static final String TEXTO = "texto";
     public static final String LOG = "log";
     public static final String LIT_TRUE = "verdadero";
@@ -56,7 +57,7 @@ public class LexerDictionary {
     public static final String OR_ESP = "o";
 
     public static final Set<String> KEYWORDS = Set.of(
-            ENTERO, NUMERO, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,
+            ENTERO, NUMERO_V1, NUMERO_v2, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,
             IF, ELSE, NULL, LIST, JSN, LOOP_WHILE, LOOP_DO, LOOP_FOR, LOOP_EACH_1,
             LOOP_EACH_2, BREAK, CONTINUE, RETURN, THROW, TRY, CATCH, EXCEPTION,
             FINALLY, OBJECT, PUBLIC_ACCESS, PRIVATE_ACCESS, STATIC, THIS, ASYNC, AWAIT,
