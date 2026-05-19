@@ -154,7 +154,32 @@ class SemanticJsnTest {
         tokens.addAll(context.getTokens());
         var ast = parser.parse();
 
-        // Esperamos que tu clase Semántica detecte que volar() no está en la lista
+        assertThrows(com.stsc4j.semantic.SemanticError.class, () -> semanticAnalyzer.analyze(ast));
+    }
+
+
+    @Test
+    @DisplayName("Caso de Uso: Modificación directa de propiedad JSN mutable (con var)")
+    void testAsignacionDirectaJsnMutable() {
+        final String code =
+                "jsn var persona = { nombre: \"Ana\", edad: 28 }\n" +
+                        "persona.nombre = \"Maria\"\n";
+
+        ejecutar(code);
+    }
+
+    @Test
+    @DisplayName("Caso de Uso: Error al hacer asignación directa a JSN constante")
+    void testErrorAsignacionDirectaJsnConstante() {
+        final String code =
+                "jsn persona = { nombre: \"Ana\", edad: 28 }\n" +
+                        "persona.nombre = \"Maria\"\n"; // Esto debería lanzar SemanticError
+
+        context.process(code);
+        tokens.addAll(context.getTokens());
+        var ast = parser.parse();
+
+        // Esperamos que bloquee por inmutabilidad
         assertThrows(com.stsc4j.semantic.SemanticError.class, () -> semanticAnalyzer.analyze(ast));
     }
 
@@ -165,4 +190,6 @@ class SemanticJsnTest {
         var ast = parser.parse();
         assertDoesNotThrow(() -> semanticAnalyzer.analyze(ast));
     }
+
+
 }

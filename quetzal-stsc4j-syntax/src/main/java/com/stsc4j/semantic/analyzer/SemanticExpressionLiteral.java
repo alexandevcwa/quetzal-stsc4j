@@ -2,20 +2,20 @@ package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.ExpressionLiteral;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionLiteral(Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionLiteral(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
-    public String visit(ExpressionLiteral expressionLiteral) {
-        TokenType tipoToken = expressionLiteral.token.getType();
+    public String visit(ExpressionLiteral expr) {
+        TokenType tipoToken = expr.token.getType();
 
         switch (tipoToken) {
             case LIT_INTEGER:

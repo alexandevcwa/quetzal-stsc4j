@@ -181,4 +181,9 @@ public abstract class SemanticAbstractAnalyzer implements Visitor <String> {
     public String visit(ExpressionConsoleIn expressionConsoleIn) {
         return null;
     }
+
+    @Override
+    public String visit(StatementPropertyAssignation statementPropertyAssignation) {
+        return null;
+    }
 }

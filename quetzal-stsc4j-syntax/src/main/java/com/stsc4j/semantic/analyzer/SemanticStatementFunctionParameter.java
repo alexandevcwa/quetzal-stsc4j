@@ -1,28 +1,27 @@
 package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.parser.v1.ast.StatementFunctionParameter;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticStatementFunctionParameter extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementFunctionParameter(Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementFunctionParameter(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
-    public String visit(StatementFunctionParameter statementFunctionParameter) {
-        // Extraemos el tipo y nombre del parámetro
-        String tipoParametro = statementFunctionParameter.type.getLexeme();
-        String nombreParametro = statementFunctionParameter.identified.getLexeme();
+    public String visit(StatementFunctionParameter stmt) {
+        // 1. Extraemos el tipo oficial (ej. PRIMITIVE_INTEGER) y el nombre
+        String tipoParametro = stmt.type.getType().name();
+        String nombreParametro = stmt.identified.getLexeme();
 
-        // Inyectamos el parámetro en la memoria local actual como una variable normal (mutable)
-        currentEnv.define(nombreParametro, tipoParametro, true);
+        // 2. Inyectamos el parámetro en la memoria local actual respetando si tiene 'var' (mutable)
+        analyzer.getEnv().define(nombreParametro, tipoParametro, stmt.mutable);
 
-        // Devolvemos el tipo del parámetro (esto servirá luego para armar la firma)
+        // 3. Devolvemos el tipo del parámetro (por si el nodo padre lo necesita)
         return tipoParametro;
     }
-
 }

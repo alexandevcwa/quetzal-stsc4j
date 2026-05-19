@@ -39,13 +39,13 @@ public class SemanticStatementFunction extends SemanticAbstractAnalyzer {
         analyzer.setEnv(new Environment(globalEnv));
 
         try {
-            // 4. Guardamos qué tipo debe retornar usando un nombre inválido para el usuario
+            // 4. Guardamos qué tipo debe retornar usando un nombre reservado
             analyzer.getEnv().define("@return", returnType, false);
 
-            // 5. Inyectamos los parámetros como variables locales
+            // 5. DELEGAMOS LA INYECCIÓN AL VISITOR DEL PARÁMETRO
+            // (Esto automáticamente llama a SemanticStatementFunctionParameter)
             for (Statement paramStmt : stmt.parameters) {
-                StatementFunctionParameter param = (StatementFunctionParameter) paramStmt;
-                analyzer.getEnv().define(param.identified.getLexeme(), param.type.getType().name(), param.mutable);
+                paramStmt.accept(analyzer);
             }
 
             // 6. Analizamos el cuerpo de la función
