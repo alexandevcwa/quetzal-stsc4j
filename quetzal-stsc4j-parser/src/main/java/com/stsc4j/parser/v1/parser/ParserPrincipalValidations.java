@@ -14,9 +14,15 @@ public abstract class ParserPrincipalValidations {
                 TokenType.PRIMITIVE_BOOLEAN, TokenType.IDENTIFIER);
     }
 
+    /**
+     * Valida llamadas a funciones como: miFuncion()
+     *
+     * @return True = Es una llamada a una función, False = No es una llamada a una función
+     */
     protected boolean isFunctionCall() {
         if (tokenStream.match(TokenType.IDENTIFIER)) {
-            if ((tokenStream.matchAndBack(TokenType.DOT) || tokenStream.matchAndBack(TokenType.LEFT_PARENT))) {
+            if (tokenStream.matchNotAdvance(TokenType.LEFT_PARENT)) {
+                tokenStream.back();
                 return true;
             } else {
                 tokenStream.back();
@@ -108,11 +114,11 @@ public abstract class ParserPrincipalValidations {
     }
 
 
-    protected boolean isMatrixAssignation(){
-        if(tokenStream.notMatch(TokenType.IDENTIFIER)){
+    protected boolean isMatrixAssignation() {
+        if (tokenStream.notMatch(TokenType.IDENTIFIER)) {
             return false;
         }
-        if(tokenStream.notMatch(TokenType.BRACKETS_OPEN)){
+        if (tokenStream.notMatch(TokenType.BRACKETS_OPEN)) {
             tokenStream.back();
             return false;
         }
@@ -120,11 +126,16 @@ public abstract class ParserPrincipalValidations {
         return true;
     }
 
-    protected boolean isPropertyAssignation(){
-        if(tokenStream.notMatch(TokenType.IDENTIFIER)){
+    /**
+     * Valida llamadas a propiedades como: miPropiedad.miPropiedad2.miPropiedad3
+     *
+     * @return True = Es una llamada a una propiedad, False = No es una llamada a una propiedad
+     */
+    protected boolean isPropertyCall() {
+        if (tokenStream.notMatch(TokenType.IDENTIFIER)) {
             return false;
         }
-        if(tokenStream.notMatch(TokenType.DOT)){
+        if (tokenStream.notMatch(TokenType.DOT)) {
             tokenStream.back();
             return false;
         }
@@ -136,19 +147,19 @@ public abstract class ParserPrincipalValidations {
         return tokenStream.matchNotAdvance(TokenType.TRY);
     }
 
-    protected boolean isConsoleClass(){
+    protected boolean isConsoleClass() {
         return tokenStream.matchNotAdvance(TokenType.C_CONSOLE);
     }
 
-    protected boolean isBreakDeclaration(){
+    protected boolean isBreakDeclaration() {
         return tokenStream.matchNotAdvance(TokenType.BREAK);
     }
 
-    protected boolean isContinueDeclaration(){
+    protected boolean isContinueDeclaration() {
         return tokenStream.matchNotAdvance(TokenType.CONTINUE);
     }
 
-    protected boolean isThrowDeclaration(){
+    protected boolean isThrowDeclaration() {
         return tokenStream.matchNotAdvance(TokenType.THROW);
     }
 }

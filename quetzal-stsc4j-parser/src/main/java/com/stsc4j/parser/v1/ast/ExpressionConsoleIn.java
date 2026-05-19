@@ -5,6 +5,9 @@ package com.stsc4j.parser.v1.ast;
  */
 public class ExpressionConsoleIn extends Expression{
 
+    /**
+     * Mensaje a pedir por consola.
+     */
     public final ExpressionLiteral message;
 
     public ExpressionConsoleIn(ExpressionLiteral message) {
