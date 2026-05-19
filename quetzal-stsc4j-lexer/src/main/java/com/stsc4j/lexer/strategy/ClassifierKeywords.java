@@ -13,7 +13,8 @@ public class ClassifierKeywords implements Classifier {
 
     static {
         KEYWORDS_MAP.put(ENTERO, TokenType.PRIMITIVE_INTEGER);
-        KEYWORDS_MAP.put(NUMERO, TokenType.PRIMITIVE_DECIMAL);
+        KEYWORDS_MAP.put(NUMERO_V1, TokenType.PRIMITIVE_DECIMAL);
+        KEYWORDS_MAP.put(NUMERO_v2,TokenType.PRIMITIVE_DECIMAL);
         KEYWORDS_MAP.put(TEXTO, TokenType.PRIMITIVE_STRING);
         KEYWORDS_MAP.put(LOG, TokenType.PRIMITIVE_BOOLEAN);
         KEYWORDS_MAP.put(LIT_TRUE, TokenType.LIT_TRUE);
