@@ -76,6 +76,8 @@
                 <version>3.12.1</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <source>15</source>
+                    <target>15</target>
                 </configuration>
             </plugin>
 

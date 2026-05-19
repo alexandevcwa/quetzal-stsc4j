@@ -1,29 +1,74 @@
 package com.stsc4j.generator;
 
+import com.stsc4j.generator.bytecode.*;
 import com.stsc4j.parser.v1.ast.*;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Label;
 
 import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-// 1. CAMBIO CLAVE: Ahora devolvemos String para recordar los tipos (igual que el Semántico)
-public class BytecodeGenerator implements Visitor<String> {
+public class BytecodeGenerator extends BytecodeAbstractGenerator {
 
-    private final EnvironmentJVM envJVM = new EnvironmentJVM();
+    private EnvironmentJVM envJVM = new EnvironmentJVM();
     private ClassWriter cw;
     private MethodVisitor mv;
-
-    // 2. Diccionario para recordar qué tipo tiene cada variable en la JVM
+    private String nombreClaseActual;
     private final Map<String, String> tiposVariables = new HashMap<>();
+    private final Map<String, String> firmasFunciones = new HashMap<>();
+
+    // 1. Instancias de las clases delegadas
+    private final BytecodeExpressionLiteral expLiteral = new BytecodeExpressionLiteral(this);
+    private final BytecodeExpressionVariable expVariable = new BytecodeExpressionVariable(this);
+    private final BytecodeExpressionBinary expBinary = new BytecodeExpressionBinary(this);
+    private final BytecodeStatementVariable stmtVariable = new BytecodeStatementVariable(this);
+    private final BytecodeStatementConsolaOut stmtConsolaOut = new BytecodeStatementConsolaOut(this);
+    private final BytecodeExpressionMethodCall expMethodCall = new BytecodeExpressionMethodCall(this);
+    private final BytecodeStatementBlock stmtBlock = new BytecodeStatementBlock(this);
+    private final BytecodeStatementIf generadorIf = new BytecodeStatementIf(this);
+    private final BytecodeStatementLoopDoWhile generadorLoopDoWhile = new BytecodeStatementLoopDoWhile(this);
+    private final BytecodeStatementIncDec generadorIncDec = new BytecodeStatementIncDec(this);
+    private final BytecodeExpressionIncDec expIncDec = new BytecodeExpressionIncDec(this);
+    private final BytecodeStatementLoopWhile generadorLoopWhile = new BytecodeStatementLoopWhile(this);
+    private final BytecodeStatementLoopFor generadorLoopFor = new BytecodeStatementLoopFor(this);
+    private final BytecodeStatementBreak generadorBreak = new BytecodeStatementBreak(this);
+    private final BytecodeStatementContinue generadorContinue = new BytecodeStatementContinue(this);
+    private final BytecodeStatementFunction generadorFunction = new BytecodeStatementFunction(this);
+    private final BytecodeStatementReturn generadorReturn = new BytecodeStatementReturn(this);
+    private final BytecodeExpressionNull generadorNull = new BytecodeExpressionNull(this);
+    private final BytecodeExpressionTernary generadorTernary = new BytecodeExpressionTernary(this);
+    private final BytecodeExpressionConsoleIn generadorConsoleIn = new BytecodeExpressionConsoleIn(this);
+    private final BytecodeStatementList generadorList = new BytecodeStatementList(this);
+    private final BytecodeExpressionIndexAccess generadorIndexAccess = new BytecodeExpressionIndexAccess(this);
+    private final BytecodeStatementLoopForEach generadorForEach = new BytecodeStatementLoopForEach(this);
+
+
+
+
+    private final Deque<Label> pilaBreak = new ArrayDeque<>();
+    private final Deque<Label> pilaContinue = new ArrayDeque<>();
 
     public void compile(List<Statement> statements, String nombreClaseSalida) {
+        this.nombreClaseActual = nombreClaseSalida;
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, nombreClaseSalida, null, "java/lang/Object", null);
 
+        // =========================================================================
+        // El constructor por defecto <init>
+        // Esto equivale a: public MiClase() { super(); }
+        // =========================================================================
+        MethodVisitor initMv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
+        initMv.visitCode();
+        initMv.visitVarInsn(Opcodes.ALOAD, 0); // Carga 'this' en la pila
+        initMv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false); // Llama a Object()
+        initMv.visitInsn(Opcodes.RETURN);      // Retorna
+        initMv.visitMaxs(1, 1);                // Tamaños máximos fijos para el constructor
+        initMv.visitEnd();
+        // =========================================================================
+
+        // Ahora sí, empezamos con el main
         mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
@@ -32,7 +77,7 @@ public class BytecodeGenerator implements Visitor<String> {
         }
 
         mv.visitInsn(Opcodes.RETURN);
-        mv.visitMaxs(0, 0);
+        mv.visitMaxs(0, 0); // ClassWriter.COMPUTE_FRAMES calcula esto por nosotros
         mv.visitEnd();
         cw.visitEnd();
 
@@ -44,174 +89,132 @@ public class BytecodeGenerator implements Visitor<String> {
         }
     }
 
-    // ==========================================
-    // EXPRESIONES
-    // ==========================================
+    // 2. Métodos para que los ciclos registren sus etiquetas al entrar y las borren al salir
+    public void registrarCiclo(Label labelContinue, Label labelBreak) {
+        pilaContinue.push(labelContinue);
+        pilaBreak.push(labelBreak);
+    }
+
+    public void salirCiclo() {
+        pilaContinue.pop();
+        pilaBreak.pop();
+    }
+
+    public Label obtenerLabelBreak() { return pilaBreak.peek(); }
+    public Label obtenerLabelContinue() { return pilaContinue.peek(); }
+
+    // 2. Getters para que las clases delegadas puedan acceder a las herramientas ASM
+    public MethodVisitor getMv() { return mv; }
+    public EnvironmentJVM getEnvJVM() { return envJVM; }
+    public Map<String, String> getTiposVariables() { return tiposVariables; }
+
+    public ClassWriter getCw() { return cw; }
+    public String getNombreClaseActual() { return nombreClaseActual; }
+    public void setMv(MethodVisitor mv) { this.mv = mv; }
+    public void setEnvJVM(EnvironmentJVM env) { this.envJVM = env; }
+
+    public Map<String, String> getFirmasFunciones() { return firmasFunciones; }
+
+    // 3. Despacho (Dispatcher) a las clases específicas
+    @Override public String visit(ExpressionLiteral expr) { return expLiteral.visit(expr); }
+    @Override public String visit(ExpressionVariable expr) { return expVariable.visit(expr); }
+    @Override public String visit(ExpressionBinary expr) { return expBinary.visit(expr); }
+    @Override public String visit(StatementVariable stmt) { return stmtVariable.visit(stmt); }
+    @Override public String visit(StatementConsolaOut stmt) { return stmtConsolaOut.visit(stmt); }
 
     @Override
-    public String visit(ExpressionLiteral expressionLiteral) {
-        String tipo = expressionLiteral.token.getType().toString();
-        String lexema = expressionLiteral.token.getLexeme();
-
-        if (tipo.contains("INTEGER") || tipo.contains("ENTERO")) {
-            mv.visitLdcInsn(Integer.parseInt(lexema));
-            return "entero"; // Avisamos que empujamos un entero
-        }
-        else if (tipo.contains("DECIMAL")) {
-            mv.visitLdcInsn(Float.parseFloat(lexema));
-            return "decimal"; // Avisamos que empujamos un decimal
-        }
-        else if (tipo.contains("STRING") || tipo.contains("CADENA")) {
-            mv.visitLdcInsn(lexema.replace("\"", ""));
-            return "cadena";
-        }
+    public String visit(StatementExpression stmtExpr) {
+        if (stmtExpr.expression != null) stmtExpr.expression.accept(this);
         return null;
     }
 
     @Override
-    public String visit(ExpressionVariable expressionVariable) {
-        String nombreVar = expressionVariable.token.getLexeme();
-        int indiceMemoria = envJVM.obtenerIndice(nombreVar);
-        String tipo = tiposVariables.get(nombreVar); // Le preguntamos al diccionario qué tipo era
-
-        if (tipo.equals("decimal") || tipo.equals("número")) {
-            mv.visitVarInsn(Opcodes.FLOAD, indiceMemoria); // FLOAD = Saca un Float
-            return "decimal";
-        } else {
-            mv.visitVarInsn(Opcodes.ILOAD, indiceMemoria); // ILOAD = Saca un Entero
-            return "entero";
-        }
+    public String visit(ExpressionMethodCall expr) {
+        return expMethodCall.visit(expr);
     }
 
     @Override
-    public String visit(ExpressionBinary expressionBinary) {
-        // Obtenemos los tipos de ambos lados
-        String tipoIzq = expressionBinary.left != null ? expressionBinary.left.accept(this) : null;
-        String tipoDer = expressionBinary.right != null ? expressionBinary.right.accept(this) : null;
-        String operador = expressionBinary.operator.getLexeme();
-
-        boolean izqEsDecimal = tipoIzq.equals("decimal") || tipoIzq.equals("número");
-        boolean derEsDecimal = tipoDer.equals("decimal") || tipoDer.equals("número");
-
-        if (!izqEsDecimal && !derEsDecimal) {
-            // AMBOS SON ENTEROS: Matemáticas normales (IADD, ISUB...)
-            switch (operador) {
-                case "+": mv.visitInsn(Opcodes.IADD); break;
-                case "-": mv.visitInsn(Opcodes.ISUB); break;
-                case "*": mv.visitInsn(Opcodes.IMUL); break;
-                case "/": mv.visitInsn(Opcodes.IDIV); break;
-            }
-            return "entero";
-        } else {
-            // HAY DECIMALES MEZCLADOS: Magia de conversión (Coerción a Float)
-
-            if (!izqEsDecimal && derEsDecimal) {
-                // Pila actual: [Entero, Decimal]. Hay que convertir el de abajo.
-                mv.visitInsn(Opcodes.SWAP); // Volteamos la pila: [Decimal, Entero]
-                mv.visitInsn(Opcodes.I2F);  // Convertimos el tope a float: [Decimal, Decimal]
-                mv.visitInsn(Opcodes.SWAP); // Regresamos al orden original para no arruinar restas y divisiones
-            }
-            else if (izqEsDecimal && !derEsDecimal) {
-                // Pila actual: [Decimal, Entero]. El entero está arriba, súper fácil.
-                mv.visitInsn(Opcodes.I2F);  // Lo convertimos directo: [Decimal, Decimal]
-            }
-
-            // Ahora que la pila tiene dos Floats, usamos las instrucciones F (FADD, FSUB...)
-            switch (operador) {
-                case "+": mv.visitInsn(Opcodes.FADD); break;
-                case "-": mv.visitInsn(Opcodes.FSUB); break;
-                case "*": mv.visitInsn(Opcodes.FMUL); break;
-                case "/": mv.visitInsn(Opcodes.FDIV); break;
-            }
-            return "decimal";
-        }
-    }
-
-    // ==========================================
-    // SENTENCIAS
-    // ==========================================
-
-    @Override
-    public String visit(StatementVariable statementVariable) {
-        String nombreVar = statementVariable.name.getLexeme();
-        String tipoEsperado = statementVariable.typo.getLexeme();
-
-        // Si guardan "número", lo tratamos como decimal en la JVM
-        if (tipoEsperado.equals("número")) tipoEsperado = "decimal";
-
-        envJVM.registrarVariable(nombreVar);
-        int indiceMemoria = envJVM.obtenerIndice(nombreVar);
-        tiposVariables.put(nombreVar, tipoEsperado); // Guardamos el tipo para recordarlo luego
-
-        String tipoValor = null;
-        if (statementVariable.initialValue != null) {
-            tipoValor = statementVariable.initialValue.accept(this);
-        }
-
-        // COERCIÓN: Si la variable es decimal, pero el valor evaluado fue entero (ej. número b = 15)
-        if (tipoEsperado.equals("decimal") && (tipoValor != null && tipoValor.equals("entero"))) {
-            mv.visitInsn(Opcodes.I2F); // Convertimos el 15 entero a 15.0 flotante en la pila
-        }
-
-        // Elegimos la caja correcta para guardar (FSTORE o ISTORE)
-        if (tipoEsperado.equals("decimal")) {
-            mv.visitVarInsn(Opcodes.FSTORE, indiceMemoria);
-        } else {
-            mv.visitVarInsn(Opcodes.ISTORE, indiceMemoria);
-        }
-
-        return null;
+    public String visit(StatementBlock stmt) {
+        return stmtBlock.visit(stmt);
     }
 
     @Override
-    public String visit(StatementConsolaOut statementConsolaOut) {
-        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-
-        String tipoResultado = null;
-        if (statementConsolaOut.expression != null) {
-            tipoResultado = statementConsolaOut.expression.accept(this);
-        }
-
-        // Dinámicamente elegimos la firma de imprimir de Java
-        if (tipoResultado != null && (tipoResultado.equals("decimal") || tipoResultado.equals("número"))) {
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "(F)V", false); // Imprime Float
-        } else {
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "(I)V", false); // Imprime Integer
-        }
-
-        return null;
+    public String visit(StatementIf stmt) {
+        return generadorIf.visit(stmt);
     }
 
-    // ==========================================
-    // MÉTODOS VACÍOS RESTANTES (Ajustados a String)
-    // ==========================================
-    @Override public String visit(StatementBlock stmt) { return null; }
-    @Override public String visit(StatementIf stmt) { return null; }
-    @Override public String visit(StatementExpression stmtExpr) { if (stmtExpr.expression != null) stmtExpr.expression.accept(this); return null; }
-    @Override public String visit(StatementList stmt) { return null; }
-    @Override public String visit(TypeList stmt) { return null; }
-    @Override public String visit(TypePrimitive stmt) { return null; }
-    @Override public String visit(StatementJsn stmt) { return null; }
-    @Override public String visit(StatementFunctionParameter stmt) { return null; }
-    @Override public String visit(StatementFunction stmt) { return null; }
-    @Override public String visit(StatementReturn stmt) { return null; }
-    @Override public String visit(StatementLoopWhile stmt) { return null; }
-    @Override public String visit(StatementLoopDoWhile stmt) { return null; }
-    @Override public String visit(StatementLoopFor stmt) { return null; }
-    @Override public String visit(StatementLoopForEach stmt) { return null; }
-    @Override public String visit(StatementIncDec stmt) { return null; }
-    @Override public String visit(StatementMatrixAssignation stmt) { return null; }
-    @Override public String visit(ExpressionNull expr) { return null; }
-    @Override public String visit(StatementTryCatchFinally stmt) { return null; }
-    @Override public String visit(StatementContinue stmt) { return null; }
-    @Override public String visit(StatementBreak stmt) { return null; }
-    @Override public String visit(ExpressionTernary expr) { return null; }
-    @Override public String visit(ExpressionMethodCall expr) { return null; }
-    @Override public String visit(ExpressionIndexAccess expr) { return null; }
-    @Override public String visit(ExpressionList expr) { return null; }
-    @Override public String visit(ExpressionJsnBlock expr) { return null; }
-    @Override public String visit(ExpressionJsn expr) { return null; }
-    @Override public String visit(ExpressionPropertyAccess expr) { return null; }
-    @Override public String visit(ExpressionIncDec expr) { return null; }
-    @Override public String visit(ExpressionForEachVar expr) { return null; }
+    @Override
+    public String visit(StatementLoopDoWhile stmt) {
+        return generadorLoopDoWhile.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementIncDec stmt) {
+        return generadorIncDec.visit(stmt);
+    }
+
+    @Override
+    public String visit(ExpressionIncDec expr) {
+        return expIncDec.visit(expr);
+    }
+
+    @Override
+    public String visit(StatementLoopWhile stmt) {
+        return generadorLoopWhile.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementLoopFor stmt) {
+        return generadorLoopFor.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementBreak stmt) {
+        return generadorBreak.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementContinue stmt) {
+        return generadorContinue.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementFunction stmt) {
+        return generadorFunction.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementReturn stmt) {
+        return generadorReturn.visit(stmt);
+    }
+
+    @Override
+    public String visit(ExpressionNull expr) {
+        return generadorNull.visit(expr);
+    }
+
+    @Override
+    public String visit(ExpressionTernary expr){
+        return generadorTernary.visit(expr);
+    }
+
+    @Override
+    public String visit(ExpressionConsoleIn expr) {
+        return generadorConsoleIn.visit(expr);
+    }
+
+    @Override
+    public String visit(StatementList stmt) {
+        return generadorList.visit(stmt);
+    }
+
+    @Override
+    public String visit(ExpressionIndexAccess expr) {
+        return generadorIndexAccess.visit(expr);
+    }
+
+    @Override
+    public String visit(StatementLoopForEach stmt) {
+        return generadorForEach.visit(stmt);
+    }
 }
