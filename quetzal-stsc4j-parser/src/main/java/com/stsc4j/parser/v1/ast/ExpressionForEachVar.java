@@ -4,11 +4,22 @@ import com.stsc4j.lexer.Token;
 
 public class ExpressionForEachVar extends Expression{
 
+    /**
+     * Tipo de dato de la variable del foreach
+     */
     public final Token type;
-    public final boolean mutable = true;
-    public final ExpressionVariable variable;
 
-    public ExpressionForEachVar(Token type, ExpressionVariable variable) {
+    /**
+     * Indica si la variable es mutable o no.
+     */
+    public final boolean mutable = true;
+
+    /**
+     * Nombre de la variable del foreach
+     */
+    public final Token variable;
+
+    public ExpressionForEachVar(Token type, Token variable) {
         this.type = type;
         this.variable = variable;
     }

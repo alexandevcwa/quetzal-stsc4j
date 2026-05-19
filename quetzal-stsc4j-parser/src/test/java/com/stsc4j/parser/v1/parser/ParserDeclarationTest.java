@@ -2,7 +2,6 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.LexerContext;
 import com.stsc4j.lexer.Token;
-import com.stsc4j.parser.v1.ast.ASTPrinter;
 import com.stsc4j.parser.v1.ast.ExpressionIndexAccess;
 import com.stsc4j.parser.v1.ast.Statement;
 import com.stsc4j.parser.v1.ast.StatementVariable;
@@ -106,7 +105,7 @@ class ParserDeclarationTest {
         assertThat(ast).isNotNull();
         assertThat(ast).matches(s -> s instanceof StatementVariable);
         var formated = (StatementVariable) ast;
-        assertThat(((ExpressionIndexAccess) formated.initialValue).indexList.size()).isEqualTo(2);
+        assertThat(((ExpressionIndexAccess) formated.initialValue).index.size()).isEqualTo(2);
     }
 
     @Test
