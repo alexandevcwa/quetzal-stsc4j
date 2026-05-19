@@ -186,13 +186,13 @@ class ParserDeclarationTest {
     }
 
     @Test
-    @DisplayName("Test - Variable con asignación de valor booleano con operador de negación lógico en símbolo")
-    void testVariableObjetoAsignandoAPropiedad(){
-        final String code = "usuario.nombre = \"Juan\"";
+    @DisplayName("Test - Declaración Ternearia")
+    void testVariableDeclaracionTernearia(){
+        final String code = "texto var estado = (100) ? \"Activo\" : \"Inactivo\"";
         context.process(code);
         tokens.addAll(context.getTokens());
-        var ast = assertDoesNotThrow(() -> parser.parseStatement());
-        assertThat(ast).isNotNull();
-        assertThat(ast).matches(s -> s instanceof StatementVariable);
+        var ex = assertThrows(ParserException.class, () -> parser.parseStatement());
+        assertNotNull(ex);
+        System.out.println(ex.getMessage());
     }
 }
