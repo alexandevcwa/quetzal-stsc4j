@@ -9,9 +9,9 @@ public class Environment {
 
     //Detalles de cada variable
 
-    private static class VariableInfo{
-        String Type;
-        boolean isMutable;
+    public static class VariableInfo{
+        public String Type;
+        public boolean isMutable;
 
         VariableInfo(String type, boolean isMutable){
             this.Type = type;
@@ -139,5 +139,14 @@ public class Environment {
         throw new SemanticError("La variable '" + name + "' no ha sido definida.");
     }
 
+    public VariableInfo getVariable(String name) {
+        if (values.containsKey(name)) {
+            return values.get(name);
+        }
+        if (enclosing != null) {
+            return enclosing.getVariable(name);
+        }
+        throw new SemanticError("Error Semántico: La variable '" + name + "' no ha sido definida.");
+    }
 
 }
