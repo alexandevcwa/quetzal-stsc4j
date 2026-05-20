@@ -50,6 +50,10 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     private final BytecodeStatementJsn generadorStatementJsn = new BytecodeStatementJsn(this);
     private final BytecodeExpressionPropertyAccess generadorPropertyAccess = new BytecodeExpressionPropertyAccess(this);
     private final BytecodeStatementPropertyAssignation generadorPropertyAssignation = new BytecodeStatementPropertyAssignation(this);
+    private final BytecodeStatementFunctionParameter generadorFunctionParameter = new BytecodeStatementFunctionParameter(this);
+    private final BytecodeExpressionList generadorExpressionList = new BytecodeExpressionList(this);
+    private final BytecodeStatementThrow generadorThrow = new BytecodeStatementThrow(this);
+    private final BytecodeStatementTryCatchFinally generadorTryCatchFinally = new BytecodeStatementTryCatchFinally(this);
 
 
 
@@ -257,5 +261,43 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     @Override
     public String visit(StatementPropertyAssignation stmt){
         return generadorPropertyAssignation.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementFunctionParameter stmt) {
+        return generadorFunctionParameter.visit(stmt);
+    }
+
+    @Override
+    public String visit(ExpressionList expr) {
+        return generadorList.visit(expr);
+    }
+
+    @Override
+    public String visit(StatementThrow stmt) {
+        return generadorThrow.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementTryCatchFinally stmt) {
+        return generadorTryCatchFinally.visit(stmt);
+    }
+
+    @Override
+    public String visit(TypeList stmt) {
+        // Solo contiene información del tipo de lista, el nodo padre lo lee directamente.
+        return null;
+    }
+
+    @Override
+    public String visit(TypePrimitive stmt) {
+        // Solo contiene el tipo primitivo, el nodo padre lo lee directamente.
+        return null;
+    }
+
+    @Override
+    public String visit(ExpressionForEachVar expr) {
+        // La declaración de la variable iteradora es manejada internamente por BytecodeStatementForEach.
+        return null;
     }
 }

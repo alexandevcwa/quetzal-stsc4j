@@ -33,16 +33,26 @@ public class BytecodeStatementVariable extends BytecodeAbstractGenerator {
             tipoValor = stmt.initialValue.accept(generator);
         }
 
-        // 3. Coerción automática (int -> float)
+        // ==========================================
+        // 3. COERCIÓN AUTOMÁTICA (Magia del Compilador)
+        // ==========================================
+
+        // A. Si espera DECIMAL pero recibe ENTERO (ej: numero x = 10) -> Convertir a Float
         if (tipoEsperado.equals(TokenType.PRIMITIVE_DECIMAL.name()) &&
                 TokenType.PRIMITIVE_INTEGER.name().equals(tipoValor)) {
             mv.visitInsn(Opcodes.I2F);
         }
 
-        // 4. GUARDADO EN MEMORIA (CORREGIDO)
-        // Usamos ASTORE para Objetos (String, JSN, Arreglos)
-        // Usamos FSTORE para Decimales
-        // Usamos ISTORE para Enteros y Booleanos
+        // B. 🚨 EL PARCHE: Si espera ENTERO pero recibe TEXTO de la consola (ej: entero anio = "2026") -> Parsear a Int
+        else if (tipoEsperado.equals(TokenType.PRIMITIVE_INTEGER.name()) &&
+                (TokenType.PRIMITIVE_STRING.name().equals(tipoValor) || "texto".equals(tipoValor))) {
+            // Inyectamos Integer.parseInt("texto")
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "parseInt", "(Ljava/lang/String;)I", false);
+        }
+
+        // ==========================================
+        // 4. GUARDADO EN MEMORIA
+        // ==========================================
 
         if (tipoEsperado.equals(TokenType.PRIMITIVE_DECIMAL.name())) {
             mv.visitVarInsn(Opcodes.FSTORE, indiceMemoria);
@@ -50,7 +60,7 @@ public class BytecodeStatementVariable extends BytecodeAbstractGenerator {
         else if (tipoEsperado.equals(TokenType.PRIMITIVE_STRING.name()) ||
                 tipoEsperado.equals("JSN_OBJECT") ||
                 tipoEsperado.startsWith("[")) {
-            // ASTORE es la clave para que el VerifyError desaparezca
+            // Objetos (Textos, JSN, Arreglos)
             mv.visitVarInsn(Opcodes.ASTORE, indiceMemoria);
         }
         else {

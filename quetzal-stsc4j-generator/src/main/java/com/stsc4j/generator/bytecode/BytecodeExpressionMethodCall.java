@@ -22,7 +22,7 @@ public class BytecodeExpressionMethodCall extends BytecodeAbstractGenerator {
         String nombreMetodo = expr.methodName.getLexeme();
 
         // ====================================================================
-        // 1. FUNCIONES GLOBALES NATIVAS (Prioridad absoluta para evitar el error de variable)
+        // 1. FUNCIONES GLOBALES NATIVAS (imprimir, consola.mostrar)
         // ====================================================================
         if (nombreMetodo.equals("consola.mostrar") || nombreMetodo.startsWith("consola.mostrar_") || nombreMetodo.equals("imprimir")) {
             mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
@@ -44,63 +44,87 @@ public class BytecodeExpressionMethodCall extends BytecodeAbstractGenerator {
         }
 
         // ====================================================================
-        // 2. LLAMADAS A MÉTODOS DE OBJETOS (JSN)
+        // 2. LLAMADAS A MÉTODOS DE OBJETOS (JSN y Excepciones)
         // ====================================================================
         if (expr.object != null) {
-            String tipoObjeto = expr.object.accept(generator);
+            boolean esLlamadaAObjeto = true;
 
-            if ("JSN_OBJECT".equals(tipoObjeto)) {
-                switch (nombreMetodo) {
-                    case "contiene_clave":
-                        expr.args.get(0).accept(generator);
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "containsKey", "(Ljava/lang/Object;)Z", false);
-                        return TokenType.PRIMITIVE_BOOLEAN.name();
-
-                    case "claves":
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "keySet", "()Ljava/util/Set;", false);
-                        mv.visitInsn(Opcodes.DUP);
-                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Set", "size", "()I", true);
-                        mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/String");
-                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Set", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", true);
-                        mv.visitTypeInsn(Opcodes.CHECKCAST, "[Ljava/lang/String;");
-                        return "[Ljava/lang/String;";
-
-                    case "valores":
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "values", "()Ljava/util/Collection;", false);
-                        mv.visitInsn(Opcodes.DUP);
-                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Collection", "size", "()I", true);
-                        mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Collection", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", true);
-                        return "[Ljava/lang/Object;";
-
-                    case "establecer":
-                        expr.args.get(0).accept(generator);
-                        String tVal = expr.args.get(1).accept(generator);
-                        empaquetarPrimitivo(mv, tVal);
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
-                        mv.visitInsn(Opcodes.POP);
-                        return null;
-
-                    case "eliminar":
-                        expr.args.get(0).accept(generator);
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "remove", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
-                        return "JSN_OBJECT";
-
-                    case "fusionar":
-                        expr.args.get(0).accept(generator);
-                        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "putAll", "(Ljava/util/Map;)V", false);
-                        return null;
-
-                    case "texto":
-                    case "texto_formateado":
-                        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/stsc4j/generator/bytecode/JsnRuntime", "texto", "(Ljava/util/LinkedHashMap;)Ljava/lang/String;", false);
-                        return TokenType.PRIMITIVE_STRING.name();
+            // 🚨 PARCHE PARA EL AST: Verificamos si el Parser nos pasó una falsa variable
+            if (expr.object instanceof com.stsc4j.parser.v1.ast.ExpressionVariable) {
+                com.stsc4j.parser.v1.ast.ExpressionVariable varExpr = (com.stsc4j.parser.v1.ast.ExpressionVariable) expr.object;
+                if (!generator.getTiposVariables().containsKey(varExpr.token.getLexeme())) {
+                    // La variable no existe. Es una llamada directa a función global.
+                    esLlamadaAObjeto = false;
                 }
-            } else if (TokenType.PRIMITIVE_STRING.name().equals(tipoObjeto) && "jsn".equals(nombreMetodo)) {
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/stsc4j/generator/bytecode/JsnRuntime", "jsn", "(Ljava/lang/String;)Ljava/util/LinkedHashMap;", false);
-                return "JSN_OBJECT";
             }
-            return null;
+
+            if (esLlamadaAObjeto) {
+                String tipoObjeto = expr.object.accept(generator);
+
+                if ("JSN_OBJECT".equals(tipoObjeto)) {
+                    switch (nombreMetodo) {
+                        case "contiene_clave":
+                            expr.args.get(0).accept(generator);
+                            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "containsKey", "(Ljava/lang/Object;)Z", false);
+                            return TokenType.PRIMITIVE_BOOLEAN.name();
+
+                        case "claves":
+                            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "keySet", "()Ljava/util/Set;", false);
+                            mv.visitInsn(Opcodes.DUP);
+                            mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Set", "size", "()I", true);
+                            mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/String");
+                            mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Set", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", true);
+                            mv.visitTypeInsn(Opcodes.CHECKCAST, "[Ljava/lang/String;");
+                            return "[Ljava/lang/String;";
+
+                        case "valores":
+                            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "values", "()Ljava/util/Collection;", false);
+                            mv.visitInsn(Opcodes.DUP);
+                            mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Collection", "size", "()I", true);
+                            mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
+                            mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/Collection", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", true);
+                            return "[Ljava/lang/Object;";
+
+                        case "establecer":
+                            expr.args.get(0).accept(generator);
+                            String tVal = expr.args.get(1).accept(generator);
+                            empaquetarPrimitivo(mv, tVal);
+                            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+                            mv.visitInsn(Opcodes.POP);
+                            return null;
+
+                        case "eliminar":
+                            expr.args.get(0).accept(generator);
+                            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "remove", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
+                            return "JSN_OBJECT";
+
+                        case "fusionar":
+                            expr.args.get(0).accept(generator);
+                            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/LinkedHashMap", "putAll", "(Ljava/util/Map;)V", false);
+                            return null;
+
+                        case "texto":
+                        case "texto_formateado":
+                            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/stsc4j/generator/bytecode/JsnRuntime", "texto", "(Ljava/util/LinkedHashMap;)Ljava/lang/String;", false);
+                            return TokenType.PRIMITIVE_STRING.name();
+                    }
+
+                }
+                else if (TokenType.PRIMITIVE_STRING.name().equals(tipoObjeto) && "jsn".equals(nombreMetodo)) {
+                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/stsc4j/generator/bytecode/JsnRuntime", "jsn", "(Ljava/lang/String;)Ljava/util/LinkedHashMap;", false);
+                    return "JSN_OBJECT";
+                }
+                // 🚨 EL NUEVO PARCHE: Manejar .texto() cuando viene de la pila de llamadas
+                else if ("EXCEPTION_LLAMADAS".equals(tipoObjeto) && "texto".equals(nombreMetodo)) {
+                    // Extrae el arreglo de llamadas de la excepción
+                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Exception", "getStackTrace", "()[Ljava/lang/StackTraceElement;", false);
+                    // Lo convierte mágicamente a un String usando Arrays.toString()
+                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
+                    return TokenType.PRIMITIVE_STRING.name();
+                }
+
+                return null;
+            }
         }
 
         // ====================================================================

@@ -23,19 +23,32 @@ public class BytecodeExpressionVariable extends BytecodeAbstractGenerator {
         int indiceMemoria = generator.getEnvJVM().obtenerIndice(nombreVar);
         String tipo = generator.getTiposVariables().get(nombreVar);
 
-        // 1. ENTEROS Y BOOLEANOS (ILOAD)
-        if (TokenType.PRIMITIVE_INTEGER.name().equals(tipo) || TokenType.PRIMITIVE_BOOLEAN.name().equals(tipo)) {
+        // Si la clase de Funciones olvidó registrar el tipo del parámetro,
+        // asumimos que es un entero para no romper la pila.
+        if (tipo == null) {
+            tipo = TokenType.PRIMITIVE_INTEGER.name();
+        }
+
+        // 1. ENTEROS Y BOOLEANOS (Soporta Tokens oficiales y palabras crudas)
+        if (tipo.equals(TokenType.PRIMITIVE_INTEGER.name()) || tipo.equals(TokenType.PRIMITIVE_BOOLEAN.name()) ||
+                tipo.equals("entero") || tipo.equals("booleano") || tipo.equals("log")) {
             mv.visitVarInsn(Opcodes.ILOAD, indiceMemoria);
         }
-        // 2. DECIMALES (FLOAD)
-        else if (TokenType.PRIMITIVE_DECIMAL.name().equals(tipo)) {
+        // 2. DECIMALES
+        else if (tipo.equals(TokenType.PRIMITIVE_DECIMAL.name()) || tipo.equals("numero") || tipo.equals("decimal")) {
             mv.visitVarInsn(Opcodes.FLOAD, indiceMemoria);
         }
-        // 3. OBJETOS, ARREGLOS Y TEXTOS (ALOAD)
+        // 3. OBJETOS, ARREGLOS Y TEXTOS
         else {
-            // "JSN_OBJECT", textos y listas ("["...) entran aquí perfectamente.
             mv.visitVarInsn(Opcodes.ALOAD, indiceMemoria);
         }
+
+        // Normalizamos la salida para que el Orquestador siempre reciba el nombre del Token oficial
+        if (tipo.equals("entero")) return TokenType.PRIMITIVE_INTEGER.name();
+        if (tipo.equals("numero") || tipo.equals("decimal")) return TokenType.PRIMITIVE_DECIMAL.name();
+        if (tipo.equals("log") || tipo.equals("booleano")) return TokenType.PRIMITIVE_BOOLEAN.name();
+        if (tipo.equals("texto")) return TokenType.PRIMITIVE_STRING.name();
+        if (tipo.equals("jsn")) return "JSN_OBJECT";
 
         return tipo;
     }
