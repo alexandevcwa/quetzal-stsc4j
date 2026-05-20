@@ -1,11 +1,23 @@
 package com.stsc4j.parser.v1.ast;
 
-import com.stsc4j.lexer.Token;
-
+/**
+ * Expresiones ternarias.
+ */
 public class ExpressionTernary extends Expression {
 
+    /**
+     * Expresión binaria que representa la condición de la expresión ternaria.
+     */
     public final ExpressionBinary binary;
+
+    /**
+     * Expresión de retorno principal si la condición cumple con la expresión binaria.
+     */
     public final Expression left;
+
+    /**
+     * Expresión de retorno si la condición no cumple con la expresión binaria.
+     */
     public final Expression right;
 
     public ExpressionTernary(ExpressionBinary binary, Expression left, Expression right) {

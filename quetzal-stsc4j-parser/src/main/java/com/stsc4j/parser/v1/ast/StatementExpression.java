@@ -1,5 +1,6 @@
 package com.stsc4j.parser.v1.ast;
 
+@Deprecated
 public class StatementExpression extends Statement {
     public final Expression expression;
 

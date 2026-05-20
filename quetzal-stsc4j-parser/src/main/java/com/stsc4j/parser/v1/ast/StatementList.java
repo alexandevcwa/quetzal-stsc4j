@@ -2,6 +2,9 @@ package com.stsc4j.parser.v1.ast;
 
 import com.stsc4j.lexer.Token;
 
+/**
+ * Declaración de listas.
+ */
 public class StatementList extends Statement {
 
     /**
