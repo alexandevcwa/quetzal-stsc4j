@@ -43,7 +43,13 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     private final BytecodeStatementList generadorList = new BytecodeStatementList(this);
     private final BytecodeExpressionIndexAccess generadorIndexAccess = new BytecodeExpressionIndexAccess(this);
     private final BytecodeStatementLoopForEach generadorForEach = new BytecodeStatementLoopForEach(this);
-
+    private final BytecodeStatementMethodCall generadorMethodCall = new BytecodeStatementMethodCall(this);
+    private final BytecodeStatementMatrixAssignation generadorMatrixAssignation = new BytecodeStatementMatrixAssignation(this);
+    private final BytecodeExpressionJsn generadorJsn = new BytecodeExpressionJsn(this);
+    private final BytecodeExpressionJsnBlock generadorJsnBlock = new BytecodeExpressionJsnBlock(this);
+    private final BytecodeStatementJsn generadorStatementJsn = new BytecodeStatementJsn(this);
+    private final BytecodeExpressionPropertyAccess generadorPropertyAccess = new BytecodeExpressionPropertyAccess(this);
+    private final BytecodeStatementPropertyAssignation generadorPropertyAssignation = new BytecodeStatementPropertyAssignation(this);
 
 
 
@@ -204,6 +210,11 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     }
 
     @Override
+    public String visit(StatementMethodCall stmt) {
+        return generadorMethodCall.visit(stmt);
+    }
+
+    @Override
     public String visit(StatementList stmt) {
         return generadorList.visit(stmt);
     }
@@ -216,5 +227,35 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     @Override
     public String visit(StatementLoopForEach stmt) {
         return generadorForEach.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementMatrixAssignation stmt) {
+        return generadorMatrixAssignation.visit(stmt);
+    }
+
+    @Override
+    public String visit(ExpressionJsn expr){
+        return generadorJsn.visit(expr);
+    }
+
+    @Override
+    public String visit(ExpressionJsnBlock expr){
+        return generadorJsnBlock.visit(expr);
+    }
+
+    @Override
+    public String visit(StatementJsn stmt){
+        return generadorStatementJsn.visit(stmt);
+    }
+
+    @Override
+    public String visit(ExpressionPropertyAccess expr){
+        return generadorPropertyAccess.visit(expr);
+    }
+
+    @Override
+    public String visit(StatementPropertyAssignation stmt){
+        return generadorPropertyAssignation.visit(stmt);
     }
 }

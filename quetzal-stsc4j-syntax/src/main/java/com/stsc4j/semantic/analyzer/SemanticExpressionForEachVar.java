@@ -15,7 +15,7 @@ public class SemanticExpressionForEachVar extends SemanticAbstractAnalyzer {
     @Override
     public String visit(ExpressionForEachVar expr) {
         // Obtenemos el nombre exacto de la variable (ej: "elemento")
-        String nombreVar = expr.variable.token.getLexeme();
+        String nombreVar = expr.variable.getLexeme();
 
         // Obtenemos el nombre oficial del tipo (ej: "PRIMITIVE_INTEGER")
         String tipoDeclarado = expr.type.getType().name();

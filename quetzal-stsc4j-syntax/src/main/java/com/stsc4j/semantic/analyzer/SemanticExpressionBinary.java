@@ -26,8 +26,8 @@ public class SemanticExpressionBinary extends SemanticAbstractAnalyzer {
 
         // 2. Extraemos el símbolo del operador (sea un token simple como "+" o doble como "==")
         String operador = "";
-        if (expressionBinary.operator != null) {
-            operador = expressionBinary.operator.getLexeme();
+        if (expressionBinary.operators != null) {
+            operador = expressionBinary.operators.toString();
         } else if (expressionBinary.operators != null) {
             StringBuilder sb = new StringBuilder();
             for (Token t : expressionBinary.operators) sb.append(t.getLexeme());

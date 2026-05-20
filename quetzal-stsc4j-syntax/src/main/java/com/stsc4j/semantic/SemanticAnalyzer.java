@@ -47,7 +47,7 @@ public class SemanticAnalyzer implements Visitor<String> {
     private final SemanticStatementThrow semanticStatementThrow = new SemanticStatementThrow(this);
     private final SemanticExpressionConsoleIn semanticExpressionConsoleIn = new SemanticExpressionConsoleIn(this);
     private final SemanticStatementPropertyAssignation semanticStatementPropertyAssignation = new SemanticStatementPropertyAssignation(this);
-
+    private final SemanticStatementMethodCall semanticStatementMethodCall = new SemanticStatementMethodCall(this);
 
 
     // Metod para iniciar a leer las sentencias
@@ -190,6 +190,11 @@ public class SemanticAnalyzer implements Visitor<String> {
     @Override
     public String visit(ExpressionConsoleIn expressionConsoleIn) {
         return semanticExpressionConsoleIn.visit(expressionConsoleIn);
+    }
+
+    @Override
+    public String visit(StatementMethodCall statementMethodCall) {
+        return semanticStatementMethodCall.visit(statementMethodCall);
     }
 
     // EXPRESIONES

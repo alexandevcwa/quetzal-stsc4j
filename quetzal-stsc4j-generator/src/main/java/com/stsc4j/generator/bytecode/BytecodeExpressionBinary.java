@@ -22,7 +22,16 @@ public class BytecodeExpressionBinary extends BytecodeAbstractGenerator {
 
         String tipoIzq = expr.left != null ? expr.left.accept(generator) : null;
         String tipoDer = expr.right != null ? expr.right.accept(generator) : null;
-        String operador = expr.operator.getLexeme();
+
+        // 🚨 AQUÍ ESTÁ LA MAGIA QUE ARREGLA TODO 🚨
+        // Armamos el operador extrayendo el lexema de cada token en el arreglo
+        StringBuilder sb = new StringBuilder();
+        if (expr.operators != null) {
+            for (com.stsc4j.lexer.Token t : expr.operators) {
+                sb.append(t.getLexeme());
+            }
+        }
+        String operador = sb.toString();
 
         String tipoDecimal = TokenType.PRIMITIVE_DECIMAL.name();
         boolean izqEsDecimal = tipoDecimal.equals(tipoIzq);
@@ -57,7 +66,6 @@ public class BytecodeExpressionBinary extends BytecodeAbstractGenerator {
                     mv.visitInsn(Opcodes.I2F);
                 }
 
-                // FCMPG compara dos floats y deja 1, -1, o 0 en la pila
                 mv.visitInsn(Opcodes.FCMPG);
 
                 int opcode = 0;
@@ -72,21 +80,18 @@ public class BytecodeExpressionBinary extends BytecodeAbstractGenerator {
                 mv.visitJumpInsn(opcode, labelVerdadero);
             }
 
-            // Si NO saltó, significa que la condición es FALSA. Empujamos 0 y vamos al final.
             mv.visitInsn(Opcodes.ICONST_0);
             mv.visitJumpInsn(Opcodes.GOTO, labelFin);
 
-            // Si SÍ saltó, significa que la condición es VERDADERA. Empujamos 1.
             mv.visitLabel(labelVerdadero);
             mv.visitInsn(Opcodes.ICONST_1);
 
-            // Etiqueta de salida para que el flujo continúe normalmente
             mv.visitLabel(labelFin);
 
             return TokenType.PRIMITIVE_BOOLEAN.name();
         }
 
-        // 2. SI NO ES RELACIONAL, ENTONCES ES ARITMÉTICA (El código que ya tenías)
+        // 2. SI NO ES RELACIONAL, ENTONCES ES ARITMÉTICA
         else {
             if (!izqEsDecimal && !derEsDecimal) {
                 switch (operador) {

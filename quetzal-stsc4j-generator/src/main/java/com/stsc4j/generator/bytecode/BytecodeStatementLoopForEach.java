@@ -23,7 +23,7 @@ public class BytecodeStatementLoopForEach extends BytecodeAbstractGenerator {
         // ==========================================================
         // 1. DECLARAR Y REGISTRAR LA VARIABLE DE ITERACIÓN
         // ==========================================================
-        String nombreIterador = stmt.declaration.variable.token.getLexeme();
+        String nombreIterador = stmt.declaration.variable.getLexeme();
         String lexemaTipo = stmt.declaration.type.getLexeme();
 
         // 🚨 ¡EL PASO CLAVE! Reservamos el espacio en la memoria para 'n'

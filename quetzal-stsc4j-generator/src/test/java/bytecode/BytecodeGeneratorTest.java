@@ -199,6 +199,94 @@ class BytecodeGeneratorTest {
         assertEquals("1" + System.lineSeparator() + "2" + System.lineSeparator() + "3" + System.lineSeparator(), salida);
     }
 
+    @Test
+    @DisplayName("Éxito: Mutar una lista (Asignación en índice)")
+    void testGenerarYEjecutarMutacionLista() throws Exception {
+        final String code =
+                "lista<entero> numeros = [10, 20, 30]\n" +
+                        "numeros[1] = 99\n" + // Cambiamos el 20 por un 99
+                        "imprimir(numeros[1])\n";
+
+        String salida = compilarYEjecutar(code, "TestMutacion");
+
+        // Esperamos que la consola imprima 99
+        assertEquals("99" + System.lineSeparator(), salida);
+    }
+
+    @Test
+    @DisplayName("Éxito: Crear y guardar un objeto JSN")
+    void testGenerarYEjecutarJSN() throws Exception {
+        // CORREGIDO: Sintaxis oficial de Quetzal usando Identificadores en lugar de Textos
+        final String code =
+                "jsn var usuario = {\n" +
+                        "    nombre: \"Nilver\",\n" +
+                        "    edad: 25\n" +
+                        "}\n" +
+                        "imprimir(usuario)\n";
+
+        String salida = compilarYEjecutar(code, "TestJSN");
+
+        // El LinkedHashMap de Java se imprime así por defecto
+        String salidaEsperada = "{nombre=Nilver, edad=25}" + System.lineSeparator();
+
+        assertEquals(salidaEsperada, salida);
+    }
+
+    @Test
+    @DisplayName("Éxito: Leer y mutar propiedades de un objeto JSN")
+    void testGenerarYEjecutarPropiedadesJSN() throws Exception {
+        final String code =
+                "jsn var persona = {\n" +
+                        "    nombre: \"Nilver\",\n" +
+                        "    rol: \"Estudiante\"\n" +
+                        "}\n" +
+                        "persona.rol = \"IT Director\"\n" + // Mutamos la propiedad
+                        "imprimir(persona.rol)\n" +         // Leemos la propiedad mutada
+                        "imprimir(persona.nombre)\n";       // Leemos la propiedad intacta
+
+        String salida = compilarYEjecutar(code, "TestPropiedadesJSN");
+
+        // Debería imprimir el nuevo rol y luego el nombre
+        String salidaEsperada = "IT Director" + System.lineSeparator() +
+                "Nilver" + System.lineSeparator();
+
+        assertEquals(salidaEsperada, salida);
+    }
+
+    @Test
+    @DisplayName("Éxito: Especificación Parcial de JSN (Pendiente Parser)")
+    void testEspecificacionCompletaJSN() throws Exception {
+        final String code =
+                "jsn var persona = {\n" +
+                        "    nombre: \"Ana\",\n" +
+                        "    edad: 28\n" +
+                        "}\n" +
+                        // 1. Probar contiene_clave (Funciona porque no es palabra reservada)
+                        "log tieneNombre = persona.contiene_clave(\"nombre\")\n" +
+                        "imprimir(tieneNombre)\n" +
+
+                        // 2. Probar acceso dinámico por corchete (Con el truco de la variable)
+                        "texto claveEdad = \"edad\"\n" +
+                        "imprimir(persona[claveEdad])\n" +
+
+                        // 3. Probar establecer() método nativo
+                        "persona.establecer(\"activo\", verdadero)\n" +
+
+                        // Confirmamos que el paso 3 funcionó usando el truco del paso 2
+                        "texto claveActivo = \"activo\"\n" +
+                        "imprimir(persona[claveActivo])\n";
+
+        String salida = compilarYEjecutar(code, "TestEspecificacionJSN");
+
+        String n = System.lineSeparator();
+        // Esperamos: true (tiene_clave), 28 (edad), true (activo recién agregado)
+        String salidaEsperada = "true" + n +
+                "28" + n +
+                "true" + n;
+
+        assertEquals(salidaEsperada, salida);
+    }
+
 
     // ==========================================
     // MOTOR DE EJECUCIÓN DINÁMICA (MAGIA OSCURA)
