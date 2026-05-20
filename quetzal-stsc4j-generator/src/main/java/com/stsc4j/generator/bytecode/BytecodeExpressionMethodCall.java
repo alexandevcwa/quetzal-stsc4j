@@ -44,7 +44,7 @@ public class BytecodeExpressionMethodCall extends BytecodeAbstractGenerator {
         }
 
         // ====================================================================
-        // 2. LLAMADAS A MÉTODOS DE OBJETOS (JSN)
+        // 2. LLAMADAS A MÉTODOS DE OBJETOS (JSN y Excepciones)
         // ====================================================================
         if (expr.object != null) {
             boolean esLlamadaAObjeto = true;
@@ -108,10 +108,21 @@ public class BytecodeExpressionMethodCall extends BytecodeAbstractGenerator {
                             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/stsc4j/generator/bytecode/JsnRuntime", "texto", "(Ljava/util/LinkedHashMap;)Ljava/lang/String;", false);
                             return TokenType.PRIMITIVE_STRING.name();
                     }
-                } else if (TokenType.PRIMITIVE_STRING.name().equals(tipoObjeto) && "jsn".equals(nombreMetodo)) {
+
+                }
+                else if (TokenType.PRIMITIVE_STRING.name().equals(tipoObjeto) && "jsn".equals(nombreMetodo)) {
                     mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/stsc4j/generator/bytecode/JsnRuntime", "jsn", "(Ljava/lang/String;)Ljava/util/LinkedHashMap;", false);
                     return "JSN_OBJECT";
                 }
+                // 🚨 EL NUEVO PARCHE: Manejar .texto() cuando viene de la pila de llamadas
+                else if ("EXCEPTION_LLAMADAS".equals(tipoObjeto) && "texto".equals(nombreMetodo)) {
+                    // Extrae el arreglo de llamadas de la excepción
+                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Exception", "getStackTrace", "()[Ljava/lang/StackTraceElement;", false);
+                    // Lo convierte mágicamente a un String usando Arrays.toString()
+                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
+                    return TokenType.PRIMITIVE_STRING.name();
+                }
+
                 return null;
             }
         }

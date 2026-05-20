@@ -300,8 +300,8 @@ class BytecodeGeneratorTest {
                         "imprimir(saludo)\n" +
 
                         "imprimir(\"Ingrese el año actual:\")\n" +
-                        // Ojo: ajusta "consola.leer_numero()" al comando exacto de tu lenguaje
-                        "entero anio = consola.leer_numero()\n" +
+
+                        "entero anio = consola.pedir(\"\")\n" +
 
                         "entero edad = anio - 1998\n" +
                         "imprimir(\"Tu edad calculada es:\")\n" +
@@ -342,6 +342,72 @@ class BytecodeGeneratorTest {
                 "100" + n;         // El 100 original
 
         assertEquals(salidaEsperada, salida);
+    }
+
+    @Test
+    @DisplayName("Éxito: Manejo de Excepciones (intentar, capturar, finalmente y lanzar)")
+    void testManejoExcepciones() throws Exception {
+
+        final String code =
+                "imprimir(\"1. Entrando al sistema...\")\n" +
+                        "intentar {\n" +
+                        "    imprimir(\"2. Ejecutando operacion riesgosa...\")\n" +
+                        "    lanzar \"¡Error critico de base de datos!\"\n" +
+                        "    imprimir(\"X. Esto jamas deberia imprimirse\")\n" +
+                        "} capturar (excepcion e) {\n" +
+                        "    imprimir(\"3. El error fue interceptado exitosamente:\")\n" +
+                        "    // Imprimimos el objeto excepción directo por ahora\n" +
+                        "    imprimir(e)\n" +
+                        "} finalmente {\n" +
+                        "    imprimir(\"4. Limpiando recursos en bloque seguro\")\n" +
+                        "}\n" +
+                        "imprimir(\"5. El programa continuo vivo despues del error\")\n";
+
+        String salida = compilarYEjecutar(code, "TestExcepciones");
+
+        String n = System.lineSeparator();
+
+        // Esperamos el flujo perfecto de supervivencia del programa
+        String salidaEsperada = "1. Entrando al sistema..." + n +
+                "2. Ejecutando operacion riesgosa..." + n +
+                "3. El error fue interceptado exitosamente:" + n +
+                "java.lang.RuntimeException: ¡Error critico de base de datos!" + n +
+                "4. Limpiando recursos en bloque seguro" + n +
+                "5. El programa continuo vivo despues del error" + n;
+
+        assertEquals(salidaEsperada, salida);
+    }
+
+    @Test
+    @DisplayName("Éxito: Propiedades de la Excepción (mensaje, linea, llamadas)")
+    void testPropiedadesExcepcion() throws Exception {
+
+        final String code =
+                "intentar {\n" +
+                        "    lanzar \"Error de conexion a la base de datos\"\n" +
+                        "} capturar (excepcion error) {\n" +
+                        "    imprimir(\"--- ATRIBUTOS DEL ERROR ---\")\n" +
+                        "    imprimir(\"Mensaje:\")\n" +
+                        "    imprimir(error.mensaje)\n" +
+                        "    \n" +
+                        "    imprimir(\"Linea:\")\n" +
+                        "    imprimir(error.linea)\n" +
+                        "} finalmente {\n" +
+                        "    imprimir(\"--- FIN DEL REPORTE ---\")\n" +
+                        "}\n";
+
+        String salida = compilarYEjecutar(code, "TestPropiedadesExcepcion");
+
+        // Validamos usando .contains() para no pelear con la estructura dinámica del StackTrace de Java
+        org.junit.jupiter.api.Assertions.assertTrue(salida.contains("--- ATRIBUTOS DEL ERROR ---"), "Falta el encabezado");
+        org.junit.jupiter.api.Assertions.assertTrue(salida.contains("Error de conexion a la base de datos"), "No se recuperó el mensaje de error.mensaje");
+        org.junit.jupiter.api.Assertions.assertTrue(salida.contains("--- FIN DEL REPORTE ---"), "No se ejecutó el bloque finalmente");
+
+        System.out.println("==================================================");
+        System.out.println("Salida de Quetzal - Propiedades de Excepción:");
+        System.out.println("==================================================");
+        System.out.print(salida);
+        System.out.println("==================================================");
     }
 
 
