@@ -1,12 +1,22 @@
 package com.stsc4j.parser.v1.ast;
 
+/**
+ * Ciclo for-each.
+ */
 public class StatementLoopForEach extends Statement{
-
-    // Controlan la primera parte de for (referencia a variable || declaración de variable; condición; incremento)
+    /**
+     * Expresión inicial de variable del for-each
+     */
     public final ExpressionForEachVar declaration;
 
+    /**
+     * Variable que representa la lista a iterar en el for-each
+     */
     public final ExpressionVariable listVariable;
 
+    /**
+     * Bloque del ciclo for-each
+     */
     public final StatementBlock block;
 
     public StatementLoopForEach(ExpressionForEachVar declaration, ExpressionVariable listVariable, StatementBlock block) {

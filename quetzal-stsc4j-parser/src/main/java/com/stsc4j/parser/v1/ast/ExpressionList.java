@@ -2,6 +2,9 @@ package com.stsc4j.parser.v1.ast;
 
 import java.util.List;
 
+/**
+ * Lista de expresiones.
+ */
 public class ExpressionList extends Expression{
 
     /**

@@ -1,5 +1,8 @@
 package com.stsc4j.parser.v1.ast;
 
+/**
+ * Declaración de bucle do-while.
+ */
 public class StatementLoopDoWhile extends StatementLoopWhile {
 
     public StatementLoopDoWhile(Expression condition, StatementBlock block) {

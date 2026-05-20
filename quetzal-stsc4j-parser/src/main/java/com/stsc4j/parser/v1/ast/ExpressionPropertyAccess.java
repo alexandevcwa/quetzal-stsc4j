@@ -7,8 +7,14 @@ import com.stsc4j.lexer.Token;
  * Ejemplo: persona.nombre, persona.datos_personales.fecha_nacimiento
  */
 public class ExpressionPropertyAccess extends Expression {
-
+    /**
+     * Objeto al que se le llama la propiedad.
+     */
     public final Expression object;
+
+    /**
+     * Nombre de la propiedad.
+     */
     public final Token propertyName;
 
     public ExpressionPropertyAccess(Expression object, Token propertyName) {
