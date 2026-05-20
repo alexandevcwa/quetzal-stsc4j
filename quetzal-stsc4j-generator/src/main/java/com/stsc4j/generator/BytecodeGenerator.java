@@ -50,6 +50,7 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     private final BytecodeStatementJsn generadorStatementJsn = new BytecodeStatementJsn(this);
     private final BytecodeExpressionPropertyAccess generadorPropertyAccess = new BytecodeExpressionPropertyAccess(this);
     private final BytecodeStatementPropertyAssignation generadorPropertyAssignation = new BytecodeStatementPropertyAssignation(this);
+    private final BytecodeStatementFunctionParameter generadorFunctionParameter = new BytecodeStatementFunctionParameter(this);
 
 
 
@@ -257,5 +258,10 @@ public class BytecodeGenerator extends BytecodeAbstractGenerator {
     @Override
     public String visit(StatementPropertyAssignation stmt){
         return generadorPropertyAssignation.visit(stmt);
+    }
+
+    @Override
+    public String visit(StatementFunctionParameter stmt) {
+        return generadorFunctionParameter.visit(stmt);
     }
 }

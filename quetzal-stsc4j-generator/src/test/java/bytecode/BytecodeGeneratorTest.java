@@ -287,6 +287,63 @@ class BytecodeGeneratorTest {
         assertEquals(salidaEsperada, salida);
     }
 
+    @Test
+    @DisplayName("Éxito: MEGA TEST - Variables, Operaciones, Listas, If, Loops y Consola")
+    void testMegaCompleto() throws Exception {
+        // 1. EL TRUCO: Simulamos que el usuario teclea "2026" y presiona Enter
+        String entradaSimulada = "2026\n";
+        System.setIn(new java.io.ByteArrayInputStream(entradaSimulada.getBytes()));
+
+        // 2. EL CÓDIGO QUETZAL COMPLETO
+        final String code =
+                "texto saludo = \"¡Bienvenido al Mega Test de Quetzal!\"\n" +
+                        "imprimir(saludo)\n" +
+
+                        "imprimir(\"Ingrese el año actual:\")\n" +
+                        // Ojo: ajusta "consola.leer_numero()" al comando exacto de tu lenguaje
+                        "entero anio = consola.leer_numero()\n" +
+
+                        "entero edad = anio - 1998\n" +
+                        "imprimir(\"Tu edad calculada es:\")\n" +
+                        "imprimir(edad)\n" +
+
+                        "imprimir(\"Procesando lista de puntajes...\")\n" +
+                        "lista<entero> puntajes = [85, 90, 100]\n" +
+                        "puntajes[0] = puntajes[0] + 5\n" + // Modificamos el primer elemento (90)
+
+                        "para (entero var p en puntajes) {\n" +
+                        "    si (p >= 95) {\n" +
+                        "        imprimir(\"Puntaje de Excelencia:\")\n" +
+                        "        imprimir(p)\n" +
+                        "    } sino {\n" +
+                        "        imprimir(\"Puntaje Normal:\")\n" +
+                        "        imprimir(p)\n" +
+                        "    }\n" +
+                        "}\n";
+
+        // 3. EJECUCIÓN
+        String salida = compilarYEjecutar(code, "TestMegaCompleto");
+
+        // 4. RESTAURAR EL TECLADO ORIGINAL (Muy importante para no romper otros tests)
+        System.setIn(System.in);
+
+        // 5. VALIDACIÓN EXACTA
+        String n = System.lineSeparator();
+        String salidaEsperada = "¡Bienvenido al Mega Test de Quetzal!" + n +
+                "Ingrese el año actual:" + n +
+                "Tu edad calculada es:" + n +
+                "28" + n +
+                "Procesando lista de puntajes..." + n +
+                "Puntaje Normal:" + n +
+                "90" + n +         // El 85 que mutó a 90
+                "Puntaje Normal:" + n +
+                "90" + n +         // El 90 original
+                "Puntaje de Excelencia:" + n +
+                "100" + n;         // El 100 original
+
+        assertEquals(salidaEsperada, salida);
+    }
+
 
     // ==========================================
     // MOTOR DE EJECUCIÓN DINÁMICA (MAGIA OSCURA)
