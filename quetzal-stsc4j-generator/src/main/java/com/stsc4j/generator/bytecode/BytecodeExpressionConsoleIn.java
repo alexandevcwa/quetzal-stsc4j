@@ -22,22 +22,20 @@ public class BytecodeExpressionConsoleIn extends BytecodeAbstractGenerator {
         // 1. MOSTRAR EL MENSAJE (Si el usuario escribió consola.pedir("Ingrese nombre:"))
         if (expr.message != null) {
             mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-            expr.message.accept(generator); // Empujamos el texto del mensaje
-
-            // Usamos 'print' (no println) para que el usuario escriba al lado del mensaje
+            expr.message.accept(generator);
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "print", "(Ljava/lang/String;)V", false);
         }
 
-        // 2. CREAR EL SCANNER: new Scanner(System.in)
-        mv.visitTypeInsn(Opcodes.NEW, "java/util/Scanner");
+        // 2. CREAR EL LECTOR ESTRICTO (DataInputStream)
+        // A diferencia de Scanner o BufferedReader, este no absorbe bytes adicionales del System.in
+        mv.visitTypeInsn(Opcodes.NEW, "java/io/DataInputStream");
         mv.visitInsn(Opcodes.DUP);
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "in", "Ljava/io/InputStream;");
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/Scanner", "<init>", "(Ljava/io/InputStream;)V", false);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/io/DataInputStream", "<init>", "(Ljava/io/InputStream;)V", false);
 
-        // 3. LEER EL TECLADO: scanner.nextLine()
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/Scanner", "nextLine", "()Ljava/lang/String;", false);
+        // 3. LEER EXACTAMENTE UNA LÍNEA
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/DataInputStream", "readLine", "()Ljava/lang/String;", false);
 
-        // El nextLine() deja automáticamente el texto ingresado en la cima de la pila.
         return TokenType.PRIMITIVE_STRING.name();
     }
 }

@@ -29,9 +29,10 @@ public class BytecodeExpressionVariable extends BytecodeAbstractGenerator {
             tipo = TokenType.PRIMITIVE_INTEGER.name();
         }
 
-        // 1. ENTEROS Y BOOLEANOS (Soporta Tokens oficiales y palabras crudas)
+        // 1. ENTEROS Y BOOLEANOS (Soporta Tokens oficiales, palabras crudas Y "IDENTIFIER")
         if (tipo.equals(TokenType.PRIMITIVE_INTEGER.name()) || tipo.equals(TokenType.PRIMITIVE_BOOLEAN.name()) ||
-                tipo.equals("entero") || tipo.equals("booleano") || tipo.equals("log")) {
+                tipo.equals("entero") || tipo.equals("booleano") || tipo.equals("log") ||
+                tipo.equals("IDENTIFIER")) { //: Forzamos ILOAD para IDENTIFIER
             mv.visitVarInsn(Opcodes.ILOAD, indiceMemoria);
         }
         // 2. DECIMALES
@@ -44,7 +45,8 @@ public class BytecodeExpressionVariable extends BytecodeAbstractGenerator {
         }
 
         // Normalizamos la salida para que el Orquestador siempre reciba el nombre del Token oficial
-        if (tipo.equals("entero")) return TokenType.PRIMITIVE_INTEGER.name();
+        // NORMALIZACIÓN: Si era IDENTIFIER, le mentimos al resto del compilador diciendo que es PRIMITIVE_INTEGER
+        if (tipo.equals("entero") || tipo.equals("IDENTIFIER")) return TokenType.PRIMITIVE_INTEGER.name();
         if (tipo.equals("numero") || tipo.equals("decimal")) return TokenType.PRIMITIVE_DECIMAL.name();
         if (tipo.equals("log") || tipo.equals("booleano")) return TokenType.PRIMITIVE_BOOLEAN.name();
         if (tipo.equals("texto")) return TokenType.PRIMITIVE_STRING.name();
