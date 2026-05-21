@@ -2,6 +2,9 @@ package com.stsc4j.parser.v1.ast;
 
 import com.stsc4j.lexer.Token;
 
+/**
+ * Expresiones de variables.
+ */
 public class ExpressionVariable extends Expression {
 
     /**

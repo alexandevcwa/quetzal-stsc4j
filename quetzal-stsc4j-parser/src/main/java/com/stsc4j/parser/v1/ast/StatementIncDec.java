@@ -1,6 +1,13 @@
 package com.stsc4j.parser.v1.ast;
 
+/**
+ * Declaración de incremento/decremento i++, i--.
+ */
 public class StatementIncDec extends Statement{
+
+    /**
+     * Expresión de incremento/decremento.
+     */
     public final ExpressionIncDec expression;
 
     public StatementIncDec(ExpressionIncDec expression) {
