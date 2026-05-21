@@ -44,10 +44,10 @@ class SemanticLoopControlTest {
     @DisplayName("Éxito: Romper y Continuar dentro de un ciclo válido")
     void testBreakDentroDeCiclo() {
         final String code =
-                "entero contador = 0\n" +
+                "entero var contador = 0\n" +
                         "mientras (contador < 10) {\n" +
                         "    si (contador == 5) {\n" +
-                        "        romper\n" + // Válido porque el IF está dentro de un WHILE
+                        "        romper\n" +
                         "    }\n" +
                         "    contador++\n" +
                         "}\n";

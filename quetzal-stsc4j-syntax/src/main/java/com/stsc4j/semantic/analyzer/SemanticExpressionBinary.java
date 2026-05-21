@@ -24,13 +24,13 @@ public class SemanticExpressionBinary extends SemanticAbstractAnalyzer {
         String tipoIzq = expressionBinary.left.accept(analyzer);
         String tipoDer = expressionBinary.right.accept(analyzer);
 
-        // 2. Extraemos el símbolo del operador (sea un token simple como "+" o doble como "==")
+        // 2. Extraemos el símbolo del operador correctamente
         String operador = "";
         if (expressionBinary.operators != null) {
-            operador = expressionBinary.operators.toString();
-        } else if (expressionBinary.operators != null) {
             StringBuilder sb = new StringBuilder();
-            for (Token t : expressionBinary.operators) sb.append(t.getLexeme());
+            for (Token t : expressionBinary.operators) {
+                sb.append(t.getLexeme());
+            }
             operador = sb.toString();
         }
 

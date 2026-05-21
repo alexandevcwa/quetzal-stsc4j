@@ -57,7 +57,7 @@ class SemanticControlFlowIntegrationTest {
     void testSoloWhile() {
         semanticAnalyzer = new SemanticAnalyzer();
         final String code =
-                "entero contador = 0\n" +
+                "entero var contador = 0\n" +
                         "mientras (contador < 3) {\n" +
                         "    contador++\n" +
                         "}\n" +
@@ -74,12 +74,17 @@ class SemanticControlFlowIntegrationTest {
         final String code =
                 "entero limite = 5\n" +
                         "lista<entero> puntuaciones = [10, 20]\n" +
-                        "para (entero i = 0; i < limite; i++) {\n" +
+
+                        // 1. Agregamos 'var' al iterador 'i'
+                        "para (entero var i = 0; i < limite; i++) {\n" +
                         "    entero multiplicador = 2\n" +
                         "}\n" +
-                        "por cada (entero puntos : puntuaciones) {\n" +
+
+                        // 2. Usamos la sintaxis oficial: para (tipo var nombre en lista)
+                        "para (entero var puntos en puntuaciones) {\n" +
                         "    entero doble = 2\n" +
                         "}\n";
+
         ejecutar(code);
     }
 

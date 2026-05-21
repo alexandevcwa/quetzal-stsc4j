@@ -53,7 +53,7 @@ public class Environment {
     public FunctionInfo resolveFunction(String name) {
         if (functions.containsKey(name)) return functions.get(name);
         if (enclosing != null) return enclosing.resolveFunction(name);
-        throw new SemanticError("Error Semántico: La función '" + name + "' no existe o no ha sido declarada.");
+        return null; // <--- CAMBIO IMPORTANTE: Retornar null en lugar de lanzar SemanticError
     }
     // --- FIN NUEVO ---
 
