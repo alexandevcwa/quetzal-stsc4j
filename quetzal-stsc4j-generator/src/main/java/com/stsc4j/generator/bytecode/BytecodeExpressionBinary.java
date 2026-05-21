@@ -23,8 +23,7 @@ public class BytecodeExpressionBinary extends BytecodeAbstractGenerator {
         String tipoIzq = expr.left != null ? expr.left.accept(generator) : null;
         String tipoDer = expr.right != null ? expr.right.accept(generator) : null;
 
-        // 🚨 AQUÍ ESTÁ LA MAGIA QUE ARREGLA TODO 🚨
-        // Armamos el operador extrayendo el lexema de cada token en el arreglo
+        // Armamos el operador extrayendo el lexema
         StringBuilder sb = new StringBuilder();
         if (expr.operators != null) {
             for (com.stsc4j.lexer.Token t : expr.operators) {
@@ -34,10 +33,40 @@ public class BytecodeExpressionBinary extends BytecodeAbstractGenerator {
         String operador = sb.toString();
 
         String tipoDecimal = TokenType.PRIMITIVE_DECIMAL.name();
-        boolean izqEsDecimal = tipoDecimal.equals(tipoIzq);
-        boolean derEsDecimal = tipoDecimal.equals(tipoDer);
+        boolean izqEsDecimal = tipoDecimal.equals(tipoIzq) || (tipoIzq != null && tipoIzq.contains("FLOAT"));
+        boolean derEsDecimal = tipoDecimal.equals(tipoDer) || (tipoDer != null && tipoDer.contains("FLOAT"));
 
-        // 1. VERIFICAMOS SI ES UNA OPERACIÓN RELACIONAL
+        // Textos
+        boolean izqEsTexto = tipoIzq != null && (tipoIzq.contains("STRING") || tipoIzq.contains("TEXTO") || tipoIzq.contains("texto"));
+        boolean derEsTexto = tipoDer != null && (tipoDer.contains("STRING") || tipoDer.contains("TEXTO") || tipoDer.contains("texto"));
+
+        // =========================================================
+        // 1. CONCATENACIÓN DE TEXTOS (Sobrecarga del operador +)
+        // =========================================================
+        if (operador.equals("+") && (izqEsTexto || derEsTexto)) {
+
+            // Si la izquierda es texto pero la derecha es número, convertimos la derecha a texto
+            if (izqEsTexto && !derEsTexto) {
+                String descriptor = derEsDecimal ? "(F)Ljava/lang/String;" : "(I)Ljava/lang/String;";
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String", "valueOf", descriptor, false);
+            }
+            // Si la derecha es texto pero la izquierda es número, las intercambiamos, convertimos y devolvemos
+            else if (!izqEsTexto && derEsTexto) {
+                mv.visitInsn(Opcodes.SWAP);
+                String descriptor = izqEsDecimal ? "(F)Ljava/lang/String;" : "(I)Ljava/lang/String;";
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/String", "valueOf", descriptor, false);
+                mv.visitInsn(Opcodes.SWAP);
+            }
+
+            // Unimos los dos textos con String.concat()
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
+
+            return TokenType.PRIMITIVE_STRING.name();
+        }
+
+        // =========================================================
+        // 2. VERIFICAMOS SI ES UNA OPERACIÓN RELACIONAL
+        // =========================================================
         boolean esRelacional = operador.equals("<") || operador.equals(">") ||
                 operador.equals("<=") || operador.equals(">=") ||
                 operador.equals("==") || operador.equals("!=");
@@ -91,7 +120,9 @@ public class BytecodeExpressionBinary extends BytecodeAbstractGenerator {
             return TokenType.PRIMITIVE_BOOLEAN.name();
         }
 
-        // 2. SI NO ES RELACIONAL, ENTONCES ES ARITMÉTICA
+        // =========================================================
+        // 3. SI NO ES RELACIONAL NI TEXTO, ENTONCES ES ARITMÉTICA
+        // =========================================================
         else {
             if (!izqEsDecimal && !derEsDecimal) {
                 switch (operador) {

@@ -43,11 +43,16 @@ public class BytecodeStatementVariable extends BytecodeAbstractGenerator {
             mv.visitInsn(Opcodes.I2F);
         }
 
-        // B. 🚨 EL PARCHE: Si espera ENTERO pero recibe TEXTO de la consola (ej: entero anio = "2026") -> Parsear a Int
+        // B. Si espera ENTERO pero recibe TEXTO de la consola -> Parsear a Int
         else if (tipoEsperado.equals(TokenType.PRIMITIVE_INTEGER.name()) &&
                 (TokenType.PRIMITIVE_STRING.name().equals(tipoValor) || "texto".equals(tipoValor))) {
-            // Inyectamos Integer.parseInt("texto")
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer", "parseInt", "(Ljava/lang/String;)I", false);
+        }
+
+        // C. Si espera DECIMAL pero recibe TEXTO -> Parsear a Float
+        else if (tipoEsperado.equals(TokenType.PRIMITIVE_DECIMAL.name()) &&
+                (TokenType.PRIMITIVE_STRING.name().equals(tipoValor) || "texto".equals(tipoValor))) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Float", "parseFloat", "(Ljava/lang/String;)F", false);
         }
 
         // ==========================================
