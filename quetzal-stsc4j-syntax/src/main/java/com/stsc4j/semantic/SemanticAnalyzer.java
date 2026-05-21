@@ -52,11 +52,22 @@ public class SemanticAnalyzer implements Visitor<String> {
 
     // Metod para iniciar a leer las sentencias
     public void analyze(List<Statement> statements) {
+        // 1. PASADA DE REGISTRO (Solo definimos funciones)
         for (Statement stmt : statements) {
-            stmt.accept(this);
+            if (stmt instanceof StatementFunction) {
+                semanticStatementFunction.register((StatementFunction) stmt);
+            }
+        }
+        // 2. PASADA DE ANÁLISIS (Analizamos todo lo demás)
+        for (Statement stmt : statements) {
+            if (!(stmt instanceof StatementFunction)) {
+                stmt.accept(this);
+            } else {
+                // Analizamos solo el cuerpo de las funciones
+                semanticStatementFunction.analyzeBody((StatementFunction) stmt);
+            }
         }
     }
-
     // SENTENCIAS
 
     /*MODIFICO EL VISITOR DE STATEMENT VARIABLE PARA

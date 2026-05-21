@@ -49,12 +49,11 @@ class SemanticJsnTest {
                         "    edad: 28,\n" +
                         "    activo: verdadero\n" +
                         "}\n";
-
         ejecutar(code);
     }
 
     @Test
-    @DisplayName("Prueba 2: Claves Alternativas (Sin comillas para al Parser actual)")
+    @DisplayName("Prueba 2: Claves Alternativas")
     void testJsnClavesEspeciales() {
         final String code =
                 "jsn datos = {\n" +
@@ -63,7 +62,6 @@ class SemanticJsnTest {
                         "    clave_numerica: 456,\n" +
                         "    clave_con_guiones: verdadero\n" +
                         "}\n";
-
         ejecutar(code);
     }
 
@@ -78,7 +76,6 @@ class SemanticJsnTest {
                         "        { id: 2, nombre: \"Mouse\", precio: 29.99 }\n" +
                         "    ]\n" +
                         "}\n";
-
         ejecutar(code);
     }
 
@@ -103,7 +100,6 @@ class SemanticJsnTest {
                         "    telefonos: [\"555-1234\", \"555-5678\"],\n" +
                         "    activo: verdadero\n" +
                         "}\n";
-
         ejecutar(code);
     }
 
@@ -113,18 +109,15 @@ class SemanticJsnTest {
         final String code =
                 "jsn var persona = { nombre: \"Ana\", edad: 28 }\n" +
                         "persona.establecer(\"nombre\", \"Maria\")\n";
-
         ejecutar(code);
     }
 
     @Test
     @DisplayName("Caso de Uso 2: Error Semántico al intentar modificar un JSON constante (sin var)")
     void testErrorModificarJsnConstante() {
-        // 'persona' es constante (no tiene 'var').
-        // Usamos .establecer() para evadir el bug del Parser y probar directamente la semántica.
         final String code =
                 "jsn persona = { nombre: \"Ana\", edad: 28 }\n" +
-                        "persona.establecer(\"nombre\", \"Maria\")\n";
+                        "persona.establecer(\"nombre\", \"Maria\")\n"; // Forma natural de Quetzal
 
         context.process(code);
         tokens.addAll(context.getTokens());
@@ -134,12 +127,11 @@ class SemanticJsnTest {
     }
 
     @Test
-    @DisplayName("Caso de Uso 2: Cambio de tipo dinámico en propiedad (Entero a Texto)")
+    @DisplayName("Caso de Uso 3: Cambio de tipo dinámico en propiedad (Entero a Texto)")
     void testCambioTipoPropiedadJsn() {
         final String code =
                 "jsn var persona = { nombre: \"Ana\", edad: 28 }\n" +
                         "persona.establecer(\"edad\", \"veintiocho\")\n";
-
         ejecutar(code);
     }
 
@@ -148,7 +140,7 @@ class SemanticJsnTest {
     void testErrorMetodoInexistenteJsn() {
         final String code =
                 "jsn var persona = { nombre: \"Ana\", edad: 28 }\n" +
-                        "persona.volar()\n";
+                        "persona.volar()\n"; // Forma natural de Quetzal
 
         context.process(code);
         tokens.addAll(context.getTokens());
@@ -157,14 +149,12 @@ class SemanticJsnTest {
         assertThrows(com.stsc4j.semantic.SemanticError.class, () -> semanticAnalyzer.analyze(ast));
     }
 
-
     @Test
     @DisplayName("Caso de Uso: Modificación directa de propiedad JSN mutable (con var)")
     void testAsignacionDirectaJsnMutable() {
         final String code =
                 "jsn var persona = { nombre: \"Ana\", edad: 28 }\n" +
                         "persona.nombre = \"Maria\"\n";
-
         ejecutar(code);
     }
 
@@ -173,23 +163,17 @@ class SemanticJsnTest {
     void testErrorAsignacionDirectaJsnConstante() {
         final String code =
                 "jsn persona = { nombre: \"Ana\", edad: 28 }\n" +
-                        "persona.nombre = \"Maria\"\n"; // Esto debería lanzar SemanticError
-
+                        "persona.nombre = \"Maria\"\n";
         context.process(code);
         tokens.addAll(context.getTokens());
         var ast = parser.parse();
-
-        // Esperamos que bloquee por inmutabilidad
         assertThrows(com.stsc4j.semantic.SemanticError.class, () -> semanticAnalyzer.analyze(ast));
     }
 
-    // auxiliar para reducir duplicación de código
     private void ejecutar(String code) {
         context.process(code);
         tokens.addAll(context.getTokens());
         var ast = parser.parse();
         assertDoesNotThrow(() -> semanticAnalyzer.analyze(ast));
     }
-
-
 }
