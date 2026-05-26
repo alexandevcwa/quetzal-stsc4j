@@ -6,7 +6,8 @@ import java.util.Set;
 public class LexerDictionary {
 
     public static final String ENTERO = "entero";
-    public static final String NUMERO = "número";
+    public static final String NUMERO_V1 = "número";
+    public static final String NUMERO_v2 = "numero";
     public static final String TEXTO = "texto";
     public static final String LOG = "log";
     public static final String LIT_TRUE = "verdadero";
@@ -40,6 +41,7 @@ public class LexerDictionary {
     public static final String NEW_INSTANCE = "nuevo";
     public static final String IMPORT_MODULE = "importar";
     public static final String IMPORT_MODULE_L = "desde";
+    public static final String NEGATION_ESP = "no";
 
     // Palabras, Funciones Predefinidas
     public static final String C_CONSOLE = "consola";
@@ -55,12 +57,13 @@ public class LexerDictionary {
     public static final String OR_ESP = "o";
 
     public static final Set<String> KEYWORDS = Set.of(
-            ENTERO, NUMERO, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,
+            ENTERO, NUMERO_V1, NUMERO_v2, TEXTO, LOG, LIT_TRUE, LIT_FALSE, MUTABLE_VARIABLE,
             IF, ELSE, NULL, LIST, JSN, LOOP_WHILE, LOOP_DO, LOOP_FOR, LOOP_EACH_1,
             LOOP_EACH_2, BREAK, CONTINUE, RETURN, THROW, TRY, CATCH, EXCEPTION,
             FINALLY, OBJECT, PUBLIC_ACCESS, PRIVATE_ACCESS, STATIC, THIS, ASYNC, AWAIT,
-            NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L, C_CONSOLE, F_PRINT,
-            AND_ESP, OR_ESP
+            NEW_INSTANCE, IMPORT_MODULE, IMPORT_MODULE_L,
+            C_CONSOLE, F_PRINT, F_PRINT_ERROR, F_PRINT_WARNING, F_PRINT_INFO, F_PRINT_SUCCESS, F_SCANNER, F_SCANNER_SECRET,
+            AND_ESP, OR_ESP, NEGATION_ESP
     );
 
     public static final char PLUS = '+';

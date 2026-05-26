@@ -2,9 +2,7 @@ package com.stsc4j.parser.v1.parser;
 
 import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
-import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.Statement;
-import com.stsc4j.parser.v1.ast.StatementExpression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,15 +38,14 @@ public class ParserPrincipal extends ParserPrincipalValidations {
 
     public Statement parseNext() {
 
-        // Parser de Asignaciones e Incrementales/Decrementales
+        // Parser (Incrementales/Decrementales)
         if (isIncrementalDecremental()) {
             return parserStatement.parseIncremental().parseStatement();
         }
 
-        // Parser de Llamadas a Métodos y Funciones
-        if (isFunctionCall()) {
-            Expression expr = parserStatement.parseExpressions().parseExpression();
-            return new StatementExpression(expr);
+        // Parser (Llamadas a Métodos y Funciones)
+        if (isFunctionCall() || isPropertyCall()) {
+            return parserStatement.parseCall().parseStatement();
         }
 
         // Parser (Funciones)

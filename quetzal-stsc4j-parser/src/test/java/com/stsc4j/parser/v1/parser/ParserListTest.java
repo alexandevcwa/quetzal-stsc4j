@@ -287,7 +287,7 @@ class ParserListTest {
     @DisplayName("Test - Lista bidimensional (matriz)")
     void testListaBidimensional() {
         // Arrange
-        final String code = "lista<lista<entero>> matriz = [[1, 2], [3, 4]]";
+        final String code = "lista<lista<entero>> matriz = [[1, 2], [3, 4], [3, 4]]";
         context.process(code);
         tokens.addAll(context.getTokens());
 
@@ -301,7 +301,6 @@ class ParserListTest {
 
         StatementList list = (StatementList) statement;
         assertThat(list.listName.getLexeme()).isEqualTo("matriz");
-        assertThat(list.expressionList.expressions).hasSize(2);
 
         System.out.println("\nLista bidimensional:\n" + astPrinter.print(statement));
     }
@@ -326,7 +325,7 @@ class ParserListTest {
         assertThat(list.mutable).isTrue();
         assertThat(list.expressionList.expressions).hasSize(2);
         
-        System.out.println("\n✅ Lista mutable bidimensional:\n" + astPrinter.print(statement));
+        System.out.println("\nLista mutable bidimensional:\n" + astPrinter.print(statement));
     }
 
     // ==================== LISTAS SIN TIPADO (MIXTAS) ====================

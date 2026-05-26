@@ -35,12 +35,7 @@ public class ASTPrinter implements Visitor<String> {
     @Override
     public String visit(ExpressionBinary expressionBinary) {
         StringBuilder sb = new StringBuilder();
-        String operator;
-        if (null != expressionBinary.operators) {
-            operator = Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
-        } else {
-            operator = expressionBinary.operator.getLexeme();
-        }
+        String operator =  Arrays.stream(expressionBinary.operators).map(Token::getLexeme).reduce((a, b) -> a + b).orElse("");
         sb.append(getIndent()).append("Binary Operation: ").append(operator).append("\n");
         indentLevel++;
         sb.append(getIndent()).append("├─ Left:\n");
@@ -118,10 +113,10 @@ public class ASTPrinter implements Visitor<String> {
         indentLevel--;
 
         // Manejo de índices múltiples
-        if (expressionIndexAccess.indexList != null && !expressionIndexAccess.indexList.isEmpty()) {
-            sb.append(getIndent()).append("└─ Indices: ").append(expressionIndexAccess.indexList.size()).append(" index(es)\n");
+        if (expressionIndexAccess.index != null && !expressionIndexAccess.index.isEmpty()) {
+            sb.append(getIndent()).append("└─ Indices: ").append(expressionIndexAccess.index.size()).append(" index(es)\n");
             indentLevel++;
-            List<Expression> indices = expressionIndexAccess.indexList;
+            List<Expression> indices = expressionIndexAccess.index;
             for (int i = 0; i < indices.size(); i++) {
                 if (i < indices.size() - 1) {
                     sb.append(getIndent()).append("├─ ");
@@ -140,12 +135,8 @@ public class ASTPrinter implements Visitor<String> {
                 }
             }
             indentLevel--;
-        } else if (expressionIndexAccess.index != null) {
-            // Backwards compatibility con la versión deprecated
-            sb.append(getIndent()).append("└─ Index:\n");
-            indentLevel++;
-            sb.append(expressionIndexAccess.index.accept(this));
-            indentLevel--;
+        } else {
+            sb.append(getIndent()).append("└─ Indices: None\n");
         }
         indentLevel--;
         return sb.toString();
@@ -290,10 +281,7 @@ public class ASTPrinter implements Visitor<String> {
         sb.append(getIndent()).append("For-Each Variable\n");
         indentLevel++;
         sb.append(getIndent()).append("├─ Type: ").append(expressionForEachVar.type.getLexeme()).append("\n");
-        sb.append(getIndent()).append("└─ Variable:\n");
-        indentLevel++;
-        sb.append(expressionForEachVar.variable.accept(this));
-        indentLevel -= 2;
+        sb.append(getIndent()).append("└─ Variable: ").append(expressionForEachVar.variable.getLexeme()).append("\n");
         return sb.toString();
     }
 
@@ -394,6 +382,9 @@ public class ASTPrinter implements Visitor<String> {
         String typeNotation = getTypeListNotation(statementList.type);
         sb.append(getIndent()).append("├─ Type: ").append(typeNotation).append("\n");
 
+        // Anidamiento
+        sb.append(getIndent()).append("├─ Depth: ").append(statementList.depth).append("\n");
+
         // Mostrar nombre
         sb.append(getIndent()).append("├─ Name: ").append(statementList.listName.getLexeme()).append("\n");
 
@@ -402,6 +393,7 @@ public class ASTPrinter implements Visitor<String> {
 
         indentLevel++;
         List<Expression> expressions = statementList.expressionList.expressions;
+        sb.append(getIndent()).append("├─ Declaration Depth: ").append(statementList.expressionList.depth).append("\n");
         for (int i = 0; i < expressions.size(); i++) {
             if (i < expressions.size() - 1) {
                 sb.append(getIndent()).append("├─ ");
@@ -472,7 +464,7 @@ public class ASTPrinter implements Visitor<String> {
         }
 
         // Cerrar todos los brackets
-        sb.append(">".repeat(Math.max(0, depth -1  + 1)));
+        sb.append(">".repeat(Math.max(0, depth - 1 + 1)));
 
         return sb.toString();
     }
@@ -491,7 +483,11 @@ public class ASTPrinter implements Visitor<String> {
         sb.append(getIndent()).append("├─ Name: ").append(statementJsn.identifier.getLexeme()).append("\n");
         sb.append(getIndent()).append("└─ Value:\n");
         indentLevel++;
-        sb.append(statementJsn.accept(this));
+        if (statementJsn.block != null){
+            sb.append(statementJsn.block.accept(this));
+        }else{
+            sb.append("null");
+        }
         indentLevel -= 2;
         return sb.toString();
     }
@@ -674,6 +670,22 @@ public class ASTPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(StatementPropertyAssignation statementPropertyAssignation) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Property Assignment\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Target (Property Access):\n");
+        indentLevel++;
+        sb.append(statementPropertyAssignation.property.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Value:\n");
+        indentLevel++;
+        sb.append(statementPropertyAssignation.expression.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
     public String visit(ExpressionNull expressionNull) {
         return getIndent() + "Null (" + expressionNull.token.getType().toString() + ")";
     }
@@ -755,7 +767,48 @@ public class ASTPrinter implements Visitor<String> {
 
     @Override
     public String visit(ExpressionConsoleIn expressionConsoleIn) {
-        return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Console Input\n");
+        indentLevel++;
+        sb.append(getIndent()).append("└─ Message:\n");
+        indentLevel++;
+        sb.append(expressionConsoleIn.message.accept(this));
+        indentLevel -= 2;
+        return sb.toString();
+    }
+
+    @Override
+    public String visit(StatementMethodCall statementMethodCall) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getIndent()).append("Method Call Statement\n");
+        indentLevel++;
+        sb.append(getIndent()).append("├─ Method: ").append(statementMethodCall.methodCall.methodName.getLexeme()).append("\n");
+        sb.append(getIndent()).append("├─ Object:\n");
+        indentLevel++;
+        sb.append(statementMethodCall.methodCall.object.accept(this)).append("\n");
+        indentLevel--;
+        sb.append(getIndent()).append("└─ Arguments: ").append(statementMethodCall.methodCall.args.size()).append("\n");
+        indentLevel++;
+        List<Expression> arguments = statementMethodCall.methodCall.args;
+        for (int i = 0; i < arguments.size(); i++) {
+            if (i < arguments.size() - 1) {
+                sb.append(getIndent()).append("├─ ");
+            } else {
+                sb.append(getIndent()).append("└─ ");
+            }
+            Expression arg = arguments.get(i);
+            String argOutput = arg.accept(this);
+            String[] lines = argOutput.split("\n");
+            sb.append(lines[0].replaceFirst("^" + INDENT.repeat(indentLevel), ""));
+            for (int j = 1; j < lines.length; j++) {
+                sb.append("\n").append(lines[j]);
+            }
+            if (i < arguments.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        indentLevel -= 2;
+        return sb.toString();
     }
 
     @Override

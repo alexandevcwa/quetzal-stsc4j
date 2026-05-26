@@ -1,66 +1,52 @@
 package com.stsc4j.semantic.analyzer;
 
-import com.stsc4j.parser.v1.ast.Statement;
-import com.stsc4j.parser.v1.ast.StatementFunction;
-import com.stsc4j.parser.v1.ast.StatementFunctionParameter;
+import com.stsc4j.parser.v1.ast.*;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SemanticStatementFunction extends SemanticAbstractAnalyzer {
 
-    private Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementFunction(Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementFunction(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
-    private String retornoEsperadoActual = "vacio";
-
-    @Override
-    public String visit(StatementFunction statementFunction) {
-        String nombreFuncion = statementFunction.identified.getLexeme();
-        // Si no tiene token de retorno (ej. es un void), asumimos "vacio"
-        String tipoRetorno = statementFunction.returnValue != null ? statementFunction.returnValue.getLexeme() : "vacio";
-
-        // 1. Armar la "Firma" de la función
-        // Como nuestra memoria (Environment) guarda Strings, vamos a guardar la función así:
-        // "funcion_entero_entero_retorna_entero" -> para sumar(entero a, entero b) -> entero
-        StringBuilder firma = new StringBuilder("funcion");
-        for(Statement paramStmt : statementFunction.parameters) {
+    // FASE 1: Solo registrar la firma
+    public void register(StatementFunction stmt) {
+        String funcName = stmt.identified.getLexeme();
+        String returnType = stmt.returnValue.getType().name();
+        List<String> paramTypes = new ArrayList<>();
+        for (Statement paramStmt : stmt.parameters) {
             StatementFunctionParameter param = (StatementFunctionParameter) paramStmt;
-            firma.append("_").append(param.type.getLexeme());
+            paramTypes.add(param.type.getType().name());
         }
-        firma.append("_retorna_").append(tipoRetorno);
+        analyzer.getEnv().defineFunction(funcName, returnType, paramTypes);
+    }
 
-        // 2. Registrar la función en la memoria GLOBAL (antes de entrar a su bloque)
-        // Esto es clave para que exista la recursividad (que la función se llame a sí misma)
-        // Las funciones son inmutables (false), no queremos que alguien haga sumar = 5;
-        currentEnv.define(nombreFuncion, firma.toString(), false);
+    // FASE 2: Analizar el bloque interno
+    public void analyzeBody(StatementFunction stmt) {
+        String returnType = stmt.returnValue.getType().name();
 
-        // 3. Crear el entorno (Scope) local aislado para la función
-        Environment entornoAnterior = this.currentEnv;
-        this.currentEnv = new Environment(entornoAnterior);
-
-        // Guardamos la promesa de retorno por si hay funciones anidadas
-        String retornoEsperadoAnterior = this.retornoEsperadoActual;
-        this.retornoEsperadoActual = tipoRetorno;
+        Environment globalEnv = analyzer.getEnv();
+        analyzer.setEnv(new Environment(globalEnv)); // Nuevo Scope
 
         try {
-            // 4. Inyectar los parámetros en esta nueva memoria local
-            for (Statement param : statementFunction.parameters) {
-                param.accept(this);
+            analyzer.getEnv().define("@return", returnType, false);
+            for (Statement paramStmt : stmt.parameters) {
+                paramStmt.accept(analyzer);
             }
-
-            // 5. Analizar el contenido (bloque) de la función
-            statementFunction.block.accept(this);
-
+            stmt.block.accept(analyzer);
         } finally {
-            // 6. Al terminar la función, destruimos la memoria local y regresamos a la normalidad
-            this.currentEnv = entornoAnterior;
-            this.retornoEsperadoActual = retornoEsperadoAnterior;
+            analyzer.setEnv(globalEnv); // Restaurar Scope
         }
-
-        return null;
     }
 
+    @Override
+    public String visit(StatementFunction stmt) {
+        return null; // Ya no hacemos nada aquí directamente
+    }
 }

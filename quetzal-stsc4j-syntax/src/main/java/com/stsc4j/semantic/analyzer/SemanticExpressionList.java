@@ -1,37 +1,40 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.ExpressionList;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
-import com.stsc4j.semantic.SemanticError;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionList extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionList (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionList(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
-    public String visit(ExpressionList expressionList) {
-        //Si la lista esta vacia, se le da un tipo desconocido
-        if (expressionList.expressions == null || expressionList.expressions.isEmpty()) {
-            return "lista<desconocido>";
+    public String visit(ExpressionList expr) {
+        if (expr.expressions == null || expr.expressions.isEmpty()) {
+            return "lista"; // Lista vacía, no sabemos su contenido
         }
 
-        //Tomamos el tipo del primer elemento como identificador
-        String tipoReferencia = expressionList.expressions.get(0).accept(this);
+        // Adivinamos el tipo basándonos en el primer elemento
+        String tipoPrimerElemento = expr.expressions.get(0).accept(analyzer);
+        boolean esMixta = false;
 
-        //Comparamos todos los demas elementos con esta regla
-        for (int i = 1; i < expressionList.expressions.size(); i++) {
-            String tipoActual = expressionList.expressions.get(i).accept(this);
-            if (tipoActual != null && !tipoActual.equals(tipoReferencia)) {
-                throw new SemanticError("Todos los elementos de la lista deben ser del mismo tipo. Se detectó un '" + tipoActual + "' pero esperaba un '" + tipoReferencia + "'.");
+        for (int i = 1; i < expr.expressions.size(); i++) {
+            String tipoActual = expr.expressions.get(i).accept(analyzer);
+            if (tipoActual != null && !tipoActual.equals(tipoPrimerElemento)) {
+                esMixta = true;
+                break;
             }
         }
-        //Si todos pasaron la prueba devolvemos el tipo de la lista
-        return "lista<" + tipoReferencia + ">";
-    }
 
+        if (esMixta || tipoPrimerElemento == null) {
+            return "lista"; // Si hay mezclas, es una lista sin tipar genérica
+        }
+
+        return "lista<" + tipoPrimerElemento + ">"; // Retornamos la firma completa
+    }
 }

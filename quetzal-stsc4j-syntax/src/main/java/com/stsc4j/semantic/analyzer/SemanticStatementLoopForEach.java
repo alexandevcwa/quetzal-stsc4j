@@ -8,31 +8,39 @@ import com.stsc4j.semantic.SemanticError;
 
 public class SemanticStatementLoopForEach extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
     private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementLoopForEach(Environment currentEnv, SemanticAnalyzer analyzer) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementLoopForEach(SemanticAnalyzer analyzer) {
         this.analyzer = analyzer;
     }
 
     @Override
     public String visit(StatementLoopForEach stmt) {
-        // 1. Verificamos que lo que estamos iterando exista
-        String tipoColeccion = stmt.declaration.accept(analyzer);
+        String tipoColeccion = stmt.listVariable.accept(analyzer);
 
-        if (tipoColeccion == null) {
-            throw new SemanticError("La colección a iterar en el ciclo 'por cada' no es válida o no existe.");
+        if (tipoColeccion == null || !tipoColeccion.startsWith("lista<")) {
+            throw new SemanticError("Error Semántico: La colección a iterar debe ser una lista válida.");
         }
 
-        // 2. Evaluamos la variable iteradora (ej: 'elemento')
-        stmt.listVariable.accept(analyzer);
+        Environment entornoAnterior = analyzer.getEnv();
+        analyzer.setEnv(new Environment(entornoAnterior));
 
-        // 3. Evaluamos el bloque de código interno del ciclo
-        if (stmt.block != null) {
-            stmt.block.accept(analyzer);
+        try {
+            stmt.declaration.accept(analyzer);
+
+            // ¡ENCENDEMOS EL RADAR!
+            analyzer.enterLoop();
+            try {
+                if (stmt.block != null) {
+                    stmt.block.accept(analyzer);
+                }
+            } finally {
+                analyzer.exitLoop(); // ¡APAGAMOS EL RADAR!
+            }
+        } finally {
+            analyzer.setEnv(entornoAnterior);
         }
 
-        return "void";
+        return null;
     }
 }

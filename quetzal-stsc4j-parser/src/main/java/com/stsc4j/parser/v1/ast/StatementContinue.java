@@ -2,7 +2,14 @@ package com.stsc4j.parser.v1.ast;
 
 import com.stsc4j.lexer.Token;
 
+/**
+ * Sentencia de continuación.
+ */
 public class StatementContinue extends Statement {
+
+    /**
+     * Token identificador de continuación
+     */
     public final Token token;
 
     public StatementContinue(Token token) {

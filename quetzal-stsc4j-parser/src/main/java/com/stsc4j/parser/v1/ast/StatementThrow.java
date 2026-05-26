@@ -1,9 +1,13 @@
 package com.stsc4j.parser.v1.ast;
 
-import com.stsc4j.lexer.Token;
-
+/**
+ * Declaración de lanzamiento de excepciones.
+ */
 public class StatementThrow extends Statement{
 
+    /**
+     * Mensaje de salida de la excepción.
+     */
     public final ExpressionLiteral message;
 
     public StatementThrow(ExpressionLiteral message) {

@@ -4,7 +4,14 @@ import com.stsc4j.lexer.Token;
 
 public class ExpressionIncDec extends Expression {
 
+    /**
+     * Variable a incrementar o decrementar.
+     */
     public ExpressionVariable identifier;
+
+    /**
+     * Operador de incremento o decremento.
+     */
     public Token[] operator = new Token[2];
 
     public ExpressionIncDec(ExpressionVariable identifier, Token[] operator) {

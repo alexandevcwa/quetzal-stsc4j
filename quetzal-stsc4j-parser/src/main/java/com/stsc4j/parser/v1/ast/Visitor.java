@@ -235,6 +235,14 @@ public interface Visitor<T> {
     T visit(StatementMatrixAssignation statementMatrixAssignation);
 
     /**
+     * Visits a StatementPropertyAssignation and processes it.
+     *
+     * @param statementPropertyAssignation the StatementPropertyAssignation object to be visited
+     * @return an object of type T resulting from the processing of the statementPropertyAssignation
+     */
+    T visit(StatementPropertyAssignation statementPropertyAssignation);
+
+    /**
      * Visits the provided ExpressionNull instance and processes it according to the implementation.
      *
      * @param expressionNull an instance of ExpressionNull to be visited
@@ -279,4 +287,6 @@ public interface Visitor<T> {
     T visit(StatementThrow statementThrow);
 
     T visit(ExpressionConsoleIn expressionConsoleIn);
+
+    T visit(StatementMethodCall statementMethodCall);
 }

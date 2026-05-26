@@ -1,39 +1,57 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.lexer.TokenType;
+import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.ExpressionIndexAccess;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 import com.stsc4j.semantic.SemanticError;
 
 public class SemanticExpressionIndexAccess extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionIndexAccess (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionIndexAccess(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
-    public String visit(ExpressionIndexAccess expressionIndexAccess) {
-        // 1. Analizamos a qué le queremos sacar el índice (ej: la variable 'numeros')
-        String tipoObjeto = expressionIndexAccess.objectList.accept(this);
+    public String visit(ExpressionIndexAccess expr) {
+        // 1. Evaluamos a qué objeto le estamos sacando el índice
+        String tipoObjeto = expr.objectList.accept(analyzer);
 
-        // 2. Analizamos qué hay dentro de los corchetes [ ] (ej: el 0)
-        String tipoIndice = expressionIndexAccess.index.accept(this);
-
-        // REGLA 1: El índice SIEMPRE debe ser un número entero
-        if (tipoIndice != null && !tipoIndice.equals("entero")) {
-            throw new SemanticError("El índice de una lista debe ser un número 'entero', pero me enviaste un '" + tipoIndice + "'.");
+        if (tipoObjeto == null || !tipoObjeto.startsWith("lista")) {
+            throw new SemanticError("Error Semántico: Intento de acceso por índice [...] a una variable que no es una colección o lista.");
         }
 
-        // REGLA 2: Solo podemos usar corchetes [] en variables tipo lista
-        if (tipoObjeto != null && tipoObjeto.startsWith("lista<")) {
-            // Si es una lista de enteros, al acceder a un elemento, el resultado es un entero.
-            // Extraemos el tipo interno ("lista<entero>" -> "entero")
-            return tipoObjeto.replace("lista<", "").replace(">", "");
-        } else {
-            throw new SemanticError("Intentaste usar corchetes [ ] en una variable de tipo '" + tipoObjeto + "', lo cual no es una lista.");
+        // 2. Validamos que TODOS los índices utilizados sean ENTEROS
+        if (expr.index != null) {
+            for (Expression indexExpr : expr.index) {
+                String tipoIndice = indexExpr.accept(analyzer);
+                if (!TokenType.PRIMITIVE_INTEGER.name().equals(tipoIndice)) {
+                    throw new SemanticError("Error Semántico: Los índices de las listas deben ser estrictamente números enteros.");
+                }
+            }
         }
+
+        // 3. Calculamos el tipo de dato que va a salir de la lista
+        // (Sirve para matrices. Si es lista<lista<entero>> y accedemos [0], sale un lista<entero>)
+        String tipoRetorno = tipoObjeto;
+        if (expr.index != null) {
+            for (int i = 0; i < expr.index.size(); i++) {
+                if (tipoRetorno.startsWith("lista<")) {
+                    // Quitamos la capa exterior de la cebolla
+                    tipoRetorno = tipoRetorno.substring(6, tipoRetorno.length() - 1);
+                } else if (tipoRetorno.equals("lista")) {
+                    // Si era lista sin tipado, devuelve cualquier cosa
+                    tipoRetorno = "mixto";
+                } else {
+                    throw new SemanticError("Error Semántico: Estás intentando acceder a más dimensiones (índices) de las que tiene la matriz original.");
+                }
+            }
+        }
+
+        // Si es mixto, retornamos null para que Quetzal sepa que es un tipo de dato dinámico
+        return tipoRetorno.equals("mixto") ? null : tipoRetorno;
     }
-
 }

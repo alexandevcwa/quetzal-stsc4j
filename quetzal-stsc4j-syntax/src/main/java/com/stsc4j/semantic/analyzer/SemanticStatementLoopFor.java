@@ -1,58 +1,57 @@
 package com.stsc4j.semantic.analyzer;
 
+import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.Expression;
 import com.stsc4j.parser.v1.ast.Statement;
 import com.stsc4j.parser.v1.ast.StatementLoopFor;
 import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 import com.stsc4j.semantic.SemanticError;
 
 public class SemanticStatementLoopFor extends SemanticAbstractAnalyzer {
 
-    private Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticStatementLoopFor (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticStatementLoopFor (SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
     public String visit(StatementLoopFor statementLoopFor) {
-        // TRUCO DE COMPILADORES:
-        // Creamos un entorno temporal AQUÍ MISMO para que la variable que se declare
-        // en la primera parte del 'para' (ej: entero i = 0) nazca y muera con el ciclo.
-        Environment entornoAnterior = this.currentEnv;
-        this.currentEnv = new Environment(entornoAnterior);
+        Environment entornoAnterior = analyzer.getEnv();
+        analyzer.setEnv(new Environment(entornoAnterior));
 
         try {
-            // 1. Analizar la declaración inicial (puede ser un StatementVariable o un ExpressionVariable)
             if (statementLoopFor.declaration instanceof Statement) {
-                (statementLoopFor.declaration).accept(this);
+                ((Statement) statementLoopFor.declaration).accept(analyzer);
             } else if (statementLoopFor.declaration instanceof Expression) {
-                (statementLoopFor.declaration).accept(this);
+                ((Expression) statementLoopFor.declaration).accept(analyzer);
             }
 
-            // 2. Validar que la condición sea booleana
-            String tipoCondicion = statementLoopFor.condition.accept(this);
-            if (tipoCondicion != null && !tipoCondicion.equals("booleano")) {
-                throw new SemanticError("La condición del ciclo 'para' debe ser de tipo 'booleano', pero se encontró un '" + tipoCondicion + "'.");
+            String tipoCondicion = statementLoopFor.condition.accept(analyzer);
+            if (tipoCondicion != null && !tipoCondicion.equals(TokenType.PRIMITIVE_BOOLEAN.name())) {
+                throw new SemanticError("Error Semántico: La condición del ciclo 'para' debe ser de tipo 'booleano'.");
             }
 
-            // 3. Analizar la expresión de incremento/decremento (ej. i++)
             if (statementLoopFor.increment != null) {
-                statementLoopFor.increment.accept(this);
+                statementLoopFor.increment.accept(analyzer);
             }
 
-            // 4. Finalmente, analizamos el bloque de código a ejecutar.
-            // (Nota: el StatementBlock creará otro sub-entorno, lo cual es perfectamente
-            // seguro y mantiene nuestra variable 'i' visible para el bloque).
-            statementLoopFor.block.accept(this);
+            // ¡ENCENDEMOS EL RADAR!
+            analyzer.enterLoop();
+            try {
+                if (statementLoopFor.block != null) {
+                    statementLoopFor.block.accept(analyzer);
+                }
+            } finally {
+                analyzer.exitLoop(); // ¡APAGAMOS EL RADAR!
+            }
 
         } finally {
-            // Al terminar el ciclo for, destruimos el entorno y la variable iteradora desaparece
-            this.currentEnv = entornoAnterior;
+            analyzer.setEnv(entornoAnterior);
         }
 
         return null;
     }
-
 }

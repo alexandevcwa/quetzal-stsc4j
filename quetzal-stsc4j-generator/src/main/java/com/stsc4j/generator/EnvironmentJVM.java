@@ -1,28 +1,74 @@
 package com.stsc4j.generator;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class EnvironmentJVM {
-    // Diccionario para recordar: Nombre de variable en Quetzal -> Índice en la JVM
-    private final Map<String, Integer> variables = new HashMap<>();
 
-    // Empezamos en 1 porque el índice 0 en public static void main(String[] args) lo ocupa 'args'
-    private int proximoIndiceLibre = 1;
+    // Stack de scopes
+    private final Deque<Map<String, Integer>> scopes = new ArrayDeque<>();
 
-    // Registra una nueva variable y le asigna un "casillero" numérico
+    // Próximo slot libre JVM
+    private int proximoIndiceLibre;
+
+    // =========================================================
+    // CONSTRUCTORES
+    // =========================================================
+
+    public EnvironmentJVM(int indiceInicial) {
+        this.proximoIndiceLibre = indiceInicial;
+        enterScope();
+    }
+
+    public EnvironmentJVM() {
+        this.proximoIndiceLibre = 1; // main(String[] args)
+        enterScope();
+    }
+
+    // =========================================================
+    // SCOPES
+    // =========================================================
+
+    public void enterScope() {
+        scopes.push(new HashMap<>());
+    }
+
+    public void exitScope() {
+        if (!scopes.isEmpty()) {
+            scopes.pop();
+        }
+    }
+
+    // =========================================================
+    // VARIABLES
+    // =========================================================
+
     public void registrarVariable(String nombre) {
-        if (!variables.containsKey(nombre)) {
-            variables.put(nombre, proximoIndiceLibre);
+
+        Map<String, Integer> actual = scopes.peek();
+
+        if (actual == null) {
+            throw new RuntimeException("No existe scope activo.");
+        }
+
+        if (!actual.containsKey(nombre)) {
+
+            actual.put(nombre, proximoIndiceLibre);
+
             proximoIndiceLibre++;
         }
     }
 
-    // Devuelve el número de casillero donde se guardó la variable
     public int obtenerIndice(String nombre) {
-        if (!variables.containsKey(nombre)) {
-            throw new RuntimeException("Error en Generador: La variable '" + nombre + "' no existe en memoria.");
+
+        for (Map<String, Integer> scope : scopes) {
+
+            if (scope.containsKey(nombre)) {
+                return scope.get(nombre);
+            }
         }
-        return variables.get(nombre);
+
+        throw new RuntimeException(
+                "Variable no encontrada: " + nombre
+        );
     }
 }

@@ -2,35 +2,34 @@ package com.stsc4j.semantic.analyzer;
 
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.ExpressionLiteral;
-import com.stsc4j.semantic.Environment;
 import com.stsc4j.semantic.SemanticAbstractAnalyzer;
+import com.stsc4j.semantic.SemanticAnalyzer;
 
 public class SemanticExpressionLiteral extends SemanticAbstractAnalyzer {
 
-    private final Environment currentEnv;
+    private final SemanticAnalyzer analyzer;
 
-    public SemanticExpressionLiteral (Environment currentEnv) {
-        this.currentEnv = currentEnv;
+    public SemanticExpressionLiteral(SemanticAnalyzer analyzer) {
+        this.analyzer = analyzer;
     }
 
     @Override
-    public String visit(ExpressionLiteral expressionLiteral) {
-        TokenType tipoToken = expressionLiteral.token.getType();
+    public String visit(ExpressionLiteral expr) {
+        TokenType tipoToken = expr.token.getType();
 
         switch (tipoToken) {
             case LIT_INTEGER:
-                return "entero";
+                return TokenType.PRIMITIVE_INTEGER.name(); // "PRIMITIVE_INTEGER"
             case LIT_STRING:
-                return "cadena";
+                return TokenType.PRIMITIVE_STRING.name();  // "PRIMITIVE_STRING"
             case LIT_DECIMAL:
-                return "decimal";
+                return TokenType.PRIMITIVE_DECIMAL.name(); // "PRIMITIVE_DECIMAL"
+            case LIT_TRUE:
             case LIT_FALSE:
-                return "booleano";
+                return TokenType.PRIMITIVE_BOOLEAN.name(); // "PRIMITIVE_BOOLEAN"
             default:
-                // Si el token no es un literal reconocido, podríamos lanzar un error semántico o devolver "desconocido"
-                return "desconocido";
+                // token de error
+                return TokenType.UNKNOW.name();
         }
-
     }
-
 }

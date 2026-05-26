@@ -21,6 +21,7 @@ public class ParserStatement {
     private ParserLoopForEach parserLoopForEach;
     private ParserIncremental parserIncremental;
     private ParserMatrixAssignation parserMatrixAssignation;
+    private ParserCall parserCall;
     private ParserTryCatchFinally parserTryCatchFinally;
     private ParserConsoleOut parserConsoleOut;
     private ParserContinue parserContinue;
@@ -32,10 +33,6 @@ public class ParserStatement {
         this.tokenStream = tokenStream;
         this.parserExpression = new ParserExpression(tokenStream);
         this.parserPrincipal = parserPrincipal;
-    }
-
-    public Parser parseExpressions() {
-        return parserExpression;
     }
 
     public Parser parseVar() {
@@ -127,6 +124,13 @@ public class ParserStatement {
             parserMatrixAssignation = new ParserMatrixAssignation(tokenStream, parserExpression);
         }
         return parserMatrixAssignation;
+    }
+
+    public Parser parseCall() {
+        if (parserCall == null) {
+            parserCall = new ParserCall(tokenStream, parserExpression);
+        }
+        return parserCall;
     }
 
     public Parser parseTryCatchFinally() {

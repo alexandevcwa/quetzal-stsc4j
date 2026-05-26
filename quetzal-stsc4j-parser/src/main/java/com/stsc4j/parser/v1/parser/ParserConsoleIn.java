@@ -36,6 +36,8 @@ public class ParserConsoleIn extends Parser {
 
         tokenStream.consume(LEFT_PARENT, "Se esperaba un apertura de parentesis '(' despues de la llamada de la función");
         Expression expression = parserExpression.parseExpression();
+        tokenStream.consume(RIGHT_PARENT, "Se esperaba un cierre de parentesis ')' despues de la llamada de la función");
+
         if (expression instanceof ExpressionLiteral){
             ExpressionLiteral literal = (ExpressionLiteral) expression;
             if (!(literal.token.type.equals(TokenType.LIT_STRING))){

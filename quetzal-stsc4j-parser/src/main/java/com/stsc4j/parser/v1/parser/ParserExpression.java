@@ -4,6 +4,7 @@ import com.stsc4j.lexer.Token;
 import com.stsc4j.lexer.TokenType;
 import com.stsc4j.parser.v1.ast.*;
 import com.stsc4j.parser.v1.exception.ParserException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class ParserExpression extends Parser {
         Expression expression = parseEspaniolExpression();
         while (tokenStream.match(TokenType.AND, TokenType.OR)) {
             Token operator = tokenStream.before();
-            Token secondaryOperator = null;
+            Token secondaryOperator;
             if ((tokenStream.match(TokenType.AND) && operator.getType() == TokenType.AND) ||
                     (tokenStream.match(TokenType.OR) && operator.getType() == TokenType.OR)
             ) {
@@ -42,7 +43,8 @@ public class ParserExpression extends Parser {
                 expression = new ExpressionBinary(expression, operators, parseEspaniolExpression());
             } else {
                 Expression right = parseEspaniolExpression();
-                expression = new ExpressionBinary(expression, operator, right);
+                final Token[] operators = {operator};
+                expression = new ExpressionBinary(expression, operators, right);
             }
         }
         return expression;
@@ -51,9 +53,10 @@ public class ParserExpression extends Parser {
     private Expression parseEspaniolExpression() {
         Expression expression = parseEqualExpression();
         while (tokenStream.match(TokenType.AND_ESP, TokenType.OR_ESP)) {
-            Token operator = tokenStream.before();
+            Token token = tokenStream.before();
+            final Token[] operators = {token};
             Expression right = parseEqualExpression();
-            expression = new ExpressionBinary(expression, operator, right);
+            expression = new ExpressionBinary(expression, operators, right);
         }
         return expression;
     }
@@ -77,7 +80,8 @@ public class ParserExpression extends Parser {
                 final Token[] operators = {operator, secondaryOperator};
                 expression = new ExpressionBinary(expression, operators, right);
             } else {
-                expression = new ExpressionBinary(expression, operator, right);
+                final Token[] operators = {operator};
+                expression = new ExpressionBinary(expression, operators, right);
             }
         }
         return expression;
@@ -97,7 +101,8 @@ public class ParserExpression extends Parser {
                 final Token[] operators = {operator, secondaryOperator};
                 expression = new ExpressionBinary(expression, operators, right);
             } else {
-                expression = new ExpressionBinary(expression, operator, right);
+                final Token[] operators = {operator};
+                expression = new ExpressionBinary(expression, operators, right);
             }
         }
         return expression;
@@ -109,7 +114,8 @@ public class ParserExpression extends Parser {
         while (tokenStream.match(TokenType.MODULE)) {
             Token operator = tokenStream.before();
             Expression right = parseAddAndSubtractExpression();
-            expression = new ExpressionBinary(expression, operator, right);
+            final Token[] operators = {operator};
+            expression = new ExpressionBinary(expression, operators, right);
         }
         return expression;
     }
@@ -119,8 +125,9 @@ public class ParserExpression extends Parser {
         Expression expression = parseMultiplyAndDivideExpression();
         while (tokenStream.match(TokenType.PLUS, TokenType.MINUS)) {
             Token operator = tokenStream.before();
+            final Token[] operators = {operator};
             Expression right = parseMultiplyAndDivideExpression();
-            expression = new ExpressionBinary(expression, operator, right);
+            expression = new ExpressionBinary(expression, operators, right);
         }
         return expression;
     }
@@ -131,7 +138,8 @@ public class ParserExpression extends Parser {
         while (tokenStream.match(TokenType.MULTIPLY, TokenType.DIVIDE)) {
             Token operator = tokenStream.before();
             Expression right = parsePostfixExpression();
-            expression = new ExpressionBinary(expression, operator, right);
+            final Token[] operators = {operator};
+            expression = new ExpressionBinary(expression, operators, right);
         }
         return expression;
     }
@@ -161,24 +169,6 @@ public class ParserExpression extends Parser {
     }
 
     /**
-     * Analiza y procesa una lista de argumentos a partir de la secuencia de tokens actual.
-     * Los argumentos son interpretados como expresiones y se agregan a una lista en el
-     * orden en que se presentan en la entrada.
-     *
-     * @return Una lista de objetos {@code Expression} que representan las expresiones
-     * extraídas como argumentos. Si no hay argumentos presentes, retorna una lista vacía.
-     */
-    private List<Expression> parseArgs() {
-        List<Expression> args = new ArrayList<>();
-        if (!tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
-            do {
-                args.add(parseExpression());
-            } while (tokenStream.match(TokenType.COMMA));
-        }
-        return args;
-    }
-
-    /**
      * Punto de entrada para parsear llamadas a métodos y acceso a propiedades.
      * Delega la responsabilidad a métodos especializados.
      */
@@ -189,9 +179,8 @@ public class ParserExpression extends Parser {
         // Controlar llamada directa a función: mifuncion()
         if (tokenStream.match(TokenType.LEFT_PARENT)) {
             expression = parseDirectMethodCall(expression, before);
+
         }
-
-
         // Controlar acceso mediante punto: obj.prop o obj.metodo()
         expression = parsePropertyAndMethodAccess(expression);
         return expression;
@@ -209,6 +198,24 @@ public class ParserExpression extends Parser {
         List<Expression> args = parseArgs();
         tokenStream.consume(TokenType.RIGHT_PARENT, "Se esperaba ')' después de los argumentos.");
         return new ExpressionMethodCall(object, methodName, args);
+    }
+
+    /**
+     * Analiza y procesa una lista de argumentos a partir de la secuencia de tokens actual.
+     * Los argumentos son interpretados como expresiones y se agregan a una lista en el
+     * orden en que se presentan en la entrada.
+     *
+     * @return Una lista de objetos {@code Expression} que representan las expresiones
+     * extraídas como argumentos. Si no hay argumentos presentes, retorna una lista vacía.
+     */
+    private List<Expression> parseArgs() {
+        List<Expression> args = new ArrayList<>();
+        if (!tokenStream.matchNotAdvance(TokenType.RIGHT_PARENT)) {
+            do {
+                args.add(parseExpression());
+            } while (tokenStream.match(TokenType.COMMA));
+        }
+        return args;
     }
 
     /**
@@ -298,9 +305,14 @@ public class ParserExpression extends Parser {
             return new ExpressionLiteral(token, token.getLexeme());
         }
 
-        // Controla variables
-        if (tokenStream.match(TokenType.IDENTIFIER)) {
-            return new ExpressionVariable(tokenStream.before());
+        // Controla variables y negación de variables
+        if (tokenStream.match(TokenType.IDENTIFIER, TokenType.EXCLAMATION, TokenType.NEGATION_ESP)) {
+            Token token = tokenStream.before();
+            if (token.getType() == TokenType.EXCLAMATION || token.getType() == TokenType.NEGATION_ESP) {
+                Token id = tokenStream.consume(TokenType.IDENTIFIER, "Se esperaba el nombre de la variable.");
+                return new ExpressionVariable(id, true);
+            }
+            return new ExpressionVariable(token, false);
         }
 
         // Controla null

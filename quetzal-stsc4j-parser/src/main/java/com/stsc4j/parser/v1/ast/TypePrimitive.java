@@ -7,6 +7,9 @@ import com.stsc4j.lexer.Token;
  */
 public class TypePrimitive extends Type{
 
+    /**
+     * Tipo de dato primitivo.
+     */
     public final Token primitiveType;
 
     public TypePrimitive(Token primitiveType) {
